@@ -1,0 +1,191 @@
+.box-body {
+  padding: 20px;
+}
+
+/* FILTERS */
+.row.filters button {
+  vertical-align: text-top;
+}
+
+
+/* WAREHOUSE LOCATIONS */
+div.warehouse-row {
+  width: 100%;
+  overflow: -moz-scrollbars-vertical;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  display: none;
+}
+
+/* Section Dimension and table colors */
+div.section-table,
+div.heights-table {
+  max-width: 20%;
+  min-width: 180px;
+  display: inline-block;
+}
+div.section-table {
+  max-width: 100%;
+}
+.section-table h3,
+.heights-table h3,
+.section-table th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section-table h3,
+.heights-table h3,
+.section-table th,
+.heights-table th,
+.heights-table tr {
+  background-color: #214A7B;
+  color: #fff;
+}
+
+.section-table td {
+  background-color: #D9E0CB;
+  color: #333;
+}
+
+.section-table h3,
+.heights-table h3 {
+  padding: 5px;
+}
+
+/* Table Element Dimension and Alignment */
+table.table {
+  width: 100%;
+  max-width: 100%;
+}
+.section-table,
+.section-table .table th {
+  text-align: center;
+}
+
+/* Table Borders */
+table.table.table-bordered,
+table.table.table-bordered td,
+table.table.table-bordered th {
+  border: 1px solid #333;
+}
+
+/* Warehouse Location Hover Behaviour */
+.section-table td:hover {
+  cursor: pointer;
+}
+.table-hover>tbody>tr>td:hover, .table-hover>tbody>tr>td:hover{
+  background-color: #eee;
+}
+.table-hover>tbody>tr:hover {
+  background-color: #fff;
+}
+
+
+/** MODAL **/
+.modal-dialog {
+  width: 65%;
+  max-width: 1000px;
+}
+
+@media all and (max-width: 768px) {
+  .modal-dialog {
+    width: auto;
+  }
+}
+
+#modal-close-btn {
+  float: right;
+}
+@media all and (max-width: 991px) {
+  #modal-close-btn {
+    float: none;
+    display: block;
+  }
+}
+#locationModal .modal-header .form-group {
+  padding-left: 0px;
+}
+
+#locationModal .form-group label {
+  display: block;
+  text-align: center;
+}
+#locationModal .form-group input {
+  text-align: center;
+}
+
+.modal-dialog .modal-table {
+  padding: 15px 25px;
+}
+
+.modal-dialog .modal-table table th {
+  text-align: center;
+}
+
+/*exit confirm popup*/
+.td-group 
+{ margin-bottom: 0px; }
+
+
+.points_table_scrollbar{
+  height: 150px;
+  overflow-y: scroll !important;
+
+}
+
+.points_table_scrollbar::-webkit-scrollbar-track{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+  border-radius: 10px;
+  background-color: #444444;
+}
+
+.points_table_scrollbar::-webkit-scrollbar{
+  width: 1%;
+  min-width: 5px;
+  background-color: #F5F5F5;
+}
+
+.points_table_scrollbar::-webkit-scrollbar-thumb{
+  border-radius: 10px;
+  background-color: #D62929;
+  background-image: -webkit-linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.4) 50%, transparent, transparent)
+}
+
+.points_table tbody {
+  height: 200px;
+  overflow-y: auto;
+}
+
+.points_table thead, .points_table tbody{
+  display: inline-block;
+}
+.input-group{
+  padding: 6px 45px;
+}
+
+.input-group-th {
+    padding: 10px 37px !important;
+}
+table.custromtable tbody tr td{
+  padding: 0;
+}
+table.custromtable tbody tr td input.form-control{
+  padding: 7px 8px;
+  height: auto; 
+  border-radius: 0;
+}
+table.custromtable .pd0{
+  padding: 0;
+}
+table.custromtable .mr0{
+  margin: 0;
+}
+table.custromtable .font11{
+  font-size: 11px;
+}
+
+.mark_red{
+  background: red !important;
+}

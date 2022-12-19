@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load i18n %}
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'relocation-list' %}">{% trans 'RELOCATIONS' %}</a></li>
+  <li class="active">New</li>
+</ol>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+ <div class="col-md-12"> 
+    <div class="box box-primary">
+      <form id="relocation-form" role="form" method="post" enctype="multipart/form-data">
+
+      <div class="box-header with-border">
+        <div class="pull-right">
+        <a href="/warehouse_relocation" class="btn btn-lg  btn-default" onclick="history.go(-1)">{% trans 'Cancel' %}</a>
+        </div>
+      </div>
+      
+        {% csrf_token %}
+        <div class="box-body">
+          <div class="row">            
+            {% include 'form-error.html' %}         
+
+
+            <div class="col-md-6">
+
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label> {% trans 'Entrance ID' %}</label>               
+                        <input type="text" class="form-control"  value="{{relocation_serializer.entrance_id}}">
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label> {% trans 'Palet Lot' %}</label>
+                        <input type="text" class="form-control"  value="{{relocation_serializer.palet_lot}}">
+                        
+                         <!-- {{relocation_serializer.palet_lot}} -->
+                    </div>
+                   
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label> {% trans 'Customer' %}</label>
+                         <!-- {{ form.customer }} -->
+                          <input type="text" class="form-control"  value="{{relocation_serializer.customer}}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label> {% trans 'Product' %}</label>
+                         <!-- {{ form.product }} -->
+                          <input type="text" class="form-control"  value="{{relocation_serializer.product}}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label> {% trans 'Source Warehouse' %}</label>
+                         <!-- <input type="text" class="form-control"  value=" {{ warehouserelocation.source_warehouse }}"> -->
+                         <input type="text" class="form-control"  value=" {{ relocation_serializer.s_warehouse_code }}">
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label> {% trans 'Source Location' %}</label>                        
+                        <!-- <input type="text" class="form-control"  value=" {{ warehouserelocation.source_location }}"> -->
+                        <input type="text" class="form-control"  value=" {{ relocation_serializer.s_location_short_code }}">
+                    </div>
+                </div>                
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label> {% trans 'Destination Warehouse' %}</label>                        
+                        <input type="text" class="form-control"  value=" {{ relocation_serializer.d_warehouse_code }}">
+                        
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label> {% trans 'Destination Location' %}</label>
+                         <!-- {{ form.destination_location }} -->
+                          <input type="text" class="form-control"  value=" {{ relocation_serializer.d_location_short_code }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                   <div class="form-group col-md-12">
+                        <label> {% trans 'Reason for Relocation' %}</label>
+                        <textarea class="form-control rounded-0" id="id_description" rows="9" name="description" >
+                        {% if relocation_serializer.description != None %}
+                       {{relocation_serializer.description}}
+                       {% endif %}
+                        </textarea>
+                        <!-- <textarea> {{warehouserelocation.description}}</textarea> -->
+                    </div> 
+                </div>                
+            </div>          
+          </div>
+       
+        </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+ 
+  {% endblock %}
+
+  {% block header-links %}
+    <link rel="stylesheet" href="{%static 'custom/warehouse/css/warehouse-entrance.css' %}"> 
+    <style type="text/css">
+      .img_remove{
+       display: none !important;
+      }
+    </style>
+  {% endblock %}
+
+  {% block scripts %}  
+  <script src="{% static 'theme/js/jquery.are-you-sure.min.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/jquery.formset.js' %}"></script>
+  <script type="text/javascript">
+    $(".form-control").prop("disabled", true)
+  </script>
+
+
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'form-edit.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'General Parameters' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'General Parameters' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'gp-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{generalparams.key}}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{{generalparams.key}}{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="gpKey">{% trans 'Key' %}</label>
+    <input type="text" class="form-control" name="key" value="{{generalparams.key}}" id="gpKey" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-12">
+    <label for="gpDescription">{% trans 'Description' %}</label>
+    <input type="text" class="form-control" name="description" value="{{generalparams.description}}" id="gpDescription" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-9">
+    <label for="gpValue">{% trans 'Value' %}</label>
+    <input type="text" class="form-control" name="value" value="{{generalparams.value}}" id="gpValue" required>
+  </div>
+</div>
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'gp-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/general_params/sidebar.html' %}
+{% endblock %}

@@ -1,0 +1,97 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% load qr_image %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>Entrance pallet Label</title>
+	<style type="text/css">
+	@page {
+		size: 4in 5in;
+	}
+</style>
+</head>
+<body>
+	{%for pallet in object_list %}
+	<table style="width: 100%; box-sizing: border-box; border-collapse: collapse;">
+		<tr>
+			<td style="padding: 5px 5px 5px 5px;">
+				<table style="width: 100%; box-sizing: border-box; border-collapse: collapse; font-weight: 500;">
+					<tr>
+						<th colspan="3" style="text-align: center; padding:5px 10px; font-size: 16px;">FRIGORIFICO SANTANDER</th>			
+					</tr>
+
+					<tr>
+						<td colspan="2" style="min-width: 66%; vertical-align: top;">
+							<table style="width: 100%;">
+								<tr>
+									<td style="vertical-align: top; text-align: left; padding:0 0 0 2px;">
+										<img style="width:80px; height: auto;" src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" align="top"/>
+									</td>
+									<td style="vertical-align: top; text-align: left;">
+										<p style="padding: 0; margin: 0 0 0 -35px;">Rita Perez de moreno 937<br>
+										Col. Sta Maria <br>
+										Guadalajara Jalisco <br>
+										Tels: 01 (33) 3649 1913<br>
+										www.frigorificosantander.mx</p>
+									</td>
+								</tr>
+							</table>
+						</td>
+						<td style="min-width: 34%; vertical-align: top;">
+							{% qr_image text=pallet.get_pallet_detail_for_qr width=200 height=250 %}
+						</td>
+					</tr>
+					<tr>
+						<td style="vertical-align: bottom; padding:3px 0 0;" colspan="3"><p style="text-align: left; margin:0; display: inline-block; vertical-align: bottom; font-weight: 500; font-size: 12px;">Producto </p> &nbsp;
+							<p style="font-weight: bold; vertical-align: bottom; font-size: 16px; margin:0; display: inline-block;">{{pallet.werehouse_entrance_confirmation.product.product_code|truncatechars:20}} </p>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding: 5px 0 5px 5px;" colspan="3">
+							<table width="100%">
+								<tr>
+									<td>
+							<h6 style="background-color: #000; color: #fff; font-size: 16px; text-align: left; padding: 5px 10px; margin-left: -10px; line-height: normal;">{{pallet.werehouse_entrance_confirmation.product.product_description|truncatechars:36}}</h6>
+						</td>
+								</tr>
+							</table>
+						</td>
+						
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" style="border:2px solid #000; padding: 5px 0 0 5px; border-right:none;"> Cliente &nbsp; <p style="font-weight: bold; font-size: 16px; margin: 0; display: inline-block;">{{ pallet.werehouse_entrance_confirmation.werehouse_entrance.customer.client_code|truncatechars:20 }}</p> <p style="font-size: 16px; text-transform: uppercase; margin: 0;">{{ pallet.werehouse_entrance_confirmation.werehouse_entrance.customer.name|truncatechars:25 }}</p></td>
+						<td valign="top" style="border:2px solid #000; border-left:none; padding: 5px;">Fecha Ingreso <p style="font-size: 16px; text-transform: uppercase; margin: 0;">{{pallet.created_at|date:"Y-m-d"}}</p></td>
+					</tr>
+					<tr>
+						<td valign="top" style="border:2px solid #000; padding: 5px;">Folio Entrada <p style="font-size: 30px; text-align: center;  text-transform: uppercase; margin: 0;">{{pallet.werehouse_entrance_confirmation.werehouse_entrance_id}}</p></td>
+						<td valign="top" style="border:2px solid #000; text-align: center; padding: 5px;">Fecha Caducidad <p style="font-size: 16px;text-transform: uppercase; margin: 0;">{{pallet.exp_date}}</p></td>
+						<td valign="top" style="border:2px solid #000; padding: 0;"><p style="margin: 0; padding:5px 5px 0;">Lote cliente <p style="font-size: 16px; text-transform: uppercase; margin: 0; border-bottom: 2px solid #000; padding:0 5px 5px; text-align: center;">{{pallet.cost_lot }}</p></p>
+
+
+							<p style="margin: 0; padding:5px;">Cajas totales <p style="font-size: 16px; text-transform: uppercase; margin: 0; padding:5px; text-align: center;">{{pallet.boxes | unlocalize}}</p></p>
+							
+						</td>
+					</tr>
+					<tr>						
+						<td colspan="2" valign="top" style="border:2px solid #000; padding: 5px; text-align: center;">
+							<p style="margin: 0; padding:5px 5px 0;">Lote Tarima <p style="font-size: 40px; line-height: 40px; text-transform: uppercase; margin: 0; padding:0 5px 5px; text-align: center;">{{pallet.palet_lot}}</p></p>
+						</td>
+						<td valign="top" style="border:2px solid #000; padding: 5px; text-align: center;">
+
+							<p style="margin: 0; padding:5px;"> Peso Neto<p style="font-size: 16px; text-transform: uppercase; margin: 0; padding:5px; text-align: center;">{{pallet.net_weight | unlocalize}}</p></p>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>		
+	</table>
+	{% endfor %}
+
+</body>
+</html>
+
+
+

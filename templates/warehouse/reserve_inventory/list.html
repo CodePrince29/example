@@ -1,0 +1,270 @@
+
+{% extends 'base.html' %}
+
+{% block header-links %}
+{% load staticfiles %}
+
+{% load i18n %}
+{% load l10n %}
+<link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}
+
+{% block content-header %}
+<h1>
+    {% block header-title %}{% endblock %}
+    <small>{% trans 'Reserve Product' %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li class="active">{% trans 'Reserve Product' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+            <div class="box-header">
+                <h4>&nbsp;</h4>
+                <a class="btn btn-primary" href="add" role="button">{% trans "Nueva Retención" %}</a>
+            </div>
+            <div class="box-body">
+                <table id="data-table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% block list-header-columns %}
+                                <th>{% trans 'Customer' %}</th>
+                                <th>{% trans 'Product' %}</th>
+                                <th>{% trans 'Lote Cliente' %}</th>
+                                <th>{% trans 'Lote Tarima' %}</th>
+                                <th>{% trans 'Cajas Retenidas' %}</th>
+                                <th>{% trans 'Reserve Stored Boxes' %}</th>
+                                <th>{% trans 'Fecha Caducidad' %}</th>
+                                <th>{% trans 'Action' %}</th>
+                           {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserveinventory in reserveinventory_list %}
+                        <tr>
+                            <td>{{ reserveinventory.inventory.client }}</td>
+                            <td>{{ reserveinventory.inventory.product }}</td>
+                            <td>{{ reserveinventory.inventory.warehouse_entrance_pallet.cost_lot }}</td>
+                            <td>{{ reserveinventory.palet_lot }}</td>
+                            <td>{{ reserveinventory.reserve_boxes | unlocalize }}</td>
+                            <td>{{ reserveinventory.released_store_box | unlocalize }}</td>
+                            <td>{{ reserveinventory.inventory.exp_date }}</td>
+                           
+                            <td>
+                                <a role="button" href="{% url 'inventory-reserve-update' reserveinventory.id %}" class="btn btn-success">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a role="button" class="btn btn-default release_button" style="background-color: #3be5ff;" data-inventory="{{reserveinventory.inventory_id}}" data-palet_lot="{{reserveinventory.palet_lot}}" data-boxes="{{reserveinventory.boxes| unlocalize}}" data-reserve_boxes="{{reserveinventory.reserve_boxes| unlocalize}}" data-reserve_id="{{reserveinventory.id}}" data-released_store_box="{{reserveinventory.released_store_box| unlocalize}}">
+                                    <i class="fa fa-sign-out"></i>
+                                </a>
+                            </td>                            
+                            </tr>
+                            {% endfor %}
+                        </tbody>                       
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- modal start -->
+
+
+
+<div id="release_product" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width: 1000px !important;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">          
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">{%trans 'LIBERAR PRODUCTO' %}</h3>
+                        </div>
+                        <form role="form" method="post" action="" enctype="multipart/form-data">
+                        <div class="box-body">
+                            <div class="col-md-12">
+                                <div class="col-md-2 form-group">
+                                    <label>Lote Tarima</label>
+                                    <input type="text" class="form-control palet_lot" readonly="true" name="palet_lot">
+                                    <input type="hidden" class="form-control inventory" readonly="true" name="inventory">
+                                    <input type="hidden" class="form-control reserveinventory" readonly="true" name="reserveinventory">
+                                </div>
+
+                                <div class="col-md-2 form-group">
+                                    <label>Cajas</label>
+                                    <input type="text" class="form-control boxes" readonly="true" name="boxes">
+                                </div>
+
+                                <div class="col-md-2 form-group">
+                                    <label>Cajas a Reservar</label>
+                                    <input type="text" readonly="true" class="form-control reserve_box" name="reserve_box">
+                                </div>
+
+                                <div class="col-md-2 form-group">
+                                    <label>Cajas to Reservar</label>
+                                    <input type="text" readonly="true" class="form-control released_store_box" name="released_store_box">
+                                </div>
+
+                                <div class="col-md-2 form-group">
+                                    <label>Cajas a Liberar</label>
+                                    <input type="number" min="0"  class="form-control release_box" name="release_box">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-12 form-group">
+                                    <label>Notas</label>
+                                    <textarea name="notes" maxlength="255" id="id_notes" rows="3" class="form-control" cols="80"></textarea>
+                                </div>
+                            </div>
+                        </div>   
+                        </form>                   
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary release_inventory_submit">{% trans 'Save' %}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    .error{
+        color: red;
+    }
+</style>
+
+    <!-- modal end -->
+    {% endblock %}
+
+    {% block scripts %}
+    <script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    
+    <script>
+        var datatable = $("#data-table").DataTable({
+            "ordering": false,
+            "language": {
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+
+        $(".release_button").click(function(){
+            $(".release_button").removeClass("row_selected")
+            $(".row_selected_data").removeClass("row_selected_data")
+            $(this).closest('tr').addClass("row_selected_data")
+            $(this).addClass("row_selected")
+            $(".release_box").val('')
+            $("#id_notes").val('')
+            $("#release_product").modal("show")
+            inventory = $(this).attr('data-inventory')
+            boxes = $(this).attr('data-boxes')
+            reserve_boxes = $(this).attr('data-reserve_boxes')
+            palet_lot = $(this).attr('data-palet_lot')
+            reserve_id = $(this).attr('data-reserve_id')
+            released_store_box = $(this).attr('data-released_store_box')
+            $(".palet_lot").val(palet_lot)
+            $(".boxes").val(boxes)
+            $(".reserve_box").val(reserve_boxes)
+            $(".inventory").val(inventory)
+            $(".reserveinventory").val(reserve_id)
+            $(".released_store_box").val(released_store_box)
+        })
+        $(".release_inventory_submit").click(function(){
+            release_box = $(".release_box").val()
+            if(release_box !=""){
+                create_release_log()
+            }else{
+                alert("Cajas a Liberar requerido")
+            }
+            
+        })
+
+
+        
+            
+
+        function create_release_log() {
+            release_box = $(".release_box").val()
+            id_notes = $("#id_notes").val()
+            inventory = $(".inventory").val()
+            reserve_id = $(".reserveinventory").val()
+            jQuery.ajax({
+                url: "release_reserved_inventory",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    release_box: release_box,
+                    notes: id_notes,
+                    inventory: inventory,
+                    reserve_id: reserve_id,
+                }
+            } ).done( function( response )
+            { 
+                if(response.code = "200") {
+                    $("#release_product").modal('hide')
+                    $(".row_selected").attr('data-released_store_box',response.reserveinventory_box)
+                    if(parseFloat(response.reserveinventory_box) == 0)
+                    {
+                        datatable.row('.row_selected_data').remove().draw()
+                    }
+                    
+                    alert("Actualizado exitosamente")
+                }else{
+                    $("#release_product").modal('hide')
+                    alert("Actualizado exitosamente")
+                }
+            })
+        }
+
+        $(".release_box").blur(function(){
+            release_box = parseFloat($(this).val())
+            reserve_box = parseFloat($(".released_store_box").val())
+            if(release_box == 0){
+                $(this).val('')
+                alert("No puedes reservar 0 cajas.")
+            }
+            else if(release_box > reserve_box){
+                $(this).val('')
+                alert("Las cajas que se van a liberar deben ser mayores que las cajas para reservar")
+            }
+        })
+
+
+    </script>
+    {% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

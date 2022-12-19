@@ -1,0 +1,998 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'warehouse-entrances-list' %}">{% trans 'WAREHOUSE-ENTRANCE-APPOINTMENTS' %}</a></li>
+  <li class="active">{{warehouseentrance.id}}</li>
+</ol>
+{% endblock %}
+
+
+
+<a href="{% url 'packaging-list' %}"></a>
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <div class="pull-right">
+        <a href="javascript:void(0)" class="btn btn-lg  btn-default redirect_url">{% trans 'Cancel' %}</a>
+        </div>
+      </div>
+      
+        {% csrf_token %}
+        <div class="box-body">
+          <div class="row">            
+            {% include 'form-error.html' %}
+            <div class="form-group col-md-3">
+              <label>{% trans 'Customer' %}</label>
+              <div>
+                {{ form.customer }}
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="entrance_date">{% trans 'Entrance Date' %}</label>
+              {{form.entrance_date}}
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="entrance_hour">{% trans 'Entrance Hour' %}</label>
+              {{form.entrance_hour}}
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="folio">{% trans 'Folio' %}</label>
+              <input type="text" class="form-control" id="exit_id" name="id" value="{{warehouseentrance.id}}" required>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-xs-12">
+                <table data-role="w-product-measurment" class="table table-bordered measurement_table">
+                  <tr>
+                    <th>{% trans 'Product Code' %}</th>
+                    <th>{% trans 'Description' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>
+                    <th>{% trans 'Prices' %}</th>
+                    <th>{% trans 'Kg Per Price' %}</th>
+                    <th>{% trans 'Boxes' %}</th>
+                    <th>{% trans 'Kg Per Box' %}</th>
+                  </tr>   
+                  {{ w_product_measurment_form.management_form }}                                     
+                  {% for form in w_product_measurment_form.forms %}
+                  <tr data-role="w-product-measurment-row" class="tr_body">
+                    {{ form.id }}
+                    {{ form.description.errors }}
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                    {% for field in form %}
+                    {% if not field.is_hidden %}
+                    <td>
+                      {{ field }}
+                    </td>
+                    {% endif %}
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </table>
+                
+              </div>
+              <div class="row">
+              <div class="col-md-3">
+                 <div class="form-group col-md-12">
+                            {{ form.cargo_type }}
+                        </div>                       
+
+              </div>
+              <div class="col-md-9">
+                <div class="col-md-3">
+                <h4>{% trans 'GRAND TOTAL' %}</h4>
+                </div>
+              <div class="col-md-9">
+
+                <table class="table calculate" id="calculate_tr" style="border-top: 3px">
+                  <tr>
+                    <td><input type="text" name="total_kg" class="form-control" id="entrance_total_kg" value="{{warehouseentrance.total_kg | unlocalize}}"  readonly="true"></td>
+                    <td><input type="text" name="total_price" class="form-control" id="entrance_total_price"   value="{{warehouseentrance.total_price| unlocalize}}"  readonly="true"></td>
+                    <td><input type="text" name="kg_per_price" class="form-control" id="entrance_kg_per_price"  value="{{warehouseentrance.kg_per_price | unlocalize}}"  readonly="true"></td>
+                    <td><input type="text" name="boxes" class="form-control" id="entrance_boxes"  value="{{warehouseentrance.boxes| unlocalize}}"  readonly="true"></td>
+                    <td><input type="text" name="kg_per_boxes" class="form-control" id="entrance_kg_per_boxes"  value="{{warehouseentrance.kg_per_boxes| unlocalize}}"  readonly="true"></td>
+                    <td ></td>
+                  </tr >
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+              <div class="col-md-5">
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Cargo Sender' %}</label>
+                  <div>
+                    {{ form.cargo_sender }}
+                  </div>
+                </div> 
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Reference' %}</label>
+                  <div>
+                    {{ form.cust_reference }}
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-5 pull-right">
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Fleje/Sello 1' %}</label>
+                  <div>
+                    {{ form.seal1 }}
+                  </div>
+                </div>
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Fleje/Sello 2' %}</label>
+                  <div>
+                    {{ form.seal2 }}
+                  </div>
+                </div>
+            </div>
+            </div>
+
+          <div class="row">            
+            <div class="form-group col-md-4">
+              <label>{% trans 'Carrier' %}</label>
+              <div>
+                {{ form.carrier }}
+              </div>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label>{% trans 'Vehicle' %}</label>
+              <div>
+                {{ form.vehicle }}
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="license_plate">{% trans 'License Plates' %}</label>
+              <input type="text" class="form-control" id="license_plate" name="license_plate" value="{{warehouseentrance.license_plate}}" required>
+            </div>
+          </div>           
+          <div class="row">            
+            <div class="form-group col-md-4">
+              <label>&nbsp;</label>
+
+              <input type="button" name="" value="{% trans 'VEHICLE INSPECTION' %}" class="btn btn-success" data-toggle="modal" data-target="#vehicle_inspection">
+            </div>
+
+            <div class="form-group col-md-4">
+              <label>&nbsp;</label>  
+              <input type="button" name="" value=" {% trans 'REGISTER INCIDENCE' %}" class="btn btn-danger" data-toggle="modal" data-target="#register_inspection">
+
+            </div>
+            <div class="form-group col-md-4">
+              <label>&nbsp;</label> 
+              <button type="button" class="btn btn-primary confirm_entrance" data-toggle="modal" data-target="#entrance_confirmation_modal">{% trans 'CONFIRM ENTRANCE' %}</button>
+            </div>
+
+          </div>
+
+
+          <div class="modal fade" id="vehicle_inspection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog" role="document" style="width: 1000px;">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel">{%trans 'REVESION VEHICLE INSPECTION' %}</h4>
+                </div>
+                <div class="modal hide" id="vehicle_inspection">
+
+                </div>
+                <div class="modal-body" align="center">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                      <table class="table">
+                        <tr> 
+                          <td></td>                        
+                          <td><h4>{%  trans 'ABLE' %}</h4></td>
+                          <td><h4>{%  trans 'NOT ABLE' %}</h4></td>
+                          <td><h4>{% trans 'NO APPLIES' %}</h4></td>
+                        </tr>                        
+                        <tr>
+                          <td><h4>{% trans 'Vehicle has Termograph' %}</h4></td>                          
+                          <td colspan="3">{{form.vehicle_temograph}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Temperature °C' %}</h4></td>
+                          <td colspan="3">{{form.temprature_cel}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Container Floor Status' %}</h4> <small>{% trans 'Clean No Stains, Odorless and No Humidity' %}</small></td>
+                          <td colspan="3">{{form.cont_flr_sta}}</td>                        
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Fasteners' %}</h4> <small>{% trans 'Mattress, Retentions Bars , Tensor, Stabilizing Bar' %}</small></td>
+
+                          <td colspan="3">{{form.fasteners}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Inside The Container is in Good Condition' %}</h4> <small>{% trans 'Spike free,screws or other element that could damage the package' %}</small></td>
+                       
+                          <td colspan="3">{{form.container_clean}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Container Clean' %}</h4> <small>{% trans 'Floor, Roof, Walls' %}</small></td>
+                          <td colspan="3">{{form.inside_container_good}}</td>                          
+
+                        </tr>
+
+                      </table>
+
+                     <div align="left"> 
+                      <div class="row">                    
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="notes">{% trans 'Name Of The Driver' %}</label>
+                                {{form.driver_name}}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">F</label>
+                                {{form.temp_front}}
+                            </div>
+                          </div> 
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">M</label>
+                                {{form.temp_middle}}
+                            </div>
+                          </div> 
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">B</label>
+                                {{form.temp_back}}
+                            </div>
+                          </div>  
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                          <div class="form-group">
+                            <label for="notes">{% trans 'Notes' %}</label>
+                            <textarea class="form-control" name="notes">
+                              {{warehouseentrance.notes}}
+                            </textarea>
+                          </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                          <div class="form-group">
+                        <input type="checkbox" name="loading_availity" {% if warehouseentrance.loading_availity %} checked {% endif %} /> &nbsp;{% trans 'VEHICLE ABLE FOR LOADING/UNLOADING' %}
+                      </div>
+                    </div>
+                      </div>  
+                      </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <section class="wearhouse-digrame">
+                            <div class="ck-bx-list">
+                              <ul>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check"><!-- Buying -->
+                                      <input type="checkbox" name="prente" {% if warehouseentrance.prente %} checked {% endif %} >
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check "><!-- Buying -->
+                                      <input type="checkbox"  name="lado_izquerdo" {% if warehouseentrance.lado_izquerdo %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check "><!-- Buying -->
+                                      <input type="checkbox"  name="vista_inferior" {% if warehouseentrance.vista_inferior %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check "><!-- Buying -->
+                                      <input type="checkbox"  name="puerta_tresera_deregha" {% if warehouseentrance.puerta_tresera_deregha %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check "><!-- Buying -->
+                                      <input type="checkbox"  name="duerta_tresera_inquiera" {% if warehouseentrance.duerta_tresera_inquiera %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check "><!-- Buying -->
+                                      <input type="checkbox"  name="techa" {% if warehouseentrance.techa %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check "><!-- Buying -->
+                                      <input type="checkbox"  name="puerta_referal" {% if warehouseentrance.puerta_referal %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check "><!-- Buying -->
+                                      <input type="checkbox"  name="puerta" {% if warehouseentrance.puerta %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check "><!-- Buying -->
+                                      <input type="checkbox"  name="lado_denecha" {% if warehouseentrance.lado_denecha %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+
+
+                              </ul>
+                            </div>
+
+                            <figure class="wearhouse-digrame-img">
+                              <img src="{% static 'theme/img/diagrame.jpg' %}" >
+                            </figure>
+
+                          </section>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">                    
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                  </div>
+                </div>              
+              </div>
+            </div>
+          </div>
+
+
+          <div class="modal fade" id="register_inspection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog" role="document" style="width: 1000px;">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel">REPORTE DE INCIDENCIA</h4>
+                </div>
+                <div class="modal hide" id="register_inspection">
+
+                </div>
+                <div class="modal-body" align="center">
+                  <table data-role="w-incidence-product" class="table table-bordered incidence_product">
+                  <tr>
+                    <th>{% trans 'Code' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Incidence' %}</th>
+                    <th>{% trans 'Notes' %}</th>                    
+                    <th>{% trans 'Delete' %}</th>
+                  </tr> 
+                  {{ w_incidence_product_form.management_form }}                                       
+                  {% for form in w_incidence_product_form.forms %}
+                  <tr data-role="w-incidence-product-row" class="tr_incidence-product">
+                    {{ form.id }}
+                    {{ form.description.errors }}
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                    {% for field in form %}
+                    {% if not field.is_hidden %}
+                    <td>
+                      {{ field }}
+                    </td>
+                    {% endif %}
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </table>
+                
+
+
+                  <section class="web_disigner">
+                   <div class="web_disigner_contain">
+                     <div class='row'>
+                       
+                       <div class="col-md-10"> 
+
+                         <div class="owl-carousel owl-theme" id="product-image-carousel">
+                          {% for image in w_incidence_images%}
+                           <div class="item wincidenceimage_set-{{forloop.counter0}}-image">
+                             <img src="{{image.image.url}}">
+                           </div>
+                           {%endfor%}
+                        </div>
+
+                       </div>
+                        </div>
+                   </div>
+                   </section>
+
+
+
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="box">
+                        <div class="box-header">
+                          <h3 class="box-title">{%trans 'INCIDENCIA EN TRANSPORTE ' %}</h3>
+                        </div>
+                        <ul class="list-group">
+                          <li class="list-group-item">TRANSPORTE</li>
+                          <li class="list-group-item">16 Olor desagradable</li>
+                          <li class="list-group-item">17 Avistamiento de plagas</li>
+                          <li class="list-group-item">18 Sucio</li>
+                          <li class="list-group-item">19 Otros(indicar)</li>
+                        </ul>                        
+                      </div>
+                    </div>
+
+                    <div class="col-md-8">                        
+                      <div class="box">
+                        <div class="box-header">
+                          <h3 class="box-title">{%trans 'INCIDENCIA EN PRODUCTO EMPAQUE' %}</h3>
+                        </div>
+                        <div class="col-md-6">
+                          <ul class="list-group">
+                            <li class="list-group-item"> PRODUCTO</li>
+                            <li class="list-group-item">1- Fuera de rango de temperatura</li>
+                            <li class="list-group-item">2- En cuarentena</li>
+                            <li class="list-group-item">3- Faltantes (empaque piezas)</li>
+                            <li class="list-group-item">4- Mal olor</li>
+                            <li class="list-group-item">5- Caducado</li>
+                            <li class="list-group-item">6- Escurrimiento</li>
+                            <li class="list-group-item">7- Otros(indicar)</li>
+                          </ul>
+                        </div>
+                        <div class="col-md-6">
+                          <ul class="list-group">
+                            <li class="list-group-item">EMPAQUE</li>
+                            <li class="list-group-item">8- Golpeado aplastado</li>
+                            <li class="list-group-item">9- Desarmado</li>
+                            <li class="list-group-item">10- Roto o perforado</li>
+                            <li class="list-group-item">11- Sello empaque roto </li>
+                            <li class="list-group-item">12- Empaque sucio</li>
+                            <li class="list-group-item">13- Pallet deficiente de origen</li>
+                            <li class="list-group-item">14- Otros(indicar)</li>
+                          </ul>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                                     
+                  </div>
+                  <div class="modal-footer">                    
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                  </div>
+                </div> 
+              </div>
+            </div>
+
+             <!-- confirmation modal -->
+        <div class="modal fade" id="entrance_confirmation_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+            
+            <div class="modal-dialog" role="document" style="width: 95%;">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel">{% trans 'WAREHOUSE ENTRANCE CONFIRMATION' %}
+                  </h4>
+
+                </div>
+
+                <div class="modal-body" >
+
+                <div class="row">
+                  <div class="col-md-12" id="entrance_product_detail">
+                    {{ w_entrance_confirmation_pallet.management_form }}
+                    <div class="form-group col-xs-12 form-group-list">
+                      {% for entrance_confirmation in w_entrance_confirmation_pallet %}
+                      {{ entrance_confirmation.id }}
+                      <div class="row {{ w_entrance_confirmation_pallet.prefix }}" data-role="w_entrance_confirmation_pallet_row_{{ forloop.counter0 }}">
+                        {{ entrance_confirmation.description.errors }}
+                        {{ entrance_confirmation.description.label_tag }}
+                        {{ entrance_confirmation.description }}
+                        {% for field in entrance_confirmation %}
+
+                        <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                          {% if not field.is_hidden %}
+                          {{ field.label_tag }}
+                          {{ field }}
+                          {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        {% if entrance_confirmation.nested %}
+                        <div class="table-scroll">
+                        <div class="col-md-12">
+                          <table class="table new-tab">
+                            <thead>
+                              <tr>
+                                <th class="input-group-th pallet_th"> 
+                                  {% trans 'Palet Lot' %}
+                                </th>
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Boxes' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Box Kg' %}
+                                </th>
+                                
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Warehouse' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Rack Number' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Location' %}
+                                </th>
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Cust Lot' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Expiration Date' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Gross Weight' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Net Weight' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Entrance Invoice Weight' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Retained Qty' %}
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  {% trans 'Retainment Reason' %}
+                                </th>
+                                <th class="input-group-th pallet_th">
+                                  &nbsp;&nbsp;&nbsp;&nbsp;
+                                </th>
+
+                                <th class="input-group-th pallet_th">
+                                  &nbsp;&nbsp;&nbsp;&nbsp;
+                                </th>
+                              </tr>
+                            </thead>
+
+                          </table>
+
+                        </div>
+                        <div class="pallete_form_list">    
+                          {{ entrance_confirmation.nested.management_form }}
+                          {{ entrance_confirmation.nested.non_form_errors }}
+
+                          {% for pallet_form in entrance_confirmation.nested.forms %}
+                          <div class="row col-xs-12 table-row">
+                            {% for field in pallet_form %}
+                            {% if field.name == "werehouse_entrance_confirmation" or field.name == "id"  %}
+                            <div class="col-sm-2 form-group pallet_column empty-block">
+                              {{ field }}
+                            </div> 
+
+                            {% elif field.name == "DELETE" %}
+                            <div class="col-sm-2 form-group pallet_column empty-block">
+                              {{ field }}
+                            </div>                            
+                            {%else%}
+                            <div class="col-sm-2 form-group pallet_column">
+                              {{ field }}
+                            </div>
+                            {%endif%}
+                            {% endfor %}
+                            
+                          </div>
+                          {% endfor %}
+                        </div>
+                        </div>
+                        <!-- empty pallate form -->
+                        <div class="hide empty_pallate_detail_form">
+
+                          <div class="row col-xs-12 table-row">
+                            {% for field in entrance_confirmation.nested.empty_form %}
+                            {% if field.name == "werehouse_entrance_confirmation" or field.name == "id"  %}
+                            <div class="col-sm-2 form-group pallet_column empty-block">
+                              {{ field }}
+                            </div> 
+
+                            {% elif field.name == "DELETE" %}
+                            <div class="col-sm-2 form-group pallet_column empty-block">
+                              {{ field }}
+                            </div>                            
+                            {%else%}
+                            <div class="col-sm-2 form-group pallet_column">
+                              {{ field }}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            <div class="col-sm-2 form-group pallet_column" >
+                              <a href="javascript:void(0)" class="btn btn-primary appDetails" style="margin-top: -25px;" >Mapa</a>
+                            </div>
+                          </div>
+                        </div>
+
+                        {% endif %}
+                      </div>
+                      <hr>
+                      {% endfor %}
+                    </div>  
+                  </div>                       
+                </div> 
+
+                <div id="empty_product_detail_form" class="hide">
+
+
+                  <div class="row warehouseentranceconfirmation_set" data-role="w_entrance_confirmation_pallet_row___prefix__">
+                    {{w_entrance_confirmation_pallet.empty_form.id}}
+
+                    {% for field in w_entrance_confirmation_pallet.empty_form %}
+
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      {% if not field.is_hidden %}
+                      {{ field.label_tag }}
+                      {{ field }}
+                      {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+
+                  </div>
+
+                </div>
+                <!-- remove above -->
+
+                <div class="modal-footer">
+                  <input type="hidden" name="status" value="Guardar" id="id_status">
+                  <label class="label label-info error-msg"></label>
+                  <button type="button" class="btn btn-primary" onclick="return set_status('CONFIRM ENTRANCE')">{% trans 'Save' %}</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                </div>               
+
+              </div> 
+            </div> 
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="pallet_warehouse" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content" style="
+      border-radius: 6px;">
+      <div class="modal-body">
+        <div class="row">
+          <div class="loader-section">
+          </div>
+          <div class="box" align="center">
+            <div class="box-header">
+              <h3 class="box-title">{%trans 'Warehouse' %}</h3>
+              <div class="form-group">
+
+                <select class="form-control" id="warehouse_select_id">
+                  <option value="">---------</option>
+                  {% for warehouse in warehouses %}
+                  <option value="{{warehouse.id}}">{{warehouse}}</option>
+                  {% endfor %}
+                </select>
+
+              </div>
+
+            </div>
+            <div class="form-group">
+              <button class="btn btn-primary" type="button" onclick="return load_location()">{% trans 'Check locations' %}</button>
+            </div>
+
+
+            <div id="list_location">
+
+            </div>                        
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block header-links %}
+
+    <link rel="stylesheet" href="{%static 'custom/warehouse/css/warehouse-entrance.css' %}"> 
+    <style type="text/css">
+      .img_remove{
+       display: none !important;
+     }
+
+
+     .sure-confirmation { margin: 100px auto !important;}
+
+     .confirm-sure {padding: 50px !important;}
+     #accept { margin: 0 20px 0 0;}
+     div#entrance_product_detail {
+        height: 28em;
+        overflow-y: scroll;
+    }
+    #id_cargo_type li {
+      float: left;
+    padding: 24px;
+    list-style: none;
+    }
+
+       .loader-image{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 9;  }
+       .loader-image img{ position: absolute; top: 70%; left: 50%; width:100px; margin-left: -50px;  }
+
+    </style>
+  {% endblock %}
+
+  {% block scripts %}
+
+ 
+  <script src="{% static 'theme/js/jquery.are-you-sure.min.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/jquery.formset.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/entrance_detail.js' %}"></script>
+
+   <script >
+    $(".hide_field").parent().addClass('hide')
+    var products;
+    load_products()
+    $('#product-image-carousel').owlCarousel({
+           loop:true,
+           margin:10,
+           responsiveClass:true,
+           items:3,
+           dots:false,
+            nav:true,
+           responsive:{
+             0:{
+               items:1,
+               nav:true
+             },
+             600:{
+               items:3,
+               nav:false
+             },
+             1000:{
+               items:3,
+               nav:true,
+               loop:false
+             }
+           }
+         })
+
+     
+
+  </script>
+  <script type="text/javascript">
+    var  total_measurment_row =1 ;
+
+    var total_incidence_product_row = 1;
+
+    var total_incidence_image_row = 1; 
+    
+$(document).ready(function() {
+$("[id$=image-clear_id]").css({'display': "none"})
+$("[id$=image-clear_id]").next().css({'display': "none"})
+  $('form').areYouSure();
+
+
+
+
+  $('#media').carousel({
+    pause: true,
+    interval: false,
+  });
+
+  var total_measurment_row_initial  = $("table[data-role='w-product-measurment'] tr[data-role='w-product-measurment-row']:visible").length;  
+    if(total_measurment_row_initial == 1){
+      $("table[data-role='w-product-measurment'] tr[data-role='w-product-measurment-row']").find(".delete-row").css({"display": "none"}) 
+    }
+  var total_incidence_product_row_initial = $("table[data-role='w-incidence-product'] tr[data-role='w-incidence-product-row']:visible").length;
+  if(total_incidence_product_row_initial == 1){
+          $("table[data-role='w-incidence-product'] tr[data-role='w-incidence-product-row']").find(".delete-row").css({"display": "none"}) 
+        }
+
+});
+
+// image load
+
+$(document).on('change', 'input[type="file"]', function(e) {
+     current = $(this)
+     add_class = current.attr("name")  
+     var file = this.files[0];
+     var ext = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase();
+     if (file && ( ext == "png" || ext == "jpeg" || ext == "jpg")) {
+       var file = this.files[0];
+       var reader = new FileReader();
+       reader.onload = function (e) {
+         var img = $('<img/>');
+         img.attr('src', e.target.result);
+         previous_image = $("."+add_class)
+         if (previous_image != null) {
+           previous_image.parent().addClass("img_remove")
+           previous_image.remove()
+        }
+             
+         $('#product-image-carousel').trigger('add.owl.carousel', ["<div class='item "+ add_class +"'>"+ $(img)[0].outerHTML + "</div>"])
+         .trigger('refresh.owl.carousel');           $('#product-image-carousel').owlCarousel({
+           loop:true,
+           margin:10,
+           responsiveClass:true,
+           items:3,
+           dots:false,
+            nav:true,
+           responsive:{
+             0:{
+               items:1,
+               nav:true
+             },
+             600:{
+               items:3,
+               nav:false
+             },
+             1000:{
+               items:3,
+               nav:true,
+               loop:false
+             }
+           }
+         })        }        
+       reader.readAsDataURL(file);      }else{
+       alert("sorry please upload only png jpeg jpg file")
+       $('#preview_here').attr('src', '');
+     }
+   });
+  
+
+
+
+// conform script 
+function load_partial_product()
+{
+    $(".partial_product").empty();
+    
+    html_section = 
+      "<tr style='{4}' data-row='product-{5}-location'><td class='input-group-0'>{6}</td>\
+      <td>\
+      <div class='form-group td-group'>\
+      <span onfocus='this.blur()' class='form-control input-group product_code'><p>{0}</p></span>\
+      </div>\
+      </td>\
+      <td>\
+      <div class='form-group td-group'>\
+      <span  onfocus='this.blur()' class='form-control input-group product_description'><p>{1}</p> </span>\
+      </div>\
+      </td>\
+      <td>\
+      <div class='form-group td-group'>\
+      <span onfocus='this.blur()' class='form-control input-group product_location'><p>{2}</p></span>\
+      </div>\
+      <input type='hidden' value = '{3}' class='product_id'>\
+      </td>\
+      </tr>"
+      
+      $("table tr[data-role='w-product-measurment-row']:visible").each(function(){ 
+              var selected = $(this).find("td:first").find('select');
+              var position  = selected.attr('name').replace ( /[^\d.]/g, '' );
+              var location = selected.find('option:selected').attr('product-location') 
+              var description = selected.find('option:selected').attr('data-secription')
+              var product_code = selected.find('option:selected').text()
+              var product_id = selected.find('option:selected').val()
+              if(product_id != ''){
+                if(location == 'None'){
+                  location = ''
+                }
+                if( product_code != '')
+                {
+                  $(".partial_product").append(html_section.f(product_code, description,location, product_id, '', position, (parseInt(position)+1)))
+                  
+                }
+                else{
+                  $(".partial_product").append(html_section.f(product_code, description,location, product_id, '', position, (parseInt(position)+1)))
+                }
+              
+               }
+              else
+              {
+                $(".partial_product tr").each(function(){$(this).removeAttr('style') })
+              }
+
+          })
+        
+  }
+
+
+  function load_location(){
+    $("#list_location").empty()
+
+    warehouse = $("#warehouse_select_id").val()
+    if(warehouse != '')
+    {
+      div_data = $( "<div class='loader-image'> <img src='{% static 'theme/img/loader.gif' %}' alt='loader'/ ></div> " )
+      $(".loader-section").append(div_data)
+
+      jQuery.ajax( {
+        url: "{% url 'warehouse-location-detail' 0 %}".replace('0', warehouse),
+        type: "GET",
+        dataType: "json",
+      } ).done( function( response )
+      {
+        $("#list_location").append(response.warehouse)
+        $(".loader-section").html('')       
+      })
+    }
+
+  }
+
+  $("#id_entrance_hour , #id_entrance_date").addClass('form-control')
+   $(".redirect_url").click(function(){
+      referal_url = document.referrer.split("?")[0]
+      location.href = referal_url + "?redirect_query=true"
+   })
+   $('.select2').attr('disabled', true);
+   $('#entrance_date,#entrance_hour,.price_calculation').attr('readonly', true);
+   $('.form-control').attr('readonly', true);
+   $("input[name^='wincidenceproduct_set']" ).attr('readonly', true);
+  
+</script>
+
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/warehouse_entrance/sidebar.html' %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

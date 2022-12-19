@@ -1,0 +1,45 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic);
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #d2d6de;
+}
+
+section.login-box {
+  background: white;
+  margin: 60px auto 0 auto;
+  width: 400px;
+}
+
+.login-box .logo {
+  text-align: center;
+  padding-top: 40px;
+}
+
+section form {
+  display: block;
+  padding: 10px 20px 25px 20px;
+}
+
+section form div.input-group {
+  font: 20px;
+  font-weight: bold;
+  margin: 25px 0;
+}
+
+button.btn.btn-primary {
+  display: block;
+  margin: 40px auto 20px auto;
+  width: 40%;
+}
+
+@media all and (max-width: 399px) {
+  section.login-box {
+    width: 100%;
+  }
+}

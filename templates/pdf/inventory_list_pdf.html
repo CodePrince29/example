@@ -1,0 +1,122 @@
+{% extends 'pdf/base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+    <table style="width:100%; vertical-align: top;">
+        <tr>
+        <td style="width: 50%; height: 100px;" align="left">
+            <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+        </td>
+        <td style="width:50%; ">
+            <h2 style="font-size:30px; margin-top:-60px; margin-bottom:10px;" align="right">{% trans 'Inventario' %} </h2>
+            <table width="100%" align="right" style="font-size:14px;">
+                <tr>
+                    <td width="50%" align="right"><strong>{% trans 'Print Date Time' %}</strong></td>
+                    <td width="50%" align="right">{{print_date}}</td>
+                </tr>               
+            </table>
+        </td>
+    </tr>
+    </table>
+    <br>
+    <br>
+    <table width="100%" style="border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12.5%;">
+               {% trans 'Almacen' %}
+            </th>
+            
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Ubicación' %}
+            </th>
+            
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 11%;">
+               {% trans 'Producto' %}
+            </th>
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 11%;">
+               {% trans 'Description' %}
+            </th>
+            <th valign="top" style="padding: 5px 3px 10px 3px;width: 12%;"> </th>
+            <th valign="top" style="padding: 5px 3px 10px 3px;width: 12%;"> </th>
+            <th valign="top" style="padding: 5px 3px 10px 3px;width: 12%;"> </th> 
+        </tr>
+
+        <tr>           
+
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Lote Cte' %}
+            </th>
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Lote Tarima' %}
+            </th>
+            
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Motivo de Retencion' %}
+            </th>
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Referencia en Recibo' %}
+            </th>
+
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 11%;">
+               {% trans 'Folio Entrada' %}
+            </th>
+            <th style="width: 12%;" valign="top" > </th>
+            <th style="width: 12%;" valign="top" > </th>
+            <th style="width: 12%;" valign="top" > </th>
+            <th style="width: 12%;" valign="top" > </th> 
+        </tr>
+        <tr style="border-bottom:1px solid #000; margin-top: 20px;">
+           <th align="left" style="width: 12%;">
+               {% trans 'Fecha Cad' %}
+            </th>
+            <th valign="top" style="width: 12%;"> </th> 
+
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Cajas en Proceso Salida' %}
+            </th>
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Cajas en Existencia' %}
+            </th>
+            <th align="left" style="width: 11%;">
+               {% trans 'Cliente' %}
+            </th>
+            <th valign="top" style="width: 11%;"> </th> 
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Cajas Disponibles' %}
+            </th> 
+            
+            <th align="left" style="padding: 5px 3px 10px 3px;width: 12%;">
+               {% trans 'Cantidad Retenida' %}
+            </th> 
+            <th valign="top" style="width: 12%;"> </th> 
+                           
+
+        </tr>
+
+    </thead>
+</table>
+  
+<table width="100%" style="border-collapse:collapse;">
+    <tbody>   
+        {{inventory_data| safe}}
+    </tbody>
+</table>
+<table width="100%" style="border-collapse:collapse;">
+    <tbody>        
+         <tr style="border-top:1px solid #000; padding: 5px 0;">
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 11%;"  > </td>
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 11%;"  > </td>
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 11%;"  >Total: {{count_peso_bruto| unlocalize}}  </td>
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 11%;"  >Total: {{count_peso_neto| unlocalize}} </td>
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 11%;"  > </td>
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 11%;"  > </td>
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 12%;"  > Total: {{count_total_boxes| unlocalize}}  </td>
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 12%;"  > Total: {{count_invoice_weight| unlocalize}} </td>
+            <td valign="top" style="padding: 5px 3px 10px 3px; width: 11%;"  > Total: {{count_retained_quantity| unlocalize}} </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}

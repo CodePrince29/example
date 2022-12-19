@@ -1,0 +1,96 @@
+{% extends 'pdf/base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+
+<div style="max-width:900px;padding:20px; margin:0 auto; background:#fff; display: inline-block;">
+    <table class="firstBlock" style="width:100%; vertical-align: top;">
+        <tr>
+        <td style="width: 40%; height: 100px;" align="left">
+            <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+        </td>
+        <td style="width:60%; ">
+            <h2 style="font-size:30px; margin-top:-60px; margin-bottom:10px;" align="right">{% trans 'Reporte de Entradas Resumen' %} </h2>
+            <table width="100%" align="right" style="font-size:14px;">
+                <tr>
+                    <td width="50%" align="right"><strong>{% trans 'Print Date Time' %}</strong></td>
+                    <td width="50%" align="right">{{print_date}}</td>
+                </tr>               
+            </table>
+        </td>
+    </tr>
+    </table>
+    <br>
+    <br>
+    <div style="width:100%; float:left; min-height:560px; font-size: 13px;">
+        <table width="100%" style="text-transform:uppercase; border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th align="left">
+                {% trans 'CLIENTE' %}
+            </th>
+            <th align="left">
+               {% trans 'FECHA RECIBO' %}
+            </th>
+            <th align="left">
+               {% trans 'NUMERO RECIBO' %}
+            </th>
+            <th align="left">
+               {% trans 'NUM DOCTO CLIENTE' %}
+            </th>            
+        </tr>
+
+        <tr style="border-bottom:1px solid #000;">
+            <th align="left">
+               {% trans 'PRODUCTO' %}
+            </th>
+            <th align="left" >
+               {% trans 'DESCRIPCION PRODUCTO' %}
+            </th>
+            <th align="left">
+               {% trans 'CANTIDAD RECIBIDA ' %}
+            </th>
+            <th align="left">
+               {% trans 'PESO BRUTO' %}
+            </th>
+            <th align="left">
+               {% trans 'PESO NETO' %}
+            </th>            
+        </tr>
+
+    </thead>
+    <tbody>
+        {% for entrance in  entrance_data %}
+            
+            <tr {%if entrance.client_data %} style="border-top:1px solid #000; padding: 5px 0;" {%else%} style="padding: 5px 0;" {%endif%}>
+                <td valign="top">{{entrance.client_code}}</td>
+                <td valign="top">{{entrance.entrance_date}}</td>
+                <td valign="top" style="width: 200px;">{{entrance.entrance_id}}</td>
+                <td valign="top">{{entrance.cust_reference}}</td>                
+                <td valign="top"></td>
+               
+            </tr>
+            
+            <tr {%if entrance.client_data %} style="padding: 5px 0;" {% endif %}>
+                <td valign="top" style="width: 200px;">{{entrance.product_code}}</td>
+                <td valign="top" style="width: 400px;">{{entrance.product_description}}</td>
+                <td valign="top">{{entrance.boxes | unlocalize}}</td>
+                <td valign="top">{{entrance.gross_weight| unlocalize}}</td>
+                <td valign="top">{{entrance.net_weight| unlocalize}}</td>                        
+            </tr>              
+        {%endfor%}
+        <tr style="border-top:1px solid #000; padding: 5px 0;">
+            <td valign="top" > </td>
+            <td valign="top" > </td>
+            <td valign="top" > Total: {{total_boxes | unlocalize}}</td>
+            <td valign="top" > Total: {{ total_gross_weight| unlocalize}}</td>
+            <td valign="top" > Total: {{ total_net_weight | unlocalize}}</td>
+        </tr>
+    </tbody>
+    </table>
+    </div>
+</div>
+
+
+{% endblock %}

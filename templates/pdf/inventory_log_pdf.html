@@ -1,0 +1,76 @@
+{% extends 'pdf/base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+    <table style="width:100%;padding:20px; margin:0 auto; background:#fff; display: inline-block;">
+        <tr>
+            <td style="width: 50%; height: 100px;" align="left">
+                <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+            </td>
+            <td style="width:50%; ">
+                <h2 style="font-size:30px; margin-top:-60px; margin-bottom:10px;" align="right">{% trans 'Reporte de Ajustes de Inventario' %} </h2>
+                <table width="100%" align="right" style="font-size:14px;">
+                    <tr>
+                        <td width="50%" align="right"><strong>{% trans 'Print Date Time' %}</strong></td>
+                        <td width="50%" align="right">{{print_date}}</td>
+                    </tr>               
+                </table>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <table style="text-transform:uppercase; border-collapse:collapse; width:100%; float:left; font-size: 13px;">
+            <thead>
+            <tr> 
+                <th align="left">
+                   {% trans 'Cliente' %}
+                </th>
+               <th align="left">
+                   {% trans 'Producto' %}
+                </th>            
+
+                <th align="left">
+                   {% trans 'Usuario' %}
+                </th>
+
+                <th align="left">
+                   {% trans 'Kg Totales' %}
+                </th> 
+
+                <th align="left">
+                   {% trans 'Cajas' %}
+                </th>
+
+                <th align="left">
+                   {% trans 'Cajas Retenidas' %}
+                </th>
+
+                <th align="left">
+                   {% trans 'Motivo del Ajuste' %}
+                </th>
+
+                 <th align="left">
+                   {% trans 'Creado' %}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+        {% for inventory in  inventory_log %}
+            <tr style="border-top:1px solid #000;" class="new-page">
+                <td style="width:15%; white-space: normal;" valign="top">{{inventory.client_code}}</td>                
+                <td style="width:20%; white-space: normal; word-break: break-all;" valign="top" >{{inventory.product_description}}</td>
+                <td style="width:15%; white-space: normal;" valign="top">{{inventory.email}}</td>
+                <td style="width:10%; white-space: normal;" valign="top">{{inventory.total_kg}}</td>
+                <td style="width:10%; white-space: normal;" valign="top">{{inventory.total_boxes}}</td>
+                <td style="width:10%; white-space: normal;" valign="top">{{inventory.retained_boxes}}</td>
+                <td style="width:10%; white-space: normal;" valign="top">{{inventory.adjust_reason}}</td>
+                <td style="width:10%; white-space: normal;" valign="top">{{inventory.created_date}}</td>                
+            </tr>          
+                           
+        {%endfor%}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'form-edit.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Packaging' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Packaging' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'packaging-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{packaging.code}}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{{packaging.code}}{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="packagingCode">{% trans 'Code' %}</label>
+    <input type="text" class="form-control" id="packagingCode" name="code"  value="{{packaging.code}}" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-9">
+    <label for="packagingDescription">{% trans 'Description' %}</label>
+    <input type="text" class="form-control" id="packagingDescription" name="description" value="{{packaging.description}}" required>
+  </div>
+</div>
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'packaging-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/packaging/sidebar.html' %}
+{% endblock %}

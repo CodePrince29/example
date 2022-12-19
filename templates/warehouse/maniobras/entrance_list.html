@@ -1,0 +1,119 @@
+
+{% extends 'base.html' %}
+
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+<link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}
+
+{% block content-header %}
+<h1>
+    {% block header-title %}{% endblock %}
+    <small>{% trans 'Overview' %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li class="active">{% trans 'WAREHOUSE-ENTRANCE-MANEUVERS' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+            <div class="box-header">
+                <h4> {% trans 'WAREHOUSE-ENTRANCE-MANEUVERS' %} </h4>
+                
+            </div>
+            <div class="box-body">
+                <div class="table-responsive">
+                <table id="data-table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% block list-header-columns %}
+                            <th>{% trans 'Entrance ID' %}</th>
+                            <th>{% trans 'Entrance Date' %}</th>
+                            <th>{% trans 'Entrance Hour' %}</th>
+                            <th>{% trans 'Customer' %}</th>
+                            <th>{% trans 'Status' %}</th>
+                            {% if request.user.is_authenticated and request.user.is_staff %}
+                            <th>{% trans 'Action' %}</th>
+                            {% endif %}
+                           {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for warehouse_entrance in warehouseentrance_list %}
+                        <tr>
+                            <td>{{ warehouse_entrance.id }}</td>
+                            <td>{{ warehouse_entrance.entrance_date }}</td>
+                            <td>{{ warehouse_entrance.entrance_hour }}</td>
+                            <td>{{ warehouse_entrance.customer }}</td>
+                            <td><spna class="label {{warehouse_entrance.status}}" >{% trans warehouse_entrance.status %}</spna></td>
+                            {% if request.user.is_authenticated and request.user.is_staff %}
+                            <td>
+                            	{% if warehouse_entrance.status == "InManeuvers" %}
+                                <a role="button" href="{% url 'maniobras-entrance-update' warehouse_entrance.id %}" class="btn btn-success"><i
+                                    class="fa fa-edit"></i>
+                                </a>
+                                {% endif %}
+                                {% if warehouse_entrance.status == "ManeuverComplete" %}
+                                <a role="button" href="{% url 'maniobras-entrance-update' warehouse_entrance.id %}" class="btn btn-info"><i
+                                    class="fa fa-eye"></i>
+                                </a>
+                                {% endif %}
+                                
+                            </td>
+                            
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>                       
+
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block scripts %}
+    <script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    
+    <script>
+        $(function () {
+            $("#data-table").DataTable({
+                "order": [[ 0, "desc" ]],
+                "language": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+        });
+    $("#sidebar-maneuvers").addClass("active");
+    $("#sidebar-maneuvers .entrance").addClass('active')
+    </script>
+    {% endblock %}

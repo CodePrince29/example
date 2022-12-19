@@ -1,0 +1,56 @@
+{% extends 'form-new.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Carrier' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Carrier' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'carrier-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Carrier' %}{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="carrierCode">{% trans 'Carrier Code' %}</label>
+    <input type="text" class="form-control" id="carrierCode" name="code"  value="{{carrier.code}}" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-5">
+    <label for="carrierDescription">{% trans 'Carrier Name' %}</label>
+    <input type="text" class="form-control" id="carrierName" name="name" value="{{carrier.name}}" required>
+  </div>
+  <div class="form-group col-md-4">
+    <label for="carrierTelephone">{% trans 'Carrier Telephone' %}</label>
+    <input type="text" class="form-control mobile_number_format" id="carrierTelephone" name="telephone" value="{{carrier.telephone}}" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-5">
+    <label for="carrierAddress">{% trans 'Carrier Address' %}</label>
+    <input type="text" class="form-control" id="carrierAddress" name="address" value="{{carrier.address}}" required>
+  </div>
+  <div class="form-group col-md-4">
+    <label for="carrierEmail">{% trans 'Carrier Email' %}</label>
+    <input type="email" class="form-control email_validate" id="carrierEmail" name="email" value="{{carrier.email}}" required>
+  </div>
+</div>
+
+<div class="row">
+  <div class="form-group col-md-5">
+    <label for="carrierAttendPerson">{% trans 'Carrier AttendPerson' %}</label>
+    <input type="text" class="form-control" id="carrierAttendPerson" name="attend_person" value="{{carrier.attend_person}}" required>
+  </div>
+</div>
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'carrier-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/carrier/sidebar.html' %}
+{% endblock %}

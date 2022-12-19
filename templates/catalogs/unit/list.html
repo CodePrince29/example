@@ -1,0 +1,38 @@
+{% extends 'list.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block header-title %}{% trans 'Units' %}{% endblock %}
+{% block breadcrumb-specific %}{% trans 'Units' %}{% endblock %}
+
+{% block create-url %}{% url 'unit-create' %}{% endblock %}
+
+{% block list-header-columns %}
+{{ block.super }}
+{% endblock %}
+
+{% block list-items %}
+{% for unit in unit_list %}
+    <tr>
+        <td>{{ unit.code }}</td>
+        <td>{{ unit.description }}</td>
+        <td>
+            <a role="button" href="{% url 'unit-detail' unit.id %}"
+               class="btn btn-success"><i class="fa fa-edit"></i></a>
+            <a role="button" href="{% url 'unit-delete' unit.id %}"
+               class="btn btn-danger btn-delete"
+               data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                    class="fa fa-close"></i></a>
+        </td>
+    </tr>
+{% endfor %}
+{% endblock %}
+
+{% block list-footer-columns %}
+{{ block.super }}
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/unit/sidebar.html' %}
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    {# Add the dialog content to the bottom of the content #}
+    
+            <div class="white-popup mfp-hide" id="advanced_filters">
+                <form novalidate method="POST" id="advanced_filters_form" action="">
+                    {% csrf_token %}
+                    {{ formset.management_form }}
+                    <input type="hidden" value="advanced_filters" name="action">
+                    
+                    <br/>
+                    <table id="{{ formset.prefix }}-group" data-rules-formset>
+                        <thead>
+                            <tr>
+                                <th class="center_th">{% trans 'Field' %}</th>
+                                <th class="center_th">{% trans 'Operator' %}</th>
+
+                                <th class="center_th">{% trans 'Ordenamiento' %}</th>
+
+                                <th class="center_th">{% trans 'Value' %}</th>
+                                <th colspan="2">{% trans 'Negate' %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in formset %}
+                                <tr class="form-row {% cycle "row1" "row2" %} {% if forloop.last %}empty-form{% endif %}" id="{{ formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+                                    {{form.non_field_errors}}
+                                    {% for field in form.visible_fields %}
+                                        <td  {% if field.field.name %} class="field-{{ field.field.name }}"{% endif %} >
+                                            <div class="col-md-12">
+                                                {{ field }}
+                                            </div>
+                                            
+                                            {% if field.errors %}
+                                                <ul style="min-height: 30px;" class="errorlist">
+                                                    {% for error in field.errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    
+                </form>
+            </div>
+    <br>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+            <div class="box-header">
+                <h4> {% trans 'ENTRADAS RESUMIDO' %} </h4>
+                <div class="col-md-6 pull-right">
+
+                <form class="pull-right excel-generate" id="generate_report_form">
+                    {% csrf_token %}
+                    <input type = "submit" class="btn btn-primary" href="javascript:void(0)" value="{% trans "WAREHOUSE ENTRY REPORT" %}">
+                    <input type="hidden" id="ids_list" value="[]" name="ids_list">
+                </form> 
+
+                <form class="pull-right" id="generate_pdf_form">
+                  {% csrf_token %}
+                  <input type = "submit" class="btn btn-primary" href="javascript:void(0)" value="{% trans "GENERATE PDF" %}">
+                  <input type="hidden" id="pdf_ids_list" value="[]" name="pdf_ids_list">
+                </form>              
+            </div>
+            </div>
+            <div class="box-body">
+                <table id="filter_data-table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% block list-header-columns %}
+                            <th>{% trans 'ID' %}</th>
+                            <th>{% trans 'Date' %}</th>
+                            <th>{% trans 'Time' %}</th>
+                            <th>{% trans 'Customer' %}</th>
+                            <th>{% trans 'Status' %}</th>
+                           {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for warehouse_entrance in warehouseentrance_list %}
+                        <tr>
+                            <td>{{ warehouse_entrance.entrance_date }}</td>
+                            <td>{{ warehouse_entrance.entrance_hour }}</td>
+                            <td>{{ warehouse_entrance.customer }}</td>
+                            <td><spna class="label label-primary">{{ warehouse_entrance.status|title }}</spna></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>                       
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+     <style type="text/css">
+        .excel-generate{ margin-left: 30px;}
+    </style>     
+{% endblock content %}
+{% block scripts %}
+{% include "reportes/entradas_resumido/common_js_init.html" with formset=formset %}
+<script type="text/javascript">
+      $("#generate_pdf_form").submit(function(event){
+        event.preventDefault();
+        $.LoadingOverlay('show', {text: 'Procesando Petición...'})
+        var data = new FormData($(this)[0]);
+        $.ajax({
+                      url: "{% url 'generate_resumido_pdf' %}",
+                      type: "POST",
+                      data:data,
+                      contentType:false,
+                      processData:false,
+                      success: function( response ) {
+                          console.log(response)
+                          if(response.code == 200){
+                            var lem = document.createElement('a')
+                            lem.href = "/media"+response.file
+                            lem.setAttribute('download', "")
+                            lem.click()
+                          }else{
+                            alert("No hay información a generar.")
+                          }
+                          $.LoadingOverlay('hide')
+                        }
+                    })
+    });
+
+    $("#generate_report_form").submit(function(event){
+        
+        event.preventDefault();
+        $.LoadingOverlay('show', {text: 'Procesando Petición...'})
+        var data = new FormData($(this)[0]);
+        $.ajax({
+                      url: "{% url 'generate_resumido_report' %}",
+                      type: "POST",
+                      data:data,
+                      contentType:false,
+                      processData:false,
+                      success: function( response ) {
+                          console.log(response)
+                          if(response.code == 200){
+                            var lem = document.createElement('a')
+                            lem.href = "/media"+response.file
+                            lem.setAttribute('download', "")
+                            lem.click()
+                          }else{
+                            alert("No hay información a generar.")
+                          }
+                          $.LoadingOverlay('hide')
+                        }
+                    })
+    });
+    </script>
+{% endblock %}
+

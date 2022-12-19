@@ -1,0 +1,40 @@
+ .img_remove{
+    display: none !important;
+  }
+  .sure-confirmation { margin: 100px auto !important;}
+
+  .confirm-sure {padding: 50px !important;}
+  #accept { margin: 0 20px 0 0;}
+  div#entrance_product_detail {
+    max-height: 40em;
+    overflow-y: scroll;
+  }
+  #id_cargo_type li {
+    float: left;
+    padding: 24px;
+    list-style: none;
+  }
+  .validation-error{
+    border-color: #ff0000 !important;
+  }
+
+  .loader-image{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 9;  }
+  .loader-image img{ position: absolute; top: 70%; left: 50%; width:100px; margin-left: -50px;  }
+  #warehouse_entry_options{height:217px; overflow-x: hidden; overflow-y: auto; scroll-behavior: smooth; margin-top:30px; }
+  .pallet_th{width: 19.53%;}
+  .pallet_th_i{width: 18.66%;}
+  .pallet_column{width: 14%;}
+  .btn-line{display: inline-block; width:100%; padding: 15px; vertical-align: bottom; background: #fff;}
+  .btn-line .btn + .btn{
+    margin-left: 10px;
+  }
+  .loader-image{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 9;  }
+.loader-image img{ position: absolute; top: 50%; left: 50%; width:100px; margin-left: -50px;  }
+
+.picking-loader-image{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 9;  }
+.picking-loader-image img{ position: absolute; top: 32%; left: 50%; width:200px; margin-left: -50px;  }
+
+.table-row-total {display: table;}
+.total-block {display: table-cell;vertical-align: top;
+   padding-bottom: 10px;width: 120px;min-width: 120px;float: none;}
+.total-block.delete-block {width: auto;min-width: auto;}

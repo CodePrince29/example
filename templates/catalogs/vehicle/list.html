@@ -1,0 +1,51 @@
+{% extends 'list.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block header-title %}{% trans 'Vehicles' %}{% endblock %}
+{% block breadcrumb-specific %}{% trans 'Vehicles' %}{% endblock %}
+
+{% block create-url %}{% url 'vehicle-create' %}{% endblock %}
+
+{% block list-header-columns %}
+<th>{% trans 'Code' %}</th>
+<th>{% trans 'Description' %}</th>
+<th>{% trans 'capicity' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block list-items %}
+{% for vehicle in vehicle_list %}
+<tr>
+    <td>{{ vehicle.code }}</td>
+    <td>{{ vehicle.description }}</td>
+    <td>{{ vehicle.capicity }}</td>
+    <td>
+        <a role="button" href="{% url 'vehicle-update' vehicle.id %}" class="btn btn-success"><i
+                class="fa fa-edit"></i></a>
+        {%if vehicle.can_delete%}
+              <a role="button" href="javascript:void(0)"
+               class="btn btn-danger" onclick="alert('El registro esta siendo utilizado por el Sistema y no puede ser eliminado. Verifique por favor.')"> <i
+                    class="fa fa-close"></i></a>
+        {%else%}
+        <a role="button" href="{% url 'vehicle-delete' vehicle.id %}"
+           class="btn btn-danger btn-delete"
+           data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                class="fa fa-close"></i></a>
+        {%endif%}
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block list-footer-columns %}
+<th>{% trans 'Code' %}</th>
+<th>{% trans 'Description' %}</th>
+<th>{% trans 'Capicity' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/vehicle/sidebar.html' %}
+{% endblock %}

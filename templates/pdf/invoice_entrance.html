@@ -1,0 +1,133 @@
+{% extends 'pdf/base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+    <table class="firstBlock" style="width:100%; vertical-align: top;">
+        <tr>
+        <td style="width: 50%; height: 100px;" align="left">
+            <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+        </td>
+        <td style="width:50%; ">
+            <h2 style="font-size:30px; margin-top:-60px; margin-bottom:10px;" align="right">{% trans 'Entrance Invoice' %} </h2>
+            <table width="100%" align="right" style="font-size:14px;">
+                <tr>
+                    <td width="50%" align="right"><strong>{% trans 'Print Date Time' %}</strong></td>
+                    <td width="50%" align="right">{{print_datetime}}</td>
+                </tr>
+                <tr>
+                    <td width="50%" align="right">{% trans "Entrance Id" %} #</td>
+                    <td width="50%" align="right">{{entrans_id}}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    </table>
+    <table style="width:100%; margin:30px 0;">
+        <tr>
+        <td style="width:50%; font-size:14px; padding: 0 10px;  box-sizing: border-box; vertical-align: top;">
+            <p style="margin:0;">{% trans "Customer" %}: {{client_code}}</p>
+            <p style="margin:0; text-transform:uppercase;">{{customer_name}}</p>
+            <p style="margin:0; text-transform:uppercase;">{% trans "Cargo Sender" %}: {{object.cargo_sender}}</p>
+            <p style="margin:0; text-transform:uppercase;">A o P: &nbsp;&nbsp;{{object.cargo_type}}</p>
+            <p style="margin:0; text-transform:uppercase;">{% trans "Temprature F/M/B" %}:&nbsp;&nbsp; {{object.temp_front|unlocalize}}/{{object.temp_middle|unlocalize}}/{{object.temp_back|unlocalize}}</p>
+            <p style="margin:0; text-transform:uppercase;">{% trans "Flejes/Sellos" %}:&nbsp;&nbsp; {{object.seal1}} &nbsp;&nbsp;{{object.seal2}}</p>
+        </td>
+
+        <td style="width:50%;font-size:14px; text-align: left; padding: 0px 70px; box-sizing: border-box; vertical-align: top;">
+            <p style="margin:0;">{% trans "Name Of The Driver" %}:&nbsp;&nbsp; {{object.driver_name}}</p>
+            <p style="margin:0;">{% trans "Carrier" %}:&nbsp;&nbsp;{{transportistas}}</p>
+            <p style="margin:0;">{% trans "Transport" %}:&nbsp;&nbsp;{{transporte}}</p>
+            <p style="margin:0;">{% trans "License Plates" %}:&nbsp;&nbsp;{{placas}}</p>
+            <p style="margin:0;">{% trans "Reference" %}:&nbsp;&nbsp;{{object.cust_reference}}</p>
+        </td>
+    </tr>
+    </table>
+    <table style="width:100%; float:left;text-transform:uppercase; border-collapse:collapse; font-size: 13px;">
+            <thead>
+                <tr style="border-bottom:1px solid #000;">
+
+                    <td style="padding-top:10px;">{% trans "Prod. Code" %} <br>
+                        {% trans "Due Date" %} <br>
+                        {% trans "Cust. Lot" %} <br>
+                        {% trans "Warehouse Lot" %}</td>
+                    <td style=" padding-top:10px;">{% trans "PRODUCT DESCRIPTION" %}<br>                        
+                        {% trans "Gross Weight" %} <br>
+                        {% trans "Net Weight" %}<br>
+                        ALMACEN / RACK / NIVEL / UBICACION
+
+                    </td>
+                    <td width="250px;" style=" padding-bottom:10px; padding-right:1px;">
+                        {% trans "TOTAL QTY" %} <br>
+                    {% trans "WEIGHT UNIT" %}</td>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for confirm_product in  entrance_confirmation %}
+
+                <tr>
+                    <td style="padding: 10px 0;">
+                        {{confirm_product.werehouse_entrance_confirmation.code}} <br>
+                        {{confirm_product.exp_date}} <br>
+                        {{confirm_product.cost_lot}} <br>
+                    {{confirm_product.palet_lot}}</td>
+                    <td style=" padding:10px 0;">{{confirm_product.werehouse_entrance_confirmation.product.product_description }}<br>
+
+                        {{confirm_product.gross_weight| unlocalize}} <br>
+                    {{confirm_product.net_weight| unlocalize}}<br>
+                    {{ confirm_product.warehouse }} / {{ confirm_product.rack_number }} / {{confirm_product.get_pallet_location_height}} / {{ confirm_product.location}}
+                    </td></td>
+                    <td align="right" style=" padding-bottom:10px; width:140px; padding-right:15px;">
+                    {{confirm_product.boxes|unlocalize }} {% trans "CAJAS" %}<br>
+                    {{ confirm_product.werehouse_entrance_confirmation.get_total_weight|unlocalize|floatformat:2}} KGS
+                    <br>
+                    {{ confirm_product.werehouse_entrance_confirmation.kg_per_boxes|unlocalize }} Kg X Caja </td>
+                </tr>
+                {% endfor %}
+                
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td style="border-top:1px solid #000; padding-top:15px;"></td>
+                    <td align="right" style="padding-right:15px; border-top:1px solid #000; padding-top:15px; vertical-align: top;">
+                    {% trans "TOTAL QUANTITIES" %}:</td>
+                    <td style=" width:170px; padding-right:15px; 
+                    border-top:1px solid #000; vertical-align: top; padding-top: 15px;"><div style="float:left; padding-right:20px; text-align:right">{{total_boxes|unlocalize}} &nbsp; &nbsp;  {% trans "CAJAS" %}</div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td align="right" style="padding-right:15px; padding-top:0;">{% trans "TOTAL GROSS WEIGHT" %}:</td>
+                <td style=" width:170px; padding-right:15px; 
+                     padding-top:0; vertical-align: top;"><div style="float:left; padding-right:20px; text-align:right">{{total_gross_weight|unlocalize}} &nbsp; &nbsp; KGS &nbsp; &nbsp;</div>
+                </td>
+            </tr>
+            <tr>                
+
+                <td></td>
+                <td align="right"  style="padding-right:15px; padding-top:0;">{% trans "TOTAL NET WEIGHT" %}:</td>
+                <td style=" width:170px; padding-right:15px; 
+                     padding-top:0; vertical-align: top;"><div style="float:left; padding-right:20px; text-align:right">{{total_net_weight|unlocalize}} &nbsp; &nbsp; KGS &nbsp; &nbsp;</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td align="right"  style="padding-right:15px; padding-top:0;">{% trans "TOTAL BOX KGS" %}:</td>
+                <td style=" width:170px; padding-right:15px; 
+                     padding-top:0; vertical-align: top;"><div style="float:left; padding-right:20px; text-align:right">{{total_boxe_kgs|unlocalize}} &nbsp; &nbsp; KGS &nbsp; &nbsp;</div>
+                </td>
+            </tr>
+
+        </tfoot>
+    </table>
+    <table style="font-size: 14px;">
+        <tr>
+        <td style=" padding-top: 100px; width: 50%;">{% trans "Confirmed By" %}: _____________________</td>
+        <td style="padding-right:30px; padding-top: 100px; width: 50%;" align="right">{% trans "Driver Signature" %}: _____________________</td>
+        </tr>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'list.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block header-title %}{% trans 'Carrier' %}{% endblock %}
+{% block breadcrumb-specific %}{% trans 'Carrier' %}{% endblock %}
+
+{% block create-url %}{% url 'carrier-create' %}{% endblock %}
+
+
+{% block list-header-columns %}
+<th>{% trans 'Carrier Code' %}</th>
+<th>{% trans 'Carrier Name' %}</th>
+<th>{% trans 'Carrier Telephone' %}</th>
+<th>{% trans 'Address' %}</th>
+<th>{% trans 'Carrier Email' %}</th>
+<th>{% trans 'Carrier AttendPerson' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block list-items %}
+{% for carrier in carrier_list %}
+<tr>
+    <td>{{ carrier.code }}</td>
+    <td>{{ carrier.name }}</td>
+    <td>{{ carrier.telephone }}</td>
+    <td>{{ carrier.address }}</td>
+    <td>{{ carrier.email }}</td>
+    <td>{{ carrier.attend_person }}</td>
+    <td>
+        <a role="button" href="{% url 'carrier-update' carrier.id %}" class="btn btn-success"><i
+                class="fa fa-edit"></i></a>
+        {%if carrier.can_delete%}
+              <a role="button" href="javascript:void(0)"
+               class="btn btn-danger" onclick="alert('El registro esta siendo utilizado por el Sistema y no puede ser eliminado. Verifique por favor.')"> <i
+                    class="fa fa-close"></i></a>
+        {%else%}
+        <a role="button" href="{% url 'carrier-delete' carrier.id %}"
+           class="btn btn-danger btn-delete"
+           data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                class="fa fa-close"></i></a>
+        {%endif%}
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block list-footer-columns %}
+<th>{% trans 'Carrier Code' %}</th>
+<th>{% trans 'Carrier Name' %}</th>
+<th>{% trans 'Carrier Telephone' %}</th>
+<th>{% trans 'Carrier Address' %}</th>
+<th>{% trans 'Carrier Email' %}</th>
+<th>{% trans 'Carrier AttendPerson' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/carrier/sidebar.html' %}
+{% endblock %}

@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=sga
+    volumes:
+      -   postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: ./
+    command: make dev
+    environment:
+      - PORT=8000
+      - DATABASE_URL=postgres://postgres:password@db:5432/sga
+      - STOLOS_PUBLIC_URL=${STOLOS_PUBLIC_URL}
+    volumes:
+      - ${STOLOS_REMOTE_DIR}./:/app/user
+    ports:
+      - 8000
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

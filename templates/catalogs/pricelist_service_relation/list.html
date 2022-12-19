@@ -1,0 +1,45 @@
+{% extends 'list.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block header-title %}{% trans 'Price List Items' %}{% endblock %}
+{% block breadcrumb-specific %}{% trans 'Price List Items' %}{% endblock %}
+
+{% block create-url %}{% url 'pricelistservicerelation-create' %}{% endblock %}
+
+{% block list-header-columns %}
+<th>{% trans 'Service' %}</th>
+<th>{% trans 'Price' %}</th>
+<th>{% trans 'Price List' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block list-items %}
+{% for pricelistservicerelation in servicerelation_list %}
+    <tr>
+        <td>{{ pricelistservicerelation.service }}</td>
+        <td>{{ pricelistservicerelation.price }}</td>
+        <td>{{ pricelistservicerelation.price_list }}</td>
+        <td>
+            <a role="button" href="{% url 'pricelistservicerelation-detail' pricelistservicerelation.id %}"
+               class="btn btn-success"><i class="fa fa-edit"></i></a>
+            <a role="button" href="{% url 'pricelistservicerelation-delete' pricelistservicerelation.id %}"
+               class="btn btn-danger btn-delete"
+               data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                    class="fa fa-close"></i></a>
+        </td>
+    </tr>
+{% endfor %}
+{% endblock %}
+
+{% block list-footer-columns %}
+<th>{% trans 'Service' %}</th>
+<th>{% trans 'Price' %}</th>
+<th>{% trans 'Price List' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/pricelist_service_relation/sidebar.html' %}
+{% endblock %}

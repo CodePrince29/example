@@ -1,0 +1,611 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'relocation-list' %}">{% trans 'Relocations' %}</a></li>
+  <li class="active">{%trans 'New' %}</li>
+</ol>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-primary">
+        <div class="box-header with-border">
+          <h4 style="float: left;">{% trans 'NUEVA REUBICACION' %}</h4>
+          <div class="pull-right">
+           <button type="button" disabled="disabled" class="btn btn-primary" id="create_re_allocation">{% trans 'Save' %}</button>
+            <a href="/warehouse_relocation" class="btn btn-lg  btn-default">{% trans 'Cancel' %}</a>
+          </div>
+        </div>
+
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-4 col-sm-4">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'Palet Lot' %}</label>
+                    <input type="text" value="" id="pallete_palet_lot_id"  class="form-control">
+                  </div>
+                </div>
+                <div class="form-group col-md-2" style="margin-top: 25px;">
+                  <input type="button" class="btn btn-primary" value="{% trans 'FIND' %}"
+                    onclick="return load_for_filter_data()">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4 col-sm-2">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'Product Code' %}</label>
+                    <input type="text" value="" id="id_reallocation_product_code"  class="form-control" readonly="true">
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-2">
+                  <div class="form-group">
+                    <label for="notes">Descripción</label>
+                    <input type="text" value="" id="id_reallocation_product_description"  class="form-control" readonly="true">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-2 col-sm-2">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'Palet Lot' %}</label>
+                    <input type="text" value="" id="id_reallocation_pallet_lot"  class="form-control" readonly="true">
+                  </div>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'Rack' %}</label>
+                    <input type="text" value="" id="id_reallocation_rack"  class="form-control" readonly="true">
+                  </div>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'cajas' %}</label>
+                    <input type="text" value="" id="id_reallocation_boxes"  class="form-control" readonly="true">
+                  </div>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'Peso Bruto' %}</label>
+                    <input type="text" value="" id="id_reallocation_gross_weight"  class="form-control" readonly="true">
+                  </div>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'Peso Neto' %}</label>
+                    <input type="text" value="" id="id_reallocation_net_weight"  class="form-control" readonly="true">
+                    <input type="hidden" name="" id="id_reallocation_pallet_id" readonly="true">
+                  </div>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'Location' %}</label>
+                    <input type="text" value="" id="id_pallet_location"  class="form-control" readonly="true">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 col-sm-6">
+                  <div class="form-group">
+                    <label for="notes">{% trans 'Location' %}</label>
+                    <input type="text" value="" id="id_reallocation_new_location"  class="form-control">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-10 col-sm-10">
+                  <div class="form-group col-md-12">
+                    <label> {% trans 'Reason for Relocation' %}</label>
+                    <textarea class="form-control rounded-0" id="id_reallocation_new_description" rows="9" name="description"></textarea>
+                  </div>
+              </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+<!-- 
+    <div class="box box-primary">
+      <table id="data-table" class="table table-bordered table-striped ">
+        <thead>
+          <tr>
+            {% block list-header-columns %}
+            <th>{% trans 'Warehouse' %}</th>
+            <th>{% trans 'Location' %}</th>
+            <th>{% trans 'Product' %}</th>
+            <th>{% trans 'Palet Lot' %}</th>
+            <th>{% trans 'Rack Number' %}</th>
+            <th>{% trans 'Boxes' %}</th>
+            <th>{% trans 'Cust Lot' %}</th>
+            <th>{% trans 'Expiration Date' %}</th>
+            <th>{% trans 'Gross Weight' %}</th>
+            <th>{% trans 'Net Weight' %}</th>
+            <th>{% trans 'Entrance Invoice Weight' %}</th>
+            <th>{% trans 'Retained Qty' %}</th>
+            {% endblock %}
+          </tr>
+        </thead>
+        <tbody class="pallet-data">
+        </tbody>
+      </table>
+    </div> -->
+  </div>
+</div>
+{% endblock %}
+{% block header-links %}
+  <link rel="stylesheet" href="{%static 'custom/warehouse/css/warehouse-entrance.css' %}">
+  <style type="text/css">
+    .img_remove {
+      display: none !important;
+    }
+
+    .error {
+      color: red !important;
+    }
+  </style>
+{% endblock %}
+
+
+
+
+{% block scripts %}
+  <script src="{% static 'theme/js/jquery.are-you-sure.min.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/jquery.formset.js' %}"></script>
+
+<script type="text/javascript">
+  var test;
+ //  $("#id_werehouse_entrance, #id_destination_warehouse, #id_destination_location").select2();
+ //  var load_form_data = function () {
+ //    var entrace_id = $("#id_werehouse_entrance").val()
+ //    var palet_lot = $("#id_palet_lot").val()
+ //    if (entrace_id == "" && palet_lot == "") {
+ //      alert("{% trans 'Please enter filter data' %}")
+ //    } else {
+ //      if($('#id_product').val()!=""){
+ //        $("select#id_destination_warehouse").val("").trigger('change')
+ //        $("select#id_destination_location").val("").trigger('change')
+ //      }
+        
+ //      $.post("{% url 'warehouse-relocation-api' %}", $('form#relocation-form').serialize(), function (data, status) {
+ //        select_customer = $("#id_customer")
+ //        select_product = $("#id_product")
+ //        select_warehouse = $("#id_source_warehouse")
+ //        select_location = $("#id_source_location")
+ //        select_location = $("#id_source_location")
+ //        select_entrance = $("#id_werehouse_entrance")
+ //        select_customer.empty().append('<option value="">---------</option>')
+ //        select_product.empty().append('<option value="">---------</option>')
+ //        select_warehouse.empty().append('<option value="">---------</option>')
+ //        select_location.empty().append('<option value="">---------</option>')
+
+
+ //        if (status == 'success' && data.code == 200) {
+ //          data.customers.forEach(function (customer, index) {
+ //            if (index == 0) {
+ //              select_customer.append('<option value="' + customer['id'] + '" selected>' + customer['name'] +
+ //                '</option>')
+ //            } else {
+ //              select_customer.append('<option value="' + customer['id'] + '" >' + customer['name'] +
+ //                '</option>')
+ //            }
+
+ //          })
+          
+ //          data.products.forEach(function (product, index) {
+
+ //            m_boxes = parseFloat(data.product_measurements[index].pm_boxes)
+ //            m_product = data.product_measurements[index].pm_product_id
+ //            m_id = data.product_measurements[index].pm_id
+ //            length = parseFloat(product['p_product_length'])
+ //            width = parseFloat(product['p_product_width'])
+ //            height = parseFloat(product['p_product_height'])
+ //            net_weight = parseFloat(product['p_net_weight'])
+ //            total_boxes = parseFloat(product['total_boxes'])
+ //            // volume = ((length / 100) * (width / 100) * (height / 100) * m_boxes)
+ //            // weight = net_weight * m_boxes
+ //            volume = ((length / 100) * (width / 100) * (height / 100) * total_boxes)
+ //            weight = net_weight * total_boxes
+ //            product_volume = (length / 100) * (width / 100) * (height / 100)
+ //            product_weight = net_weight
+ //            console.log( data.products)
+ //            console.log( data.product_measurements)
+
+ //            if (data.palet_lot_status == true) {
+ //              select_product.append('<option value="' + product['p_product_id'] + '" data-available-weight="' +
+ //                weight +
+ //                '" measurement_id="' + m_id +
+ //                '" confirmation_id="' + product['id'] +
+ //                '" data-available-volume="' + volume + 
+ //                '"data-product-weight="' + product_weight + 
+ //                 '"data-product-volume="' + product_volume + '" selected>' + product['p_product_code'] +
+ //                '</option>')
+ //            } else {
+ //              select_product.append('<option value="' + product['p_product_id'] + '" data-available-weight="' +
+ //                weight +
+ //                '" data-measurement-id="' + m_id +
+ //                '" data-confirmation-id="' + product['p_id'] +
+ //                '" data-available-volume="' + volume + 
+ //                '"data-product-weight="' + product_weight + 
+ //                 '"data-product-volume="' + product_volume +'" >' + product['p_product_code'] +
+ //                '</option>')
+ //            }
+ //          })
+
+ //          data.warehouses.forEach(function (warehouse, index) {
+ //            if (data.palet_lot_status == true) {
+ //              select_warehouse.append('<option value="' + warehouse['warehouse_id'] + '" selected>' +
+ //                warehouse['warehouse__code'] + '</option>')
+ //            } else {
+ //              select_warehouse.append('<option value="' + warehouse['warehouse_id'] + '" >' +
+ //                warehouse['warehouse__code'] + '</option>')
+ //            }
+ //          })
+         
+ //          data.locations.forEach(function (location, index) {
+          
+ //            if (data.palet_lot_status == true)  {
+ //              select_location.append('<option value="' + location['location_id'] + '" selected>' + location['location__location_number'] + '</option>')
+ //            } else {
+ //              select_location.append('<option value="' + location['location_id'] + '">' + location['location__location_number'] + '</option>')
+ //            }
+ //          })
+          
+ //          data.entrances.forEach(function (entrance, index) {
+ //            if (data.palet_lot_status == true && $("#id_werehouse_entrance").val()==""){
+ //              $("#id_werehouse_entrance option[value='"+entrance['werehouse_entrance_confirmation__werehouse_entrance__id']+"']").prop('selected', true);
+ //              $("#id_werehouse_entrance").trigger("change")
+           
+ //            }
+           
+ //            // if (index == 0) {
+ //            //   select_entrance.append('<option value="' + entrance['werehouse_entrance_confirmation__werehouse_entrance__id'] + '" selected>' + entrance['werehouse_entrance_confirmation__werehouse_entrance__id'] + '</option>')
+ //            // } else {
+ //            //   select_entrance.append('<option value="' + entrance['werehouse_entrance_confirmation__werehouse_entrance__id'] + '" selected>' + entrance['werehouse_entrance_confirmation__werehouse_entrance__id'] + '</option>')
+ //            // }
+ //          })
+ //          $("table tbody").empty()
+ //          data.pallets.forEach(function (pallet, index) {
+
+ //            var markup = "<tr>\
+ //                          <td>" + pallet['warehouse'] + "</td>\
+ //                          <td>" + pallet['location'] + "</td>\
+ //                          <td>" + pallet['product'] + "</td>\
+ //                          <td>" + pallet['palet_lot'] + "</td>\
+ //                          <td>" + pallet['rack_number'] + "</td>\
+ //                          <td>" + pallet['boxes'] + "</td>\
+ //                          <td>" + pallet['cost_lot'] + "</td>\
+ //                          <td>" + pallet['exp_date'] + "</td>\
+ //                          <td>" + pallet['gross_weight'] + "</td>\
+ //                          <td>" + pallet['net_weight'] + "</td>\
+ //                          <td>" + pallet['invoice_weight'] + "</td>\
+ //                          <td>" + pallet['retained_quantity'] + "</td>\
+ //                          </tr>";
+
+ //            $("table tbody").append(markup);
+ //          })
+
+ //        }
+
+ //      })
+ //    }
+ //  }
+ //  // $("#id_werehouse_entrance").change(function () {
+ //  //   $("#id_palet_lot").val("")
+ //  //   load_form_data()
+ //  // })
+ //  $("#id_product").change(function () {
+ //    customer = $("#id_customer").val()
+ //    entrance = $("#id_werehouse_entrance").val()
+ //    product = $(this).val()
+
+ //    $("#id_destination_location").val("").trigger("change.select2");
+ //    if (customer != '' && entrance != '' && product != '') {
+ //      $("#measurement_id").val($("#id_product option:selected").attr('data-measurement-id'))
+ //      $("#confirmation_id").val($("#id_product option:selected").attr('data-confirmation-id'))
+ //      set_product_information(customer, entrance, product)
+ //    } else {
+ //      $("#id_source_warehouse").empty()
+ //      $("#id_source_location").empty()
+ //    }
+
+ //  })
+
+
+
+
+ //  function set_product_information(customer, entrance, product) {
+
+ //    $.get("/warehouse_relocation/entrance-confirmation-product/" + entrance + "/" + product + "/" + customer, function (
+ //      data, status) {
+ //      if (status == 'success') {
+ //        $("#id_source_warehouse").empty()
+ //        $("#id_source_location").empty()
+ //        parse_data = jQuery.parseJSON(data)
+ //        if (parse_data.entrance_conf.length > 0) {
+
+ //          select = $("#id_source_warehouse")
+ //          select_location = $("#id_source_location")
+ //          parse_data.entrance_conf.forEach(function (warehouse) {
+ //            select.append('<option value="' + warehouse.warehouse + '" selected>' + warehouse.warehouse_detail +
+ //              '</option>')
+
+ //            select_location.append('<option value="' + warehouse.location + '" selected>' + warehouse.location_detail +
+ //              '</option>')
+
+ //          })
+
+ //        }
+ //      }
+ //    });
+ //  }
+
+
+
+ //  $("select#id_destination_warehouse").change(function () {
+ //    if ($(this).val() != '') {
+ //      $.get("{% url 'warehouse-locations' 0 %}".replace('0', $(this).val()), function (data, status) {
+ //        if (status == 'success') {
+ //          $("select#id_destination_location").empty()
+ //          select = $("select#id_destination_location")
+ //          select.append('<option value="" selected="selected">Seleccione...</option>')
+ //          data.forEach(function (location) {
+ //            select.append('<option value="' + location['id'] + '">' + location['location_number'] +
+ //              '</option>')
+ //          })
+ //        }
+ //      });
+ //    } else {
+ //      $("select#id_destination_location").empty()
+ //    }
+
+ //  })
+
+
+
+
+ //  $("select#id_destination_location").change(function () {
+ // if($(this).val()!=""){
+ //     console.log("product")
+ //    if($("#id_product").val() != ""){
+ //      // $("#id_product").parent().find(".error").remove()
+
+ //       destination = $("select#id_destination_location option:selected").text()
+ //        warehouse = $("select#id_destination_warehouse option:selected").val()
+ //        s_warehouse = $("#id_source_warehouse option:selected").val()
+ //        s_location = $("#id_source_location option:selected").val()
+ //        entrance = $("#id_werehouse_entrance").val()
+ //        product = $("#id_product").val()
+
+ //        palet_lot = $('#id_palet_lot').val()
+ //        if (($(this).val() != '') && (destination != '')) {
+
+ //          jQuery.ajax({
+ //            url: "{% url 'warehouselocation-weight-volume' %}",
+ //            type: "POST",
+ //            dataType: "json",
+ //            data: {
+ //              warehouse: warehouse,
+ //              location: destination,
+ //              s_warehouse:s_warehouse,
+ //              s_location:s_location,
+ //              entrance:entrance,
+ //              palet_lot:palet_lot,
+ //              product:product,
+ //              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+ //            }
+ //          }).done(function (response) {
+            
+ //            ware_volume = parseFloat(response.available_volume)
+ //            ware_weight = parseFloat(response.available_weight)
+
+ //            console.log(response)
+ //            // product_weight = parseFloat($("#id_product option:selected").attr("data-available-weight"))
+
+ //            // product_volume = parseFloat($("#id_product option:selected").attr("data-available-volume"))
+ //            product_weight = parseFloat($("#id_product option:selected").attr("data-product-weight"))*response.total_boxes
+ //            product_volume = parseFloat($("#id_product option:selected").attr("data-product-volume"))*response.total_boxes
+ //            console.log(product_weight)
+ //            console.log(product_volume)
+ //            if ((ware_volume >= product_volume) && (ware_weight >= product_weight)) {
+
+ //            } else {
+ //              $("#id_destination_location").val("").trigger("change.select2");
+ //              alert(
+ //                "La ubicación no cuenta con el espacio suficiente o el peso sobrepasa el limite del nivel de la ubicación. Por favor seleccione otra ubicación"
+ //                )
+ //            }
+
+ //          })
+
+ //        } else {
+ //          $("select#id_destination_location").empty()
+ //        }
+
+ //        }else{
+ //          // $("#id_product").parent().append('<label for="id_product" class="error">Requerido</label>')
+ //          alert("Please select a product")
+ //          $("select#id_destination_location").val("").trigger("change")
+ //        }
+
+ // }
+ //  })
+
+
+ //  $("#relocation-form").validate({
+ //    rules: {
+ //      "werehouse_entrance": {
+ //        required: true,
+ //      },
+ //      "customer": {
+ //        required: true,
+ //      },
+ //      "product": {
+ //        required: true,
+ //      },
+ //      "source_warehouse": {
+ //        required: true,
+ //      },
+ //      "source_location": {
+ //        required: true,
+ //      },
+ //      "destination_warehouse": {
+ //        required: true,
+ //      },
+ //      "destination_location": {
+ //        required: true,
+ //      }
+ //    },
+ //    messages: {
+ //      "werehouse_entrance": {
+ //        required: "Requerido",
+ //      },
+ //      "customer": {
+ //        required: "Requerido",
+ //      },
+ //      "product": {
+ //        required: "Requerido",
+ //      },
+ //      "source_warehouse": {
+ //        required: "Requerido",
+ //      },
+ //      "source_location": {
+ //        required: "Requerido",
+ //      },
+ //      "destination_warehouse": {
+ //        required: "Requerido",
+ //      },
+ //      "destination_location": {
+ //        required: "Requerido",
+ //      }
+ //    }
+ //  });
+
+
+  function load_for_filter_data(pallet_code, entrance_id ) {
+    pallet_code = $("#pallete_palet_lot_id").val()
+    entrance_id = $("#id_warehouse_entrance_id").val()
+
+    jQuery.ajax( {
+      url: "{% url 'entrance-pallet-detail-for-relocation' %}",
+      type: "GET",
+      dataType: "json",
+      data: {
+        pallet_code: pallet_code,
+      }
+    } ).done( function( response )
+    {
+      
+      boxes = response.pallet_info["inventory_total_boxes"]
+      gross_weight = response.pallet_info["available_gross_weight"]
+      net_weight = response.pallet_info["available_net_weight"]
+      rack_number = response.pallet_info["warehouse_number"]
+      palet_lot = response.pallet_info["palet_lot"]
+      palet_id = response.pallet_info["id"]
+      location_uniq_code = response.pallet_info["location_uniq_code"]
+      description = response.pallet_info["product_description"]
+      product_code = response.pallet_info["product_code"]
+      $("#id_reallocation_pallet_lot").val(palet_lot)
+      $("#id_reallocation_rack").val(rack_number)
+      $("#id_reallocation_boxes").val(boxes)
+      $("#id_reallocation_gross_weight").val(gross_weight)
+      $("#id_reallocation_net_weight").val(net_weight)
+      $("#id_reallocation_pallet_id").val(palet_id)
+      $("#id_pallet_location").val(location_uniq_code)
+      $("#id_reallocation_product_code").val(product_code)
+      $("#id_reallocation_product_description").val(description)     
+
+    })
+    $.LoadingOverlay('hide')
+  }
+
+  $("#create_re_allocation").click(function(){
+    pallet_code = $("#pallete_palet_lot_id").val()
+    entrance_id = $("#id_warehouse_entrance_id").val()
+    new_location = $("#id_reallocation_new_location").val()
+    description = $("#id_reallocation_new_description").val()
+    jQuery.ajax( {
+        url: "{% url 'save-relocation-from-shortcode' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+          entrance_id: entrance_id,
+          pallet_code: pallet_code,
+          new_location: new_location,
+          description: description
+        }
+      } ).done( function( response )
+      {
+        alert("La reubicación de la Tarima fue realizada con éxito")
+        location.reload(true);
+      })
+  })
+
+  $('#id_reallocation_new_location').keypress(function(event){
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == 13){
+      $.LoadingOverlay('show')
+      pallet_code = $("#pallete_palet_lot_id").val()
+      entrance_id = $("#id_warehouse_entrance_id").val()
+      new_location = $("#id_reallocation_new_location").val()
+      jQuery.ajax( {
+        url: "{% url 'relocation-shortcode-weight-volume' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+          entrance_id: 0,
+          pallet_code: pallet_code,
+          new_location: new_location
+        }
+      } ).done( function( response )
+      {
+        if(response.location_not_found == true){
+          alert("Ubicación no encontrada.")
+          $("#id_reallocation_new_location").val("")
+        }
+        else{
+          ware_volume = parseFloat(response.available_volume)
+          ware_weight = parseFloat(response.available_weight)
+          product_volume = parseFloat(response.product_volume)
+          product_weight = parseFloat(response.product_net_weight)
+          if ((ware_volume >= product_volume) && (ware_weight >= product_weight)) {
+            
+            $("#create_re_allocation").removeAttr("disabled")
+
+            } else {
+              
+              $("#id_destination_location").val("").trigger("change.select2");
+              alert(
+                "La ubicación no cuenta con el espacio suficiente o el peso sobrepasa el limite del nivel de la ubicación. Por favor seleccione otra ubicación"
+                )
+            }
+
+        }
+       $.LoadingOverlay('hide')
+      })
+      
+    }
+  })
+   
+</script>
+
+
+{% block additional-custom-scripts %}
+{% endblock %}
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'form-new.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Services' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Services' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'service-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Service' %}{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="serviceCode">{% trans 'Code' %}</label>
+    <input type="text" class="form-control" id="serviceCode" name="code"  value="{{code}}" required>
+  </div>
+  <div class="form-group col-md-6">
+      <div class="checkbox">
+        <label for="serviceBillable">
+          <input type="checkbox" id="serviceBillable" name="billable">
+          {% trans 'Service Billable To Customer' %}
+        </label>
+      </div>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-9">
+    <label for="serviceDescription">{% trans 'Description' %}</label>
+    <input type="text" class="form-control" id="serviceDescription" name="description" value="{{description}}" required>
+  </div>
+</div>
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'service-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/service/sidebar.html' %}
+{% endblock %}

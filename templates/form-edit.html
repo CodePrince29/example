@@ -1,0 +1,16 @@
+{% extends 'form.html' %}
+
+{% block header-links %}
+  {% load staticfiles %}
+  {% load i18n %}
+{% endblock %}
+
+{% block content-header %}
+{{ block.super }}
+{% endblock %}
+
+{% block header-subtitle %}{% trans 'Edit' %}{% endblock %}
+
+{% block form-fields-col-width %}
+<div class="col-md-6">
+{% endblock %}

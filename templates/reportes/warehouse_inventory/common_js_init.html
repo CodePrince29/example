@@ -1,0 +1,121 @@
+{% load i18n static %}
+<link rel="stylesheet" type="text/css" href="/static/custom/reportes/css/advanced-filters.css">
+<script src="/static/custom/reportes/js/jquery_adder.js"></script>
+<script src="/static/custom/reportes/js/advanced-filters.js"></script>
+<script src="/static/custom/reportes/js/formset.js"></script>
+<script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="/static/custom/reportes/css/daterangepicker.css" />
+<link href="/static/custom/reportes/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
+<script src="/static/custom/reportes/js/bootstrap-datetimepicker.min.js"></script>
+
+<script type="text/javascript">
+	// globals
+	var _af_handlers = window._af_handlers || null;
+	var CHOICES_LOOKUP_URL = "{% url 'get_inventory_choices' 0 %}";
+
+	// common advanced filter tabular form initialization
+	(function($) {
+		$("#{{ formset.prefix }}-group > tbody > tr")
+			.tabularFormset({
+				prefix: "{{ formset.prefix }}",
+				addText: "{% trans "+Agregar" %}",
+				deleteText: "{% trans 'Remove' %}",
+				added: function(row) {
+					if (_af_handlers) _af_handlers.init();
+					$.fn.tabularFormset.default_added(row);
+					$(".inline-deletelink").addClass("btn btn-danger")
+				},
+				preAdded: function(row) {
+					if (_af_handlers) _af_handlers.destroy();  // cleanup
+				}
+		});
+	})(jQuery);
+	btn = '<input type="button" value="{% trans "Filter" %}" class="btn btn-success apply_filter">'
+	$(".add-row a").addClass('btn btn-primary')
+	$(".add-row").append(btn)
+	$("[id$='DELETE']").hide()
+	$(".apply_filter").click(function(){
+		$.LoadingOverlay('show', {text: 'Procesando Petición...'})
+		var formData = new FormData($("#advanced_filters_form")[0])
+		$.ajax({
+            url: "/inventory_reportes/filter-inventory/",
+            data: formData,
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            success: function(response){
+                ids = []
+				console.log(response)
+				if (response.length > 0){
+					var dataSet = response.map(function(filter_inventory){ 
+									ids.push(filter_inventory.id)
+									return [
+									 filter_inventory.id,
+									 filter_inventory.warehouse_entrance_id,
+									 filter_inventory.product,
+							         filter_inventory.client,
+									 filter_inventory.exp_date,					         
+							         filter_inventory.warehouse_location_number,
+							         filter_inventory.warehouse_entrance_confirmation_code,
+							         filter_inventory.available_gross_weight,
+							         filter_inventory.total_boxes,
+							         
+							         ]})
+								$("#ids_list").val(JSON.stringify(ids))
+								$("#pdf_ids_list").val(JSON.stringify(ids))
+
+							    datatable.clear();
+							    datatable.rows.add(dataSet);
+							    datatable.draw();
+							}
+				else{						
+					datatable.clear();
+					datatable.draw();
+				}
+				$.LoadingOverlay('hide')
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+			  console.log(textStatus, errorThrown);
+			}
+        })
+
+		
+	})
+
+        var datatable=    $("#filter_data-table").DataTable({
+        		"ordering": false,
+                "language": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+		// $("#report_excel").click(function(){
+		// 	if($("#ids_list").val() != "none" && JSON.parse($("#ids_list").val()).length > 0){
+		// 		$(this).attr('href', "/inventory_reportes/inventory_generate_report/?qid="+$("#ids_list").val())
+		// 	}
+		// 	else{
+		// 		$(this).attr('href', "/inventory_reportes/inventory_generate_report/?qid=[0]")
+		// 	}
+		// })
+</script>

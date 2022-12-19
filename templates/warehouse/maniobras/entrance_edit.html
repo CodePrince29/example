@@ -1,0 +1,1231 @@
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% load qr_tags %}
+{% endblock %}
+
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'maniobras-entrance-list' %}">{% trans 'WAREHOUSE-ENTRANCE-MANEUVERS' %}</a></li>
+  <li class="active">{{object.id}}</li>
+</ol>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box">
+      <div class="box-header">
+        <h4> {% trans 'WAREHOUSE-ENTRANCE-MANEUVERS' %} </h4>
+      </div>
+      <div class="box-body">
+        <input type="hidden" name="" id="id_warehouse_entrance_id" value="{{object.id}}">
+        <input type="hidden" name="" id="id_warehouse_pallet" value="">
+        <div  class="row">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Palet Lot' %}</label>
+              <input type="text" value="" id="id_pallete_palet_lot" class="form-control">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <input type="button" class="btn btn-primary available_pallet_selection" value="{% trans 'Selección' %}" style="margin-top: 20px;">
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="notes">{% trans 'Pallet' %}</label>
+              <select id="id_pallet_selection" class="form-control">
+                
+              </select>
+            </div>
+          </div>
+          <div class="col-md-2"><input type="button" class="btn btn-primary prev_pallet_selection" value="<< Anterior" style="margin-top: 20px;"></div>
+          <div class="col-md-2"><input type="button" class="btn btn-primary next_pallet_selection" value="Siguiente >>" style="margin-top: 20px;"></div>
+
+        </div>
+
+        <div  class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="notes">{% trans 'Product Code' %}:</label>
+              <input type="text" value="" id="id_pallete_product_code" class="form-control" readonly="true">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="notes">Descripción:</label>
+              <input type="text" value="" id="id_pallete_product_description" class="form-control" readonly="true">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="notes">Confirmada:</label>
+              <input type="text" value="" id="id_pallete_confirm" class="form-control" readonly="true">
+            </div>
+          </div>
+          
+        </div>
+
+        <div  class="row">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">Lote Cliente:</label>
+              <input type="text" value="" id="id_pallete_lote_cliente" class="form-control" readonly="true">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Caducidad:' %}</label>
+              <input type="text" value="" id="id_pallete_caducidad" class="form-control" readonly="true">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Boxes' %}</label>
+              <input type="text" value="" id="id_pallete_boxes" class="form-control" readonly="true">
+            </div>
+          </div>          
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Cant. En Recibo' %}</label>
+              <input type="text" value="" id="id_pallete_cant_en_recibo" class="form-control" readonly="true">
+            </div>
+          </div>
+        </div>
+
+        <div  class="row">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Peso Bruto' %}</label>
+              <input type="text" value="" id="id_pallete_peso_bruto" class="form-control" readonly="true">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Peso Neto' %}</label>
+              <input type="text" value="" id="id_pallete_peso_neto" class="form-control" readonly="true">
+            </div>
+          </div> 
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Lote Tarima' %}</label>
+              <input type="text" value="" id="id_pallete_tarima" class="form-control" readonly="true">
+            </div>
+          </div>
+
+        </div>
+        <div  class="row">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Cant. retenida' %}</label>
+              <input type="text" value="" id="id_pallete_retenida" class="form-control" readonly="true">
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="form-group">
+              <label for="notes">{% trans 'Motivo Retención' %}</label>
+              <input type="text" value="" id="id_pallete_motivo" class="form-control" readonly="true">
+            </div>
+          </div>          
+        </div>
+        <div  class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="notes">{% trans 'Código Ubicación' %}</label>
+              <input type="text" value="" id="id_pallete_uniq_code" class="form-control">
+            </div>
+          </div>
+        </div>
+        <div  class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="notes">{% trans 'Warehouse' %}</label>
+              <select class="warehouse form-control">
+                <option value="">----</option>	
+                {% for warehouse in warehouses %}
+                  <option value="{{warehouse.id}}">{{warehouse.code}}</option>
+                  {% endfor %}
+              </select>
+            </div>
+          </div>
+          {% if qr_enables %}
+          <div class="col-md-1">
+            <div class="form-group">
+              <div class="confirmar hide">
+                <a href="javascript:void(0)" class=""> {% qr_from_text "No Paletllet" size=80 %}</a>
+              </div>
+
+              <div class="already_confirmar hide">
+                <a href="javascript:void(0)" class=""> {% qr_from_text "No Paletllet" size=80 %}</a>
+              </div>
+
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div  class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="notes">{% trans 'Rack' %}</label>
+              <select class="warehouse_rack form-control">
+                <option value="">----</option>	
+              </select>
+            </div>
+          </div>
+        </div>
+        <div  class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="notes">{% trans 'Location' %}</label>
+              <select class="form-control" id="warehouse_location">
+                  <option value="">---------</option>
+                  
+                </select>
+            </div>
+          </div>
+        </div>
+
+        <div  class="row">
+          <div class="col-md-6"></div>
+          <div class="col-md-2"><input type="button" class="btn btn-primary submit_pallet hide" value="{% trans 'Save' %}" style="margin-top: 20px;"></div>
+          <div class="col-md-2">
+            <a href="/maneuver/maniobras-entrances-list" class="btn   btn-default"  style="margin-top: 20px;">{% trans 'Cancel' %}</a></div>
+          <div class="col-md-2"><input type="button" class="btn btn-success pallet_selection" value="Reubicar Pallet" style="margin-top: 20px;"></div>
+        </div>
+
+        <div class="hide pallet_qrcode">
+          {% qr_from_text pallet.pallet_url size=150 %}
+        </div>
+        <div class="hide warehouse_qrcode">
+          {% qr_from_text pallet.pallet_location_url size=150 %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="{% static 'custom/warehouse_operator/js/instascan.min.js' %}"></script>
+
+<style type="text/css">
+    #scanner-preview1{
+      width:100%;
+      margin: auto;
+      display: block;
+      border-style: inset;
+  }
+  #scanner-preview2 {
+      width: 100%;
+      margin: auto;
+      display: block;
+      border-style: inset;
+          height: 150px;
+  }
+  .scanner-pallet{
+    position: absolute;
+      left: 0px;
+      top:14px;
+  }
+
+  .scanner-warehouse{
+      position: absolute;
+      left:0;
+      top:0;
+  }
+</style>
+
+<div class="modal fade" id="confirmed_modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document" style="width: 1000px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{%trans 'CONFIRM PALLET' %}</h4>
+      </div>
+      <div class="modal-body" align="center">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Palet Lot' %}</label>
+                  <input type="text" value="" id="id_pallete_palet_lot" readonly="" class="form-control">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Boxes' %}</label>
+                  <input type="text" value="" id="id_pallete_boxes" readonly="" class="form-control">
+                </div>
+              </div> 
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Box Kg' %}</label>
+                  <input type="text" value="" id="id_pallete_box_kg" readonly="" class="form-control">
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-2 pallet_qr_image ">
+                {% if object.is_qr_enable %}
+                <a href="javascript:void(0)" class="pallet-qrcode">{% qr_from_text "No Paletllet" size=220 %}</a>
+                {%else%}
+                <a href="javascript:void(0)" class="pallet-qrcode">{% qr_from_text "No Paletllet" size=220 %}</a>
+                {%endif%}
+                <div class="scanner-pallet"></div>
+              </div>
+              <div class="col-md-3 col-sm-3 form-group">
+                <label>QR</label>
+                <textarea rows="6" class="form-control scanned-pallet" cols="60"></textarea>
+                <input type="button" class="btn btn-success manual_submit_pallet" value="Envio manual" style="margin-top: 20px;">
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-md-6" style="text-align: -webkit-left;">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Warehouse' %}</label>
+                  <select class="warehouse_select form-control">
+
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Rack' %}</label>
+                  <select class="rack_number_select form-control">
+
+                  </select>
+                </div>
+              </div>
+            </div> 
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Location' %}</label>
+                  <select class="location_select form-control">
+
+                  </select>
+                </div>
+              </div>
+            </div> 
+          </div>
+          <div class="col-md-3 col-sm-3">
+            {% if object.is_qr_enable%}
+            <figure class="wearhouse-digrame-img">
+              <a href="javascript:void(0)" class="warehouse-qrcode">{% qr_from_text "No Warehouse" size=220 %}</a>
+            </figure>
+            {%else%}
+            <figure class="wearhouse-digrame-img">
+              <a href="javascript:void(0)">{% qr_from_text "No Warehouse" size=220 %}</a>
+            </figure>
+            {%endif%}
+            <div class="scanner-warehouse">
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-3 form-group">
+            <label>QR</label>
+            <textarea rows="6" class="form-control scanned-warehouse" cols="60"></textarea>
+
+            <input type="button" class="btn btn-success manual_submit_warehouse" value="Envio manual" style="margin-top: 20px;">
+          </div>
+        </div>
+        <div class="modal-footer">
+          {% if object.is_qr_disable%}
+          <a href="javascript:void(0)" class="enable_manualy">ConfirmaciÃ³n Manual</a> &nbsp;
+          {%endif%}
+          <button type="button" disabled="disabled" class="btn btn-primary" id="update_pallet_status">{% trans 'Save' %}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+        </div>
+      </div>              
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="reallocation_modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document" style="width: 900px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{%trans 'NUEVA REUBICACION' %}</h4>
+      </div>
+      <div class="modal-body" align="center">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-4 col-sm-4">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Palet Lot' %}</label>
+                  <input type="text" value="" id="pallete_palet_lot_id"  class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-md-2" style="margin-top: 25px;">
+                <input type="button" class="btn btn-primary" value="{% trans 'FIND' %}"
+                  onclick="return load_for_filter_data()">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Product Code' %}</label>
+                  <input type="text" value="" id="id_reallocation_product_code"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">Descripción</label>
+                  <input type="text" value="" id="id_reallocation_product_description"  class="form-control" readonly="true">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Palet Lot' %}</label>
+                  <input type="text" value="" id="id_reallocation_pallet_lot"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Rack' %}</label>
+                  <input type="text" value="" id="id_reallocation_rack"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'cajas' %}</label>
+                  <input type="text" value="" id="id_reallocation_boxes"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Peso Bruto' %}</label>
+                  <input type="text" value="" id="id_reallocation_gross_weight"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Peso Neto' %}</label>
+                  <input type="text" value="" id="id_reallocation_net_weight"  class="form-control" readonly="true">
+                  <input type="hidden" name="" id="id_reallocation_pallet_id" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Location' %}</label>
+                  <input type="text" value="" id="id_pallet_location"  class="form-control" readonly="true">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Location' %}</label>
+                  <input type="text" value="" id="id_reallocation_new_location"  class="form-control">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10 col-sm-10">
+                <div class="form-group col-md-12">
+                  <label> {% trans 'Reason for Relocation' %}</label>
+                  <textarea class="form-control rounded-0" id="id_reallocation_new_description" rows="9" name="description"></textarea>
+                </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" disabled="disabled" class="btn btn-primary" id="create_re_allocation">{% trans 'Save' %}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+
+<script type="text/javascript">
+
+
+
+  function load_for_filter_data(pallet_code, entrance_id ) {
+    pallet_code = $("#pallete_palet_lot_id").val()
+    entrance_id = $("#id_warehouse_entrance_id").val()
+
+    jQuery.ajax( {
+      url: "{% url 'entrance-pallet-detail-for-relocation' %}",
+      type: "GET",
+      dataType: "json",
+      data: {
+        pallet_code: pallet_code,
+      }
+    } ).done( function( response )
+    {
+      
+      boxes = response.pallet_info["inventory_total_boxes"]
+      gross_weight = response.pallet_info["available_gross_weight"]
+      net_weight = response.pallet_info["available_net_weight"]
+      rack_number = response.pallet_info["warehouse_number"]
+      palet_lot = response.pallet_info["palet_lot"]
+      palet_id = response.pallet_info["id"]
+      location_uniq_code = response.pallet_info["location_uniq_code"]
+      description = response.pallet_info["product_description"]
+      product_code = response.pallet_info["product_code"]
+      $("#id_reallocation_pallet_lot").val(palet_lot)
+      $("#id_reallocation_rack").val(rack_number)
+      $("#id_reallocation_boxes").val(boxes)
+      $("#id_reallocation_gross_weight").val(gross_weight)
+      $("#id_reallocation_net_weight").val(net_weight)
+      $("#id_reallocation_pallet_id").val(palet_id)
+      $("#id_pallet_location").val(location_uniq_code)
+      $("#id_reallocation_product_code").val(product_code)
+      $("#id_reallocation_product_description").val(description)     
+
+    })
+    $.LoadingOverlay('hide')
+  }
+
+  $("#create_re_allocation").click(function(){
+    pallet_code = $("#pallete_palet_lot_id").val()
+    entrance_id = $("#id_warehouse_entrance_id").val()
+    new_location = $("#id_reallocation_new_location").val()
+    description = $("#id_reallocation_new_description").val()
+    jQuery.ajax( {
+        url: "{% url 'save-relocation-from-shortcode' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+          entrance_id: entrance_id,
+          pallet_code: pallet_code,
+          new_location: new_location,
+          description: description
+        }
+      } ).done( function( response )
+      {
+        alert("La reubicación de la Tarima fue realizada con éxito")
+        location.reload(true);
+      })
+  })
+
+  $('#id_reallocation_new_location').keypress(function(event){
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == 13){
+      $.LoadingOverlay('show')
+      pallet_code = $("#pallete_palet_lot_id").val()
+      entrance_id = $("#id_warehouse_entrance_id").val()
+      new_location = $("#id_reallocation_new_location").val()
+      jQuery.ajax( {
+        url: "{% url 'relocation-shortcode-weight-volume' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+          entrance_id: entrance_id,
+          pallet_code: pallet_code,
+          new_location: new_location
+        }
+      } ).done( function( response )
+      {
+        if(response.location_not_found == true){
+          alert("Ubicación no encontrada.")
+          $("#id_reallocation_new_location").val("")
+        }
+        else{
+          ware_volume = parseFloat(response.available_volume)
+          ware_weight = parseFloat(response.available_weight)
+          product_volume = parseFloat(response.product_volume)
+          product_weight = parseFloat(response.product_net_weight)
+          if ((ware_volume >= product_volume) && (ware_weight >= product_weight)) {
+            $("#create_re_allocation").removeAttr("disabled")
+
+            } else {
+              $("#id_destination_location").val("").trigger("change.select2");
+              alert(
+                "La ubicación no cuenta con el espacio suficiente o el peso sobrepasa el limite del nivel de la ubicación. Por favor seleccione otra ubicación"
+                )
+            }
+
+        }
+       $.LoadingOverlay('hide')
+      })
+      
+    }
+  })
+
+  $(".enable_manualy").click(function(){
+    $("#update_pallet_status").removeAttr('disabled')
+  })
+
+  $(".pallet_selection").click(function(){
+    $("#reallocation_modal").modal("show")
+  })
+  var scanner1;
+  var scanner2;
+
+  var scaned_warehouse = false
+  var scaned_palet = false
+  $(".pallet-qrcode").click(function(){
+    $(".scanner-warehouse").html('')
+    $(".scanner-pallet").html('')
+    $(".scanner-pallet").append('<video id="scanner-preview1"></video>')
+    scan_palet()
+
+  })
+
+  $(".warehouse-qrcode").click(function(){
+    $(".scanner-pallet").html('')
+    $(".scanner-warehouse").html('')
+    $(".scanner-warehouse").append('<video id="scanner-preview2"></video>') 
+    scan_warehouse()
+  })
+
+  function scan_palet(){
+    array = $(".pallet-qrcode img").attr('src').split("=")
+    json_data = JSON.parse(array[array.length-1].replace(/u'/g, "'"))
+    clicked_entrance   = json_data["Folio"]
+    clicked_confirmation = json_data["confirmation"]
+    clicked_palet = json_data["palet_id"]
+
+    if (scanner2 !=  undefined){
+      scanner2.stop()
+    }
+
+    if (scanner1 !=  undefined){
+      scanner1.stop()
+    }
+    scanner1 = new Instascan.Scanner({
+      video: document.getElementById('scanner-preview1')
+    });
+    scanner1.addListener('scan',function(content){
+      $(".scanned-pallet").val(content)
+      content = JSON.parse(content)
+      scan_palet_data = content["palet_id"]
+      scan_entrance = content["Folio"]
+      scan_confirmation = content["confirmation"]
+
+      if((clicked_entrance == scan_entrance) && (clicked_confirmation == scan_confirmation) && (clicked_palet == scan_palet_data)){
+        scaned_palet = true
+        if((scaned_palet == true) && (scaned_warehouse == true)){
+          $("#update_pallet_status").removeAttr("disabled")
+
+        }
+        // alert("palet emparejado")
+        scanner1.stop()
+        $(".scanner-pallet").empty()
+      }else{
+        alert("Codigo QR incorrecto para el pallet")
+        scaned_palet = false
+        $("#update_pallet_status").attr("disabled","disabled")
+      }
+
+    })
+
+    Instascan.Camera.getCameras().then(cameras=>{
+      if (cameras.length > 0){
+        if (cameras[1]){
+          scanner1.start(cameras[1])
+        }
+        else{
+          scanner1.start(cameras[0])
+        }
+        
+      } else{
+        console.log("no camera found")
+      }
+    })
+  }
+  $('.scanned-pallet').keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == 13){
+          $(".manual_submit_pallet").trigger("click")
+
+      } 
+  })
+
+  $(".manual_submit_pallet").click(function(){
+    scanned_data = $(".scanned-pallet").val()
+    if (scanned_data !="") {
+      var jdata = null;
+      try
+      {
+        jdata = $.parseJSON(scanned_data);  
+      }catch(e)
+      {}
+
+      if(jdata)
+      {
+        content = JSON.parse(scanned_data)
+        scan_manual_pallet(jdata)
+      }else
+      {
+        alert("Codigo QR incorrecto para el pallet")
+      }
+
+    }else{
+      alert("Codigo QR incorrecto para el pallet")
+    }
+
+  })
+
+
+  function scan_manual_pallet(jdata){
+    array = $(".pallet-qrcode img").attr('src').split("=")
+    json_data = JSON.parse(array[array.length-1].replace(/u'/g, "'").replace(/'/g,'"'))
+    clicked_entrance   = json_data["Folio"]
+    clicked_confirmation = json_data["confirmation"]
+    clicked_palet = json_data["palet_id"]
+    
+    scan_palet_data = jdata["palet_id"]
+    scan_entrance = jdata["Folio"]
+    scan_confirmation = jdata["confirmation"]
+
+    if((clicked_entrance == scan_entrance) && (clicked_confirmation == scan_confirmation) && (clicked_palet == scan_palet_data)){
+      scaned_palet = true
+      if((scaned_palet == true) && (scaned_warehouse == true)){
+        $("#update_pallet_status").removeAttr("disabled")
+
+      }
+      // alert("palet emparejado")
+      $(".scanner-pallet").empty()
+    }else{
+      alert("Codigo QR incorrecto para el pallet")
+      scaned_palet = false
+      $("#update_pallet_status").attr("disabled","disabled")
+    }
+  }
+
+  function scan_warehouse(){
+
+    array = $(".warehouse-qrcode img").attr('src').split("=")
+    json_data = JSON.parse(array[array.length-1].replace(/u'/g, "'").replace(/'/g,'"'))
+
+    clicked_warehouse = json_data["warehouse_id"]
+    clicked_location = json_data["location_id"]
+    clicked_rack = json_data["rack_id"]
+
+    if (scanner2 != undefined){
+      scanner2.stop()
+    }
+
+    if (scanner1 != undefined){
+      scanner1.stop()
+    }
+    scanner2 = new Instascan.Scanner({
+      video: document.getElementById('scanner-preview2')
+    });
+    scanner2.addListener('scan',function(content){
+      $(".scanned-warehouse").val(content)
+      content = JSON.parse(content)
+      scan_warehouse_id = content["WarehouseId"]
+      scan_warehouse_description = content["WarehouseName"]
+      scan_rack_id = content["RackId"]
+      rack_index = content["RackIndex"]
+      scan_location_id = content["LocationId"]
+      scan_location_number = content["LocationNumber"]
+      if((clicked_warehouse == scan_warehouse_id) && (clicked_location == scan_location_id) && (clicked_rack == scan_rack_id)){
+        scaned_warehouse = true
+        if((scaned_palet == true)&&(scaned_warehouse == true)){
+          $("#update_pallet_status").removeAttr("disabled")
+        }
+        // alert("almacÃ©n emparejado")
+        scanner2.stop()
+        $(".scanner-warehouse").empty()
+
+      }else{
+        $("#update_pallet_status").attr("disabled","disabled")
+        alert("Codigo QR incorrecto para el warehouse")
+        scaned_warehouse = false
+      }
+
+    })
+
+    Instascan.Camera.getCameras().then(cameras=>{
+      if (cameras.length > 0){
+        if (cameras[1]){
+          scanner2.start(cameras[1])
+        }
+        else{
+          scanner2.start(cameras[0])
+        }
+
+
+      } else{
+        console.log("no camera found")
+      }
+    })
+  }
+
+
+  $('.scanned-warehouse').keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == 13){
+          $(".manual_submit_warehouse").trigger("click")
+
+      } 
+  })
+
+
+$(".manual_submit_warehouse").click(function(){
+
+  scanned_warehouse = $(".scanned-warehouse").val()
+    if (scanned_warehouse !="") {
+      var jdata = null;
+      try
+      {
+        jdata = $.parseJSON(scanned_warehouse);  
+      }catch(e)
+      {}
+
+      if(jdata)
+      {
+        content = JSON.parse(scanned_warehouse)
+        scan_manual_warehouse(jdata)
+      }else
+      {
+        alert("Codigo QR incorrecto para el warehouse")
+      }
+
+    }else{
+      alert("Codigo QR incorrecto para el warehouse")
+    }
+
+})
+  function scan_manual_warehouse(jdata){
+    array = $(".wearhouse-digrame-img img").attr('src').split("=")
+    json_data = JSON.parse(array[array.length-1].replace(/u'/g, "'").replace(/'/g,'"'))
+
+    clicked_warehouse = json_data["warehouse_id"]
+    clicked_location = json_data["location_id"]
+    clicked_rack = json_data["rack_id"]
+    
+    scan_warehouse_id = content["WarehouseId"]
+    scan_warehouse_description = content["WarehouseName"]
+    scan_rack_id = content["RackId"]
+    rack_index = content["RackIndex"]
+    scan_location_id = content["LocationId"]
+    scan_location_number = content["LocationNumber"]
+    if((clicked_warehouse == scan_warehouse_id) && (clicked_location == scan_location_id) && (clicked_rack == scan_rack_id)){
+      scaned_warehouse = true
+      if((scaned_palet == true)&&(scaned_warehouse == true)){
+        $("#update_pallet_status").removeAttr("disabled")
+      }
+      $(".scanner-warehouse").empty()
+    }else{
+      $("#update_pallet_status").attr("disabled","disabled")
+      alert("Codigo QR incorrecto para el warehouse")
+      scaned_warehouse = false
+    }
+  }
+
+    $(".confirmar").click(function(){
+    $('.scanned-pallet').val('')
+    $('.scanned-warehouse').val('')
+    $("#update_pallet_status").attr('disabled','disabled')
+    
+    $("#confirmed_modal").modal('show')
+
+    $("#confirmed_modal").find('#id_pallete_palet_lot').val($("#id_pallete_palet_lot").val())
+    $("#confirmed_modal").find('#id_pallete_boxes').val($("#id_pallete_boxes").val())
+    $("#confirmed_modal").find('#id_pallete_box_kg').val($("#id_pallete_peso_neto").val())
+
+    warehouse_id = $(".warehouse").find(":selected").val()
+    warehouse_text = $(".warehouse").find(":selected").text()
+    warehouse_select = $("#confirmed_modal").find('.warehouse_select')
+    warehouse_select.empty()
+    warehouse_select.append('<option value="'+warehouse_id+'">' +warehouse_text+'</option>')
+    warehouse_select.attr('disabled','disabled')
+
+    rack_id = $(".warehouse_rack").find(":selected").val()
+    rack_text = $(".warehouse_rack").find(":selected").text()
+    rack_number_select = $("#confirmed_modal").find('.rack_number_select')
+    rack_number_select.empty()
+    rack_number_select.append('<option value="'+rack_id+'">' +rack_text+'</option>')
+    rack_number_select.attr('disabled','disabled')
+
+   location_id = $("#warehouse_location").find(":selected").val()
+   location_text = $("#warehouse_location").find(":selected").text()
+    location_select = $("#confirmed_modal").find('.location_select')
+    location_select.empty()
+    location_select.append('<option value="'+location_id+'">' +location_text+'</option>')
+    location_select.attr('disabled','disabled')
+
+    $("#update_pallet_status").click(function(){      
+      $("#confirmed_modal").modal('hide')
+      jQuery.ajax( {
+        url: "{% url 'confirm-entrance_pallet' 0 %}".replace("0",$("#id_warehouse_pallet").val()),
+            type: "GET",
+            dataType: "json"
+        } ).done( function( response )
+        {
+
+        })
+    })
+  })
+
+  $(document).on('change', ".warehouse", function() {
+  warehouse = $(this).val()
+  rack_column = $('.warehouse_rack')
+  if(warehouse != '')
+  {   
+    $.LoadingOverlay('show')
+    jQuery.ajax( {
+      url: "/warehouse_entrance/get-rack/"+warehouse,
+      type: "GET",
+      dataType: "json",
+    } ).done( function( response )
+    {
+      selected = rack_column.find(':selected').val()
+      rack_column.empty()
+      rack_column.append('<option value="" selected="selected">---------</option>')
+      rack_data = response.racks
+
+      rack_data.forEach(function(rack) {
+          if(parseInt(selected) == parseInt(rack['id'])){
+            rack_column.append('<option value="'+rack['id']+'" selected="selected">' +rack['index']+'</option>')  
+          }
+          else{
+            rack_column.append('<option value="'+rack['id']+'">' +rack['index']+'</option>')
+          }
+      })
+      $.LoadingOverlay('hide')
+    }).error(function(resp){ console.log(resp); $.LoadingOverlay('hide')})
+  }
+
+})
+
+  $(document).on('change', ".warehouse_rack", function() {
+  rack_number = $(this).val()
+  warehouse = $('.warehouse').find(':selected').val()
+  location_column = $('#warehouse_location')
+  product_net_weight = $("#id_pallete_peso_bruto").val()
+  total_boxes = $("#id_pallete_boxes").val()
+  if(total_boxes <=0 ){
+    total_boxes = 0
+  }
+  if(product_net_weight <=0 ){
+    product_net_weight = 0
+  }
+  if(rack_number != '' && warehouse !=null )
+  {
+    $.LoadingOverlay('show')
+    jQuery.ajax( {
+      url: "/warehouse_entrance/get-location/",
+      type: "POST",
+      dataType: "json",
+      data: { 
+        warehouse: warehouse ,
+        rack: rack_number ,
+        total_boxes: total_boxes ,
+        product_net_weight: product_net_weight
+        }
+    } ).done( function( response )
+    {
+      selected = location_column.find(':selected').val()
+      location_column.empty()
+      location_column.append('<option value="" selected="selected">---------</option>')
+      response.locations.forEach(function(location) {
+
+            location_column.append('<option value="'+location['id']+'">' +location['location_number']+'</option>')
+          
+      })
+      if(response.locations.length == 0 ){
+        alert("La sección seleccionada no tiene ninguna ubicación que cumpla con los requisitos.")
+      }
+      $.LoadingOverlay('hide')
+    }).error(function(resp){ console.log(resp); $.LoadingOverlay('hide')})
+  }
+
+})
+
+  $("#id_pallete_uniq_code").keypress(function (e) {
+    
+    var key = e.which;
+    if(key == 13){
+      $.LoadingOverlay('show')
+      jQuery.ajax( {
+        url: "{% url 'get-warehouse-location-detail' %}",
+        type: "GET",
+        dataType: "json",
+        data: {
+          short_code: $(this).val()
+        }
+      } ).done( function( response )
+      {
+        location_column = $("#warehouse_location")
+        rack_column = $(".warehouse_rack")
+        if(!response.location_not_found){
+          rack_detail = response.rack_detail
+          warehouse_detail = response.warehouse_detail
+          location_detail = response.location_detail
+          $(".warehouse").val(warehouse_detail["id"])
+          
+          
+          rack_column.empty()
+          rack_column.append('<option value="" selected="selected">---------</option>')
+          rack_column.append('<option selected value="'+rack_detail['id']+'">' +rack_detail['index']+'</option>')
+          location_column.empty()
+          location_column.append('<option value="" selected="selected">---------</option>')
+          location_column.append('<option selected value="'+location_detail['id']+'">' +location_detail['location_number']+'</option>')        
+      }
+      else{
+        alert("Ubicación no encontrada")
+        $(".warehouse").val("")
+        rack_column.empty()
+        location_column.empty()
+      }
+      $.LoadingOverlay('hide')
+      })
+      
+    }
+  })
+  
+  $("#id_pallete_palet_lot").keypress(function (e) {
+    var key = e.which;
+    if(key == 13){
+    $.LoadingOverlay('show')
+    pallet_code = $(this).val()
+    entrance_id = $("#id_warehouse_entrance_id").val()
+    get_pallet_detail(pallet_code, entrance_id )
+   }
+  })
+
+
+$(".submit_pallet").click(function (e) {
+  warehouse = $(".warehouse").val()
+  rack = $(".warehouse_rack").val()
+  warehouse_location = $("#warehouse_location").val()
+  pallet_id = $("#id_warehouse_pallet").val()
+  if(pallet_id !="" && warehouse_location != "" && rack !="" && warehouse != ""){
+    jQuery.ajax( {
+    url: "{% url 'save-pallet-location' %}",
+    type: "POST",
+    dataType: "json",
+    data: {
+      "warehouse_id": warehouse,
+      "rack_id": rack,
+      "location_id": warehouse_location,
+      "pallet_id": pallet_id
+    }
+  } ).done(function( response )
+  {
+    console.log(response)
+    if(response.code = 200){
+      alert("Maniobra de Pallet confirmada")
+      var url = new URL(window.location.href);
+      window.location.href = url.href;
+    }
+    else{
+      alert("failled")
+    }
+
+  })
+  }
+  else{
+    alert("please select Lote Tarima")
+  }
+})
+
+
+function get_pallet_detail(pallet_code, entrance_id ) {
+  
+  jQuery.ajax( {
+    url: "{% url 'get-single-pallet-detail' %}",
+    type: "GET",
+    dataType: "json",
+    data: {
+      entrance_id: entrance_id,
+      pallet_code: pallet_code,
+    }
+  } ).done( function( response )
+  {
+    set_response(response)
+  })
+  $.LoadingOverlay('hide')
+}
+$(".available_pallet_selection").click(function (e) {
+  entrance_id = $("#id_warehouse_entrance_id").val()
+  jQuery.ajax( {
+    url: "{% url 'get-pallet-from-entrance' %}",
+    type: "GET",
+    dataType: "json",
+    data: {
+      entrance_id: entrance_id
+    }
+  } ).done( function( response )
+  {
+    
+    id_pallet_selection = $("#id_pallet_selection")
+    id_pallet_selection.empty()
+    id_pallet_selection.append('<option value="" selected="selected">---------</option>')
+    response.pallet_info.forEach(function(pallet) {
+      id_pallet_selection.append('<option value="'+pallet['id']+'">' +pallet['palet_lot']+'</option>') 
+    })
+    
+  })
+})
+$("#id_pallet_selection").select2()
+$("#id_pallet_selection").change(function(){
+  pallet_code = $(this).find(":selected").text()
+  entrance_id = $("#id_warehouse_entrance_id").val()
+  $.LoadingOverlay('show')
+  get_pallet_detail(pallet_code, entrance_id )
+})
+
+$(".prev_pallet_selection").click(function (e) {
+  
+  type = "previous"
+    get_pallet_prev_next(type )
+  
+})
+
+$(".next_pallet_selection").click(function (e) {
+  type = "next"
+  get_pallet_prev_next(type )  
+})
+
+function get_pallet_prev_next(type ) {
+  entrance_id = $("#id_warehouse_entrance_id").val()
+  pallet_id = $("#id_warehouse_pallet").val()
+  if(pallet_id == ""){
+    pallet_id = 0
+  }
+jQuery.ajax( {
+    url: "{% url 'get-prev-next-pallet' %}",
+    type: "POST",
+    dataType: "json",
+    data: {
+      "entrance_id": entrance_id,
+      "type": type,
+      "pallet_id": pallet_id
+    }
+  } ).done(function( response )
+  {
+    if (response["code"] == 500) {
+      alert("No Pallet Found")
+    }      
+      set_response(response)
+    
+  })
+}
+
+function set_response(response ) {
+    if (response["code"] == 200) {
+      confirmed = response.pallet_info["confirmed"]
+      if(confirmed){
+        $(".confirmar").addClass("hide")
+        $(".already_confirmar").removeClass("hide")
+      }
+      else{
+        $(".confirmar").removeClass("hide")
+        $(".already_confirmar").addClass("hide")
+      }
+      console.log(response)
+      pallet_url = response["pallet_url"]
+      pallet_location_url = response["pallet_location_url"]
+      
+      pallet_img = "http://chart.apis.google.com/chart?cht=qr&chs=220x220&chl=" + pallet_url
+
+      location_img = "http://chart.apis.google.com/chart?cht=qr&chs=220x220&chl=" + pallet_location_url
+      $(".pallet_qr_image").find("img").attr('src', pallet_img);
+      $(".wearhouse-digrame-img").find("img").attr('src', location_img);
+      cost_lot = response.pallet_info["cost_lot"]
+      exp_date = response.pallet_info["exp_date"]
+      boxes = response.pallet_info["boxes"]
+      invoice_weight = response.pallet_info["invoice_weight"]
+      gross_weight = response.pallet_info["gross_weight"]
+      net_weight = response.pallet_info["net_weight"]
+      retained_quantity = response.pallet_info["retained_quantity"]
+      retained_reason = response.pallet_info["retained_reason"]
+
+      warehouse = response.pallet_info["warehouse"]
+      warehouse_name = response.pallet_info["warehouse_name"]
+      rack_number = response.pallet_info["rack_number"]
+      warehouse_number = response.pallet_info["warehouse_number"]
+      location_id = response.pallet_info["location"]
+      palet_lot = response.pallet_info["palet_lot"]
+      warehouse_location_number = response.pallet_info["warehouse_location_number"]
+      product_code = response.pallet_info["product_code"]
+      product_description = response.pallet_info["product_description"]
+      if(response.pallet_info["confirmed"] == true){
+        confirm_value = "sí"
+      }
+      else{
+        confirm_value = "No"
+      }
+      $("#id_pallete_confirm").val(confirm_value)
+      $("#id_pallete_product_code").val(product_code)
+      $("#id_pallete_product_description").val(product_description)
+
+      $("#id_pallete_lote_cliente").val(cost_lot)
+      $("#id_pallete_tarima").val(palet_lot)
+      
+      $("#id_pallete_caducidad").val(exp_date)
+      $("#id_pallete_boxes").val(boxes)
+      $("#id_pallete_cant_en_recibo").val(invoice_weight)
+      $("#id_pallete_peso_bruto").val(gross_weight)
+      $("#id_pallete_peso_neto").val(net_weight)
+      $("#id_pallete_retenida").val(retained_quantity)
+      $("#id_pallete_motivo").val(retained_reason)
+      $("#id_warehouse_pallet").val(response.pallet_info["id"])
+      $(".warehouse").val(warehouse)
+      warehouse_rack = $(".warehouse_rack")
+      warehouse_rack.empty()
+      warehouse_rack.append('<option value="" selected="selected">---------</option>')
+      warehouse_rack.append('<option value="'+rack_number+'" selected="selected">' +warehouse_number+'</option>') 
+
+     warehouse_location = $("#warehouse_location")
+      warehouse_location.empty()
+      warehouse_location.append('<option value="" selected="selected">---------</option>')
+      warehouse_location.append('<option value="'+location_id+'" selected="selected">' +warehouse_location_number+'</option>')
+      $("#warehouse_location").val()
+      $(".submit_pallet").removeClass("hide")
+
+    }
+    else{
+      $(".submit_pallet").addClass("hide")
+      $("#id_pallete_lote_cliente").val("")
+      $("#id_pallete_caducidad").val("")
+      $("#id_pallete_boxes").val("")
+      $("#id_pallete_cant_en_recibo").val("")
+      $("#id_pallete_peso_bruto").val("")
+      $("#id_pallete_peso_neto").val("")
+      $("#id_pallete_retenida").val("")
+      $("#id_pallete_motivo").val("")
+      warehouse_rack = $(".warehouse_rack")
+      warehouse_rack.empty()
+      warehouse_location = $("#warehouse_location")
+      warehouse_location.empty()
+      $(".warehouse").val("")
+      $("#id_warehouse_pallet").val("")
+      $("#id_pallete_tarima").val("")
+      $(".confirmar").addClass("hide")
+      $(".already_confirmar").addClass("hide")
+      $("#id_pallete_product_code").val("")
+      $("#id_pallete_product_description").val("")
+    }
+    }
+
+    $("#sidebar-maneuvers").addClass("active");
+    $("#sidebar-maneuvers .entrance").addClass('active')
+    $(".already_confirmar").click(function(){
+      alert("Ya confirmada")
+    })
+</script>
+
+{% endblock %}

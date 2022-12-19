@@ -1,0 +1,147 @@
+
+{% block header-links %}
+ {% load staticfiles %}
+{% load staticfiles %}
+{% load i18n %}
+{% endblock %}
+{% block content %}
+
+<style>
+.warehouse-row{ overflow-x: auto;  }
+.warehouse-row h2.row-title{ margin-bottom: 30px;  }
+.section-table h3, .heights-table h3{     background-color: #214A7B;
+    color: #fff; padding: 5px;  }
+.section-table th, .heights-table th {     background-color: #214A7B;
+    color: #fff;  padding: 8px; text-align: center; }
+.section-table td{ text-align: center; cursor: pointer; min-width: 90px;  }
+.location-manage{ width:100%;  }
+.location-manage tr td.heights-table, .location-manage tr td.section-table{ vertical-align: top;  } 
+.heights-table{ min-width: 160px;  }
+.heights-table table th{ text-align: left;  }
+.location-manage .section-table h3{ text-align: center; }
+.location-manage .section-table h3, .location-manage .heights-table h3{ margin-top: 0;  }
+.location-manage .section-table td, .location-manage .section-table th, .location-manage .heights-table th{ border-color: #000; border-top:1px solid #000 !important; }
+.location-manage .section-table{ border-left:3px solid #fff; }
+.location-manage .table-bordered{ margin-bottom:0;   }
+.mark_red{background:  red !important;}
+</style>
+<div class="row-table-wrapper">
+  <div class="warehouse-row-table">
+    {% for row in warehouse.rows_locations %}
+    <div class="col-md-12 warehouse-row">
+      <h2 class="row-title">{% trans 'ROW' %} {{row.index}}</h2>
+      <table class="location-manage">
+        <tr>
+          <td class="heights-table">
+            <h3>{{row.description}}</h3>
+            <table class="table table-bordered dataTable">
+              <thead>
+                <tr rowspan="1"><th>{% trans 'Levels' %}
+                </th></tr>
+              </thead>
+              <tbody>
+                {% for height in row.sections.0.heights %}
+                <tr>
+                  <th>{{height.description}}</th>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>    
+          {% for section in row.sections %}
+          <td class="section-table">
+            <h3>{% trans "Section" %} {{section.index}}</h3>
+            <table class="table table-bordered table-hover dataTable">
+              <thead>
+                <tr>
+                  {% for depth in section.heights.0.depths %}
+                  <th>
+                    {{depth.description}}
+                  </th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for height in section.heights %}
+                <tr>
+                  {% for depth in height.depths %}
+                    {% if depth.warehouse_location.has_broduct %}
+                     <td style="background: {{depth.get_depth_color}}" id="{{depth.warehouse_location}}" class="warehouse-location product-already">
+                      {{depth.warehouse_location}}
+                    </td>
+                    {% else %}
+                      <td style="background: {{depth.get_depth_color}}" id="{{depth.warehouse_location}}" class="warehouse-location blockable_product {% if depth.warehouse_location.is_locked %} mark_red {% endif %}" data-id="{{depth.warehouse_location.id}}">
+                        {{depth.warehouse_location}}
+                      </td>
+                    {%endif%}
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+          {% endfor %}
+        </tr>
+      </table>
+    </div>
+    <div class="clearfix"></div>
+
+        <div class="modal fade" id="modal-warning-message" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+          <div class="modal-dialog error-confirmation">
+            <div class="modal-content text-center">
+              
+              <div class="modal-body confirm-sure">
+                <p style="margin: 0 0 30px 0;">{% trans 'The location is not empty , please realocate the product before blocking the location' %}</p>              
+                
+                <button type="button" class="btn btn-default" data-dismiss="modal">{%trans 'Cancel' %}</button>
+               
+              </div>
+            </div>
+          </div>
+        </div>
+
+    {% endfor %}
+  </div>
+</div>
+
+<script type="text/javascript">
+
+$(".warehouse-location").each(function(){
+// $(this).css("background-color","#d9e0cb");
+
+// $(this).css("opacity","1");
+$(this).bind('click');
+});
+
+$(".blockable_product").click(function(){
+  location_id = $(this).attr('data-id')
+  location_ = $(this)
+  if(location_id != '')
+      {
+        
+        jQuery.ajax( {
+              url: "{% url 'warehouse-location-blocked' 0 %}".replace('0', location_id),
+              type: "GET",
+              dataType: "json",
+          } ).done( function( response )
+          {
+            if(response.status == true){
+              location_.addClass('mark_red')
+            }else{
+               location_.removeClass("mark_red")
+            }
+        })
+      }
+
+  })
+
+
+$(".product-already").click(function(){
+  $('#modal-warning-message').modal('show');
+
+  })
+
+
+</script>
+
+{% endblock %}

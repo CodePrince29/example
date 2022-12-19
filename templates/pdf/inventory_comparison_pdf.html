@@ -1,0 +1,94 @@
+{% extends 'pdf/base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+<div style="max-width:900px;padding:20px; margin:0 auto; background:#fff; display: inline-block;">
+     <table class="firstBlock" style="width:100%; vertical-align: top;">
+    <tbody>
+        <tr>
+            <td align="left" width="30%">
+                <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+            </td>
+            <td align="right" width="100%" style="width: 70% !important;">                
+                <table class="header-right" width="100%" style="padding: 0; margin: 0;">
+                    <tbody>
+                        <tr align="left" style="padding: 0;">
+                            <td style="display: block; width: 100% !important;">
+                                <h2 style="font-size: 24px;">{% trans 'Comparativo de Toma de Inventario' %}</h2>
+                            </td>
+                        </tr>
+                        <tr align="right" style="font-size:14px; display: block;">
+                            <td align="right"><strong>{% trans 'Print Date Time' %} :</strong> {{print_date}}</td>
+                            <!-- <td align="right"></td> -->
+                        </tr>
+                        <tr align="right" style="font-size:14px; display: block;">
+                            <td align="right"><strong>{% trans 'Cliente' %} :</strong> {{customer_name}}</td>
+                            <!-- <td align="right"></td> -->
+                        </tr>
+                        <tr align="right" style="font-size:14px; display: block;">
+                            <td align="right"><strong>Fecha de Toma de Inventario :</strong> {{taking_inventory_date}}</td>
+                        </tr>
+                        <tr align="right" style="font-size:14px; display: block;">
+                            <td align="right"><strong>Hora de Toma de Inventario:</strong> {{taking_inventory_time}}</td>
+                        </tr>
+                    </tbody>               
+                </table>
+            </td>             
+        </tr>
+<!--         <tr>
+            <td>              
+            <table width="100%" style="font-size:14px;">
+                <tbody>
+                    <tr>
+                        <td align="left"><strong>Fecha de Toma de Inventario:</strong></td>
+                        <td align="left">{{taking_inventory_date}}</td>
+                    </tr>
+                    <tr>
+                        <td align="left"><strong>Fecha de Toma de Inventario:</strong></td>
+                        <td align="left">{{taking_inventory_date}}</td>
+                    
+                        <td align="right"><strong>Hora de Toma de Inventario:</strong></td>
+                        <td align="right">{{taking_inventory_time}}</td>
+                    </tr>
+                </tbody>          
+            </table>
+        </td>
+        </tr> -->
+    </tbody>
+</table>
+    <br>
+    <br>
+    <div style="width:100%; float:left; min-height:560px; font-size: 13px;">
+        <table width="100%" style="text-transform:uppercase; border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Codigo' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Product' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Lote Cliente' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Lote Tarima' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Fecha Caducidad' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Fisico' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Sistema' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Diferencia' %}</th>
+        </tr>
+    </thead>
+    <tbody>  
+    {% for inventory in inventory_data %}     
+         <tr>
+            <td style="width:150px; border-bottom: 1px solid #000; padding:5px 5px 5px 0; margin-left:15px;">{{inventory.product_code}}</td>
+            <td style="border-bottom: 1px solid #000; padding:5px 5px 5px 0; margin-left:15px;">{{inventory.product_description}}</td>
+            <td style="width:230px; border-bottom: 1px solid #000; padding:5px 5px 5px 0; margin-left:15px;">{{inventory.cost_lot}}</td>
+            <td style="border-bottom: 1px solid #000; padding:5px 5px 5px 0; margin-left:15px;">{{inventory.pallet_id}}</td>
+            <td style="border-bottom: 1px solid #000; padding:5px 5px 5px 0; margin-left:15px;">{{inventory.exp_date}}</td>
+            <td style="border-bottom: 1px solid #000; padding:5px 5px 5px 0; margin-left:15px;">{{inventory.total_boxes}}</td>
+            <td style="border-bottom: 1px solid #000; padding:5px 5px 5px 0; margin-left:15px;">{{inventory.available_total_boxes}}</td>
+            <td style="border-bottom: 1px solid #000; padding:5px 5px 5px 0; margin-left:15px;">{% if inventory.defference > 0 %}+{% endif %}{{inventory.defference}}</td>                  
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    </div>
+</div>
+
+{% endblock %}

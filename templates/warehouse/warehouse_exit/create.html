@@ -1,0 +1,626 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load i18n %}
+
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'warehouse-exit-list' %}">{% trans 'WAREHOUSE-EXIT-APPOINTMENTS' %}</a></li>
+  <li class="active">{%trans "New" %}</li>
+</ol>
+{% endblock %}
+
+
+
+<!-- <a href="{% url 'packaging-list' %}"></a> -->
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-primary">
+      <form id="sga-form" role="form" method="post" enctype="multipart/form-data">
+
+      <div class="box-header with-border">
+        <div class="pull-right">
+        <input type="submit" name="status" class="btn btn-primary btn-lg" value="{% trans 'Save' %}">
+        <a href="/warehouse_exit" class="btn btn-lg  btn-default">{% trans 'Cancel' %}</a>
+        </div>
+      </div>
+      
+        {% csrf_token %}
+        <div class="box-body">
+          <div class="row">            
+            {% include 'form-error.html' %}
+            <div class="form-group col-md-6">
+              <label>{% trans 'Customer' %}</label>
+              <!-- <div>
+                {{ form.customer }}
+              </div> -->
+
+              <div>                
+                <select class="form-control customer" id="id_customer" name="customer" required=""> 
+                  <option value="">Seleccione...</option>                  
+                  {% for client in customers %}
+                  <option value="{{client.id}}">{{client.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="exit_date">{% trans 'Exit Date' %}</label>
+              <input type="text" class="form-control" id="exit_date" name="exit_date" value="{{exit_date}}" required>
+            </div>
+            <div class="form-group input-group bootstrap-timepicker timepicker">
+              <label for="exit_hour">{% trans 'Entrance Hour' %}</label>
+              <input type="text" class="form-control input-small" id="exit_hour" name="exit_hour" value="{{exit_hour}}" required>
+            </div>
+          </div>
+
+          <div class="row">
+              <div class="col-xs-12">
+                <table data-role="w-exit-product-measurment" class="table table-bordered measurement_table">
+                  <tr>
+                    <th>{% trans 'Product Code' %}</th>
+                    <th>{% trans 'Description' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>
+                    <th>{% trans 'Prices' %}</th>
+                    <th>{% trans 'Kg Per Price' %}</th>
+                    <th>{% trans 'Boxes' %}</th>
+                    <th>{% trans 'Kg Per Box' %}</th>
+                    <th>{% trans 'Delete' %}</th>
+                  </tr>                                        
+                  {% for form in w_exit_product_measurment_form.forms %}
+                  <tr data-role="w-product-measurment-row" class="tr_body">
+                    {{ form.id }}
+                    {{ form.description.errors }}
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                    {% for field in form %}
+                    {% if not field.is_hidden %}
+                    <td>
+                      {{ field }}
+                    </td>
+                    {% endif %}
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </table>
+                {{ w_exit_product_measurment_form.management_form }}
+              </div>
+            <div class="row">
+              <!-- <div class="col-md-2">
+                <div class="form-group">
+                          <label>{% trans 'Cargo Sender' %}</label>
+                          <div>
+                            {{ form.cargo_sender }}
+                          </div>
+                        </div>
+
+              </div> -->
+              <div class="col-md-10">
+                <div class="col-md-4">
+                <h4 style="margin-left: 110px;">{% trans 'GRAND TOTAL' %}</h4>
+                </div>
+                <div class="col-md-8">
+                <table class="table calculate" id="calculate_tr" style="border-top: 3px">
+                  <tr>
+
+                    <td><input type="text" name="total_kg" class="form-control" id="exit_total_kg" readonly="true" value="0"></td>
+                    <td><input type="text" name="total_price" class="form-control" id="exit_total_price" readonly="true" value="0"></td>
+                    <td><input type="text" name="kg_per_price" class="form-control" id="exit_kg_per_price" readonly="true" value="0"></td>
+                    <td><input type="text" name="boxes" class="form-control" id="exit_boxes" readonly="true" value="0"></td>
+                    <td><input type="text" name="kg_per_boxes" class="form-control" id="exit_kg_per_boxes" readonly="true" value="0"></td>
+                    <td ></td>
+                  </tr >
+                </table>
+              </div>
+              </div>
+            </div>
+
+             <div class="row">
+              <div class="col-md-5">
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Cargo Sender' %}</label>
+                  <div>
+                    {{ form.cargo_sender }}
+                  </div>
+                </div> 
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Reference' %}</label>
+                  <div>
+                    {{ form.cust_reference }}
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-5 pull-right">
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Fleje/Sello 1' %}</label>
+                  <div>
+                    {{ form.seal1 }}
+                  </div>
+                </div>
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Fleje/Sello 2' %}</label>
+                  <div>
+                    {{ form.seal2 }}
+                  </div>
+                </div>
+            </div>
+            </div>
+
+          </div>
+
+          <div class="row">            
+            <div class="form-group col-md-3">
+              <label>{% trans 'Carrier' %}</label>
+              <div>
+                {{ form.carrier }}
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>{% trans 'Vehicle' %}</label>
+              <div>
+                {{ form.vehicle }}
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>{% trans 'Consignees' %}</label>
+              <div>
+                {{ form.consignee }}
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="license_plate">{% trans 'License Plates' %}</label>
+              <input type="text" class="form-control" id="license_plate" name="license_plate" value="{{license_plate}}" required>
+            </div>
+          </div>
+
+          <div class="row">            
+            <div class="form-group col-md-4">
+              <label>&nbsp;</label>
+
+              <input type="button" name="" value="{% trans 'VEHICLE INSPECTION' %}" class="btn btn-success" data-toggle="modal" data-target="#vehicle_inspection">
+            </div>
+
+
+          <div class="modal fade" id="vehicle_inspection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog" role="document" style="width: 1000px;">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel">{%trans 'REVISION VEHICLE INSPECTION' %}</h4>
+                </div>
+                <div class="modal hide" id="vehicle_inspection">
+
+                </div>
+                <div class="modal-body" align="center">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">     
+
+                      <table class="table">
+                        <tr> 
+                          <td></td>                        
+                          <td><h4>{%  trans 'ABLE' %}</h4></td>
+                          <td><h4>{%  trans 'NOT ABLE' %}</h4></td>
+                          <td><h4>{% trans 'NO APPLIES' %}</h4></td>
+                        </tr>                        
+                        <tr>
+                          <td><h4>{% trans 'Vehicle has Termograph' %}</h4></td>                          
+                          <td colspan="3">{{form.vehicle_temograph}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Temperature °C' %}</h4></td>
+                          <td colspan="3">{{form.temprature_cel}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Container Floor Status' %}</h4> <small>{% trans 'Clean No Stains, Odorless and No Humidity' %}</small></td>
+                          <td colspan="3">{{form.cont_flr_sta}}</td>                        
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Fasteners' %}</h4> <small>{% trans 'Mattress, Retentions Bars , Tensor, Stabilizing Bar' %}</small></td>
+
+                          <td colspan="3">{{form.fasteners}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Inside The Container is in Good Condition' %}</h4> <small>{% trans 'Spike free,screws or other element that could damage the package' %}</small></td>
+                       
+                          <td colspan="3">{{form.container_clean}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Container Clean' %}</h4> <small>{% trans 'Floor, Roof, Walls' %}</small></td>
+                          <td colspan="3">{{form.inside_container_good}}</td>                          
+
+                        </tr>
+
+                      </table>
+                      
+                       <div align="left">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="notes">{% trans 'Name Of The Driver' %}</label>
+                                {{form.driver_name}}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">F</label>
+                                {{form.temp_front}}
+                            </div>
+                          </div> 
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">M</label>
+                                {{form.temp_middle}}
+                            </div>
+                          </div> 
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">B</label>
+                                {{form.temp_back}}
+                            </div>
+                          </div>  
+                        </div>
+                         <div class="row">
+                          <div class="col-md-12">
+                          <div class="form-group">
+                            <label for="notes">{% trans 'Notes' %}</label>
+                            <textarea class="form-control" name="notes">
+                              {{object.notes}}
+                            </textarea>
+                          </div>
+                        </div>
+                          </div>
+                           <div class="row">
+                            <div class="col-md-12">
+                          <div class="form-group">
+                        <input type="checkbox" name="loading_availity" {% if object.loading_availity %} checked {% endif %} /> &nbsp;&nbsp;{% trans 'VEHICLE ABLE FOR LOADING/UNLOADING' %}
+                      </div>
+                    </div>
+                      </div> 
+                      </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <section class="wearhouse-digrame">
+                            <div class="ck-bx-list">
+                              <ul>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check">
+                                      <input type="checkbox" name="prente">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="lado_izquerdo">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="vista_inferior">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="puerta_tresera_deregha">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="duerta_tresera_inquiera">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="techa">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="puerta_referal">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="puerta">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="lado_denecha">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+
+
+                              </ul>
+                            </div>
+
+                            <figure class="wearhouse-digrame-img">
+                              <img src="{% static 'theme/img/diagrame.jpg' %}">
+                            </figure>
+
+                          </section>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <input type="hidden" name="status" value="pending" id="id_status">
+                 <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">{% trans 'Save' %}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                  </div>
+                </div>              
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+          </form>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+  {% block header-links %}
+    <style type="text/css">
+      #id_cargo_type li {
+        float: left;
+        padding: 24px;
+        list-style: none;
+      }
+    </style>
+   <link rel="stylesheet" href="{%static 'custom/warehouse/css/warehouse-entrance.css' %}"> 
+  {% endblock %}
+
+  {% block scripts %}
+  
+  <script src="{% static 'theme/js/jquery.are-you-sure.min.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/jquery.formset.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/exit_detail.js' %}"></script>
+
+  <script type="text/javascript">
+
+    function checkDecimal(evt, item, lenBeforeDecimal, lenAfterDecimal) {
+      var charCode = evt.which;
+
+      var trimmed = $(item).val().replace(/\b^0+/g, "");
+      if(checkStartsWith(trimmed, '.') == true){
+        trimmed = '0' + trimmed;
+      }  
+
+      if(charCode == 8 || charCode == 9){
+        return true;
+      } 
+
+      if(charCode == 46){
+        var dotOccurrences = (trimmed.match(/\./g) || []).length;
+
+        if(dotOccurrences != undefined && dotOccurrences == 1){
+          return false;
+        }else{
+          return true;
+        }
+      }
+
+      if (charCode > 31 && ((charCode < 48) || (charCode > 57))) {
+        return false;
+      }
+      if ($(item).val() != trimmed){
+        $(item).val(trimmed);}  
+
+        if(trimmed.indexOf('.') == -1){
+          if(trimmed.length >= parseInt(lenBeforeDecimal)){
+            return false;
+          }
+        }else{
+          var inputArr = trimmed.split(".");
+          if(inputArr[0].length > parseInt(lenBeforeDecimal) || inputArr[1].length >= parseInt(lenAfterDecimal)){
+            return false;
+          }
+        }
+
+        return true;
+      }
+      function checkStartsWith(str, prefix){
+        return str.indexOf(prefix) === 0;
+      }
+   
+    var  total_measurment_row =1 ;
+
+    var total_incidence_product_row = 1;
+
+    var total_incidence_image_row = 1;
+      
+      $("table tr[data-role='w-product-measurment-row']").formset({
+      prefix: '{{ w_exit_product_measurment_form.prefix }}',
+      addText: "{% trans "Add another" %}",
+      deleteText: "{% trans "X" %}",
+      addCssClass: "btn btn-primary add-row", 
+      // deleteCssClass: "delete-row btn btn-danger"
+      added: function(e){ 
+         e.find('.whm_total_kg').val("0")
+         e.find('.whm_tprice').val("0")
+         e.find('.whm_kg_per_price').val("0")
+         e.find('.whm_boxes').val("0")
+         e.find('.whm_kg_per_boxes').val("0")
+
+        $('.w_product_measurment').select2();
+      $("table tr[data-role='w-product-measurment-row']:last").each(function(){
+        try{
+          select = $(this).find("td:first").find('select').empty()
+          select.append('<option value="" selected="selected">---------</option>')
+                products.forEach(function(product) {
+                    select.append('<option value="'+product['id']+'" data-secription="'+product['product_description']+'">' +product['product_code']+'</option>')
+                })
+          description = select.parent().next().find('input')
+          description.val(select.find("option:selected").attr('data-secription'))
+
+        select.change(function(){
+            // index = $(this).closest('tr').index()           
+              
+              // data_check = check_previous_product_availability($(this).find("option:selected").val(),index)
+              // console.log(data_check)
+              // if(data_check==true){
+              //   $(this).val('').trigger('change');
+              //   alert("Este producto ya está seleccionado")
+              // }else{
+              description = $(this).parent().next().find('input')
+              description.val($(this).find("option:selected").attr('data-secription'))
+            // }
+            })
+        total_measurment_row = total_measurment_row + 1;
+        }
+        catch(error){
+
+         
+            }
+      })
+    },
+    removed : function () {
+        total_measurment_row  = $("table[data-role='w-product-measurment'] tr[data-role='w-product-measurment-row']:visible").length  
+        if(total_measurment_row == 1){
+          $("table[data-role='w-product-measurment'] tr[data-role='w-product-measurment-row']").find(".delete-row").css({"display": "none"}) 
+        }
+        sum_table()
+      }
+
+
+
+    });
+
+
+$(document).ready(function() {
+  $("[id$=image-clear_id]").css({'display': "none"})
+$("[id$=image-clear_id]").next().css({'display': "none"})
+  $('form').areYouSure();
+
+
+  $('#exit_date').datepicker({
+     autoclose: false,
+     format: 'yyyy-mm-dd',
+  }).datepicker("setDate", new Date());
+
+  var total_measurment_row_initial  = $("table[data-role='w-product-measurment'] tr[data-role='w-product-measurment-row']:visible").length;  
+    if(total_measurment_row_initial == 1){
+      $("table[data-role='w-product-measurment'] tr[data-role='w-product-measurment-row']").find(".delete-row").css({"display": "none"}) 
+    }
+  var total_incidence_product_row_initial = $("table[data-role='w-incidence-product'] tr[data-role='w-incidence-product-row']:visible").length;
+  if(total_incidence_product_row_initial == 1){
+          $("table[data-role='w-incidence-product'] tr[data-role='w-incidence-product-row']").find(".delete-row").css({"display": "none"}) 
+        }
+});
+
+// image load
+
+$(document).on('change', 'input[type="file"]', function(e) {
+     current = $(this)
+     add_class = current.attr("id")  
+     var file = this.files[0];
+     var ext = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase();
+     if (file && ( ext == "png" || ext == "jpeg" || ext == "jpg")) {
+       var file = this.files[0];
+       var reader = new FileReader();
+       reader.onload = function (e) {
+         var img = $('<img/>');
+         img.attr('src', e.target.result);
+         previous_image = $("."+add_class)
+         if (previous_image != null) {            
+            previous_image.remove()
+         }
+             
+         $('#product-image-carousel').trigger('add.owl.carousel', ["<div class='item "+ add_class +"'>"+ $(img)[0].outerHTML + "</div>"])
+         .trigger('refresh.owl.carousel');           $('#product-image-carousel').owlCarousel({
+           loop:true,
+           margin:10,
+           responsiveClass:true,
+           items:3,
+           dots:false,
+            nav:true,
+           responsive:{
+             0:{
+               items:1,
+               nav:true
+             },
+             600:{
+               items:3,
+               nav:false
+             },
+             1000:{
+               items:3,
+               nav:true,
+               loop:false
+             }
+           }
+         })        }        
+       reader.readAsDataURL(file);      }else{
+       alert("sorry please upload only png jpeg jpg file")
+       $('#preview_here').attr('src', '');
+     }
+   });
+  
+
+  $(document).on('click', '.remove_image', function() {
+     id = $(this) .closest('tr').find("td:first").find('input').attr('id')
+     previous_image = $("."+id)
+         if (previous_image != null) {            
+            previous_image.remove()
+            $(this).closest('tr').hide();
+            total_incidence_image_row = $("table[data-role='w-incidence-image'] tr[data-role='w-incidence-image-row']:visible").length; 
+         }    
+      });
+
+
+</script>
+{% block additional-custom-scripts %}
+{% endblock %}
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

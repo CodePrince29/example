@@ -1,0 +1,38 @@
+{% extends 'form-edit.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Vehicles' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Vehicles' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'vehicle-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{vehicle.code}}{% endblock %}
+
+{# Content block #}
+
+{% block form-fields %}
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="vehicleCode">{% trans 'Code' %}</label>
+    <input type="text" class="form-control" id="vehicleCode" name="code"  value="{{vehicle.code}}" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="vehicleDescription">{% trans 'Description' %}</label>
+    <input type="text" class="form-control" id="vehicleDescription" name="description" value="{{vehicle.description}}" required>
+  </div>
+  <div class="form-group col-md-6">
+    <label for="vehiclecapicity">{% trans 'capicity' %}</label>
+    <input type="text" class="form-control" id="vehiclecapicity" name="capicity" value="{{vehicle.capicity}}" required>
+  </div>
+</div>
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'vehicle-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/vehicle/sidebar.html' %}
+{% endblock %}

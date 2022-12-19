@@ -1,0 +1,6 @@
+.delete-row,
+.add-row {
+    display: block;
+    text-transform: capitalize;
+    margin-bottom: 7px;
+}

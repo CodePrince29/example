@@ -1,0 +1,475 @@
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% endblock %}
+
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'warehouse-exit-list' %}">{% trans 'WAREHOUSE-EXIT-APPOINTMENTS' %}</a></li>
+  <li class="active">{%trans "Edit" %}</li>
+</ol>
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-primary">
+      <table class="hide">
+           <tr data-role="w-product-measurment-row" class="tr_body empty-form">
+               {% for field in w_exit_product_measurment_form.empty_form %}
+                 {% if not field.is_hidden %}
+                   <td>
+                     {{ field }}
+                   </td>
+                 {% endif %}
+             {% endfor %}
+           </tr>
+         </table>
+
+      <form id="sga-form" role="form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+      <div class="box-header with-border">
+          <div class="pull-right">
+            <input type="hidden" name="status" value="finish" id="">
+            <input type="hidden" name="" value="{{object.status}}" id="saved_status_id">
+            <input type="button" name="status1" class="btn btn-primary btn-lg" value="{% trans 'Confirmar Salida' %}" id="exit-form-submit">
+
+            <a href="/warehouse_exit/new-warehouse-exit-list" class="btn btn-lg  btn-default">{% trans 'Cancel' %}</a>
+          </div>
+        </div>
+      
+        
+        <div class="box-body">
+          <div class="row">            
+            {% include 'form-error.html' %}
+            <div class="form-group col-md-6">
+              <label>{% trans 'Customer' %}</label>
+              <div>
+                <input type="text" name="customer_name" value="{{object.customer}}" class="form-control" readonly="true">
+                <input type="hidden" name="customer" value="{{object.customer_id}}" id="id_customer">
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="exit_date">{% trans 'Exit Date' %}</label>
+              <input type="text" class="form-control" readonly="true" id="exit_date" name="exit_date" value="{{object.exit_date| date:"Y-m-d" }}" required>
+            </div>
+            <div class="form-group input-group bootstrap-timepicker timepicker">
+              <label for="exit_hour">{% trans 'Exit Hour' %}</label>
+              <input type="text" readonly="true" class="form-control input-small" id="" name="exit_hour" value="{{object.exit_hour}}" required>
+            </div>
+          </div>
+
+          <div class="row">
+              <div class="col-xs-12">
+                <div class="table-scroll">
+                  <table data-role="w-product-measurment" class="table measurement_table">
+                    <tr>
+                      <th colspan ="2"></th>
+                      <th colspan ="2" style="text-align: center;">Mesa de Control</th> 
+                      <th colspan ="2" style="text-align: center;">
+                        {% trans 'Warehouse' %}
+                      </th> 
+                    </tr>
+                    <tr>
+                      <th>{% trans 'Product Code' %}</th>
+                      <th>{% trans 'Description' %}</th>
+                      <th>{% trans 'Boxes' %}</th>
+                      <th>{% trans 'Total Kg' %}</th>
+                      <th>{% trans 'Boxes' %}</th>
+                      <th>{% trans 'Total Kg' %}</th>
+                      
+                    </tr>   
+                    {{ w_exit_product_measurment_form.management_form }}                                     
+                    {% for form in w_exit_product_measurment_form.forms %}
+                    <tr data-role="w-product-measurment-row" class="tr_body">
+                      {{ form.id }}
+                      {% for field in form %}
+                      {% if not field.is_hidden %}
+                      <td>
+                        {{ field }}
+
+                      </td>
+                      {% endif %}
+
+                      {% endfor %}
+                      <td><input type="text" name="" value="{{form.instance.get_total_palet_boxes | unlocalize }}" class="form-control" readonly="true"></td>
+                      <td><input type="text" name="" value="{{form.instance.get_total_palet_gross_weight | unlocalize}}" class="form-control" readonly="true"></td>
+                      
+                    </tr>
+
+                    {% endfor %}
+                    <tr>
+                      <td>{{ form.cargo_type }}</td>
+                      <td><h4>{% trans 'GRAND TOTAL' %}</h4></td>
+                      <td><input type="text" name="boxes" class="form-control" id="entrance_boxes"  value="{{warehouseexit.get_exit_total_boxes| unlocalize}}"  readonly="true"></td>
+                      <td><input type="text" name="total_kg" class="form-control" id="entrance_total_kg" value="{{ warehouseexit.get_exit_total_kg | unlocalize }}"  readonly="true"></td>
+                      <td><input type="text" name="" class="form-control" id=""  value="{{warehouseexit.get_total_pallet_boxes | unlocalize}}"  readonly="true"></td>
+                      <td><input type="text" name="" class="form-control" id="" value="{{warehouseexit.get_total_pallet_gross_weight | unlocalize}}"  readonly="true"></td>
+                      <td ></td>
+                    </tr >
+                  </table>
+                </div>
+
+              </div>         
+
+             <div class="row">
+              <div class="col-md-5">
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Cargo Sender' %}</label>
+                  <div>
+                    {{ form.cargo_sender }}
+                  </div>
+                </div> 
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Reference' %}</label>
+                  <div>
+                    {{ form.cust_reference }}
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-5 pull-right">
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Fleje/Sello 1' %}</label>
+                  <div>
+                    {{ form.seal1 }}
+                  </div>
+                </div>
+              <div class="form-group col-md-6">
+                  <label>{% trans 'Fleje/Sello 2' %}</label>
+                  <div>
+                    {{ form.seal2 }}
+                  </div>
+                </div>
+            </div>
+            </div>
+
+          </div>
+
+          <div class="row">            
+            <div class="form-group col-md-3">
+              <label>{% trans 'Carrier' %}</label>
+              <div>
+                {{ form.carrier }}
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>{% trans 'Vehicle' %}</label>
+              <div>
+                {{ form.vehicle }}
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>{% trans 'Consignees' %}</label>
+              <div>
+                {{ form.consignee }}
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="license_plate">{% trans 'License Plates' %}</label>
+              <input type="text" class="form-control" id="license_plate" name="license_plate" value="{{object.get_licence_place}}" required>
+            </div>
+          </div>
+
+          <div class="row">            
+            <div class="form-group col-md-4">
+              <label>&nbsp;</label>
+
+              <input type="button" name="" value="{% trans 'VEHICLE INSPECTION' %}" class="btn btn-success" data-toggle="modal" data-target="#vehicle_inspection">
+            </div>
+
+
+          <div class="modal fade" id="vehicle_inspection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog" role="document" style="width: 1000px;">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel">{%trans 'REVISION VEHICLE INSPECTION' %}</h4>
+                </div>
+                <div class="modal hide" id="vehicle_inspection">
+
+                </div>
+                <div class="modal-body" align="center">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">     
+
+                      <table class="table">
+                        <tr> 
+                          <td></td>                        
+                          <td><h4>{%  trans 'ABLE' %}</h4></td>
+                          <td><h4>{%  trans 'NOT ABLE' %}</h4></td>
+                          <td><h4>{% trans 'NO APPLIES' %}</h4></td>
+                        </tr>                        
+                        <tr>
+                          <td><h4>{% trans 'Vehicle has Termograph' %}</h4></td>                          
+                          <td colspan="3">{{form.vehicle_temograph}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Temperature °C' %}</h4></td>
+                          <td colspan="3">{{form.temprature_cel}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Container Floor Status' %}</h4> <small>{% trans 'Clean No Stains, Odorless and No Humidity' %}</small></td>
+                          <td colspan="3">{{form.cont_flr_sta}}</td>                        
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Fasteners' %}</h4> <small>{% trans 'Mattress, Retentions Bars , Tensor, Stabilizing Bar' %}</small></td>
+
+                          <td colspan="3">{{form.fasteners}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Inside The Container is in Good Condition' %}</h4> <small>{% trans 'Spike free,screws or other element that could damage the package' %}</small></td>
+                       
+                          <td colspan="3">{{form.container_clean}}</td>
+                        </tr>
+
+                        <tr>
+                          <td><h4>{% trans 'Container Clean' %}</h4> <small>{% trans 'Floor, Roof, Walls' %}</small></td>
+                          <td colspan="3">{{form.inside_container_good}}</td>                          
+
+                        </tr>
+
+                      </table>
+                      
+                       <div align="left">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="notes">{% trans 'Name Of The Driver' %}</label>
+                                {{form.driver_name}}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">F</label>
+                                {{form.temp_front}}
+                            </div>
+                          </div> 
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">M</label>
+                                {{form.temp_middle}}
+                            </div>
+                          </div> 
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label for="notes">B</label>
+                                {{form.temp_back}}
+                            </div>
+                          </div>  
+                        </div>
+                         <div class="row">
+                          <div class="col-md-12">
+                          <div class="form-group">
+                            <label for="notes">{% trans 'Notes' %}</label>
+                            <textarea class="form-control" name="notes">
+                              {{object.notes}}
+                            </textarea>
+                          </div>
+                        </div>
+                          </div>
+                           <div class="row">
+                            <div class="col-md-12">
+                          <div class="form-group">
+                        <input type="checkbox" name="loading_availity" {% if object.loading_availity %} checked {% endif %} /> &nbsp;&nbsp;{% trans 'VEHICLE ABLE FOR LOADING/UNLOADING' %}
+                      </div>
+                    </div>
+                      </div> 
+                      </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <section class="wearhouse-digrame">
+                            <div class="ck-bx-list">
+                              <ul>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check">
+                                      <input type="checkbox" name="prente" {% if object.prente %} checked {% endif %} >
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="lado_izquerdo" {% if object.lado_izquerdo %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="vista_inferior" {% if object.vista_inferior %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="puerta_tresera_deregha" {% if object.puerta_tresera_deregha %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="duerta_tresera_inquiera" {% if object.duerta_tresera_inquiera %} checked {% endif %} >
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="techa" {% if object.techa %} checked {% endif %} >
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="puerta_referal" {% if object.puerta_referal %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="puerta" {% if object.puerta %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+                                <li>
+                                  <div class="c-ck-bx">
+                                    <label class="check ">
+                                      <input type="checkbox"  name="lado_denecha" {% if object.lado_denecha %} checked {% endif %}>
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </div>
+                                </li>
+
+
+                              </ul>
+                            </div>
+
+                            <figure class="wearhouse-digrame-img">
+                              <img src="{% static 'theme/img/diagrame.jpg' %}">
+                            </figure>
+
+                          </section>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <input type="hidden" name="status" value="finish" id="id_status">
+                 <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">{% trans 'Save' %}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                  </div>
+                </div>              
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+          </form>
+        </div>
+      </div>
+    </div>
+<style type="text/css">
+#id_cargo_type li {
+  float: left;
+padding: 24px;
+list-style: none;
+
+}
+
+.readonly_true {
+    pointer-events: none;
+    background-color: #eee;
+  }
+</style>
+ <link rel="stylesheet" href="{%static 'custom/warehouse/css/warehouse-entrance.css' %}"> 
+  {% endblock %}
+
+  {% block scripts %}
+  
+  <script src="{% static 'theme/js/jquery.are-you-sure.min.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/exit_detail.js' %}"></script>
+  <script src="{% static 'theme/js/django-formset.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/download_pdf.js' %}"></script>
+  <script type="text/javascript">
+var saved_status = $("#saved_status_id").val()
+
+if(saved_status != "ManeuverComplete"){
+  // $("#exit-form-submit").addClass("hide")
+  // $('input[type=text]').addClass("readonly", "true")
+  // $('textarea').addClass("readonly", "true")
+
+  // $('input[type=number]').addClass("readonly", "true")
+  // $('select').attr("disabled", "disabled")
+  // $('input[type=radio]').attr("disabled", "disabled")
+  // $('input[type=checkbox]').attr("disabled", "disabled")
+
+
+}
+$("#exit-form-submit").click(function(){
+  $("#id_status").val("finish")
+  
+  if ($('form').valid()){
+    $.LoadingOverlay("show");
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", ""); 
+    xhr.responseType= 'blob';
+    xhr.onload = function(event){ 
+        $.LoadingOverlay("hide");
+        download_pdf(event.target.response, "Salida_{{object.id}}_"+new Date().toLocaleDateString()+".pdf")
+        window.location = '/warehouse_exit/new-warehouse-exit-list';
+    }; 
+    // or onerror, onabort
+    var formData = new FormData(document.getElementById("sga-form")); 
+    xhr.send(formData);
+  }
+  else{
+    $('form').validate()
+  }
+
+})
+
+jQuery.extend(jQuery.validator.messages, {
+  required: "Requerida"
+})
+
+
+</script>
+{% block additional-custom-scripts %}
+{% endblock %}
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

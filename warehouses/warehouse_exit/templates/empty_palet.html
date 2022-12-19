@@ -1,0 +1,112 @@
+<div class="hide empty_pallate_detail_form">    
+
+  <div class="row col-xs-12 table-row">
+      <input type="hidden" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-id" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-id" >
+    <div class="col-sm-2 form-group pallet_column">      
+      <input type="text" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-palet_lot" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-palet_lot" readonly="" class="form-control palet_lot" maxlength="255">
+
+    </div>
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="text" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-boxes" value="0" readonly="" class="form-control boxes required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-boxes">
+    </div>
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="text" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-box_kg" value="0" readonly="" class="form-control box_kg required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-box_kg">
+    </div>
+
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <select name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-warehouse" class="form-control warehouse required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-warehouse">
+        <option value="" selected="">---------</option>
+        {% for warehouse in warehouses %}
+        <option value="{{warehouse.id}}">{{ warehouse.code }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-sm-2 form-group pallet_column">
+      <select name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-rack_number" class="form-control rack_number required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-rack_number">
+        <option value="" selected="">---------</option>
+        {% for rack_number in sections %}
+        <option value="{{rack_number.id}}">{{rack_number.index}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <select name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-location" class="form-control location required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-location">
+        <option value="" selected="">---------</option>
+        {% for location in locations %}
+        <option value="{{location.id}}">{{location.location_number}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="text" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-cost_lot" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-cost_lot" class="form-control cost_lot required-field required-pallet" maxlength="255">
+    </div>
+
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="text" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-exp_date" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-exp_date" class="form-control exp_date datepicker" maxlength="255">
+    </div>
+
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="number" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-gross_weight" value="0.0" step="0.01" class="form-control gross_weight required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-gross_weight">
+    </div>
+
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="number" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-net_weight" value="0.0" step="0.01" class="form-control net_weight required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-net_weight">
+    </div>
+
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="number" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-invoice_weight" value="0" step="0.01" class="form-control invoice_weight required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-invoice_weight">
+    </div>
+
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="number" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-retained_quantity" value="0" class="form-control retained_quantity required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-retained_quantity" readonly="">
+    </div>
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <input type="text" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-retained_reason" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-retained_reason" class="form-control retained_reason" maxlength="255">
+    </div>
+
+    <div class="col-sm-2 form-group pallet_column">
+      <select name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-inventory" class="form-control inventory required-field required-pallet" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-inventory">
+        <option value="" selected="">---------</option>
+
+        {% for inventory in inventories %}
+        <option value="{{inventory.id}}">{{inventory.product.product_code}}</option>
+        {% endfor %} 
+
+      </select>
+    </div>
+
+    <div class="col-sm-2 form-group pallet_column delete-block">
+      <input type="checkbox" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-DELETE" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-__prefixe__-DELETE">
+    </div>
+
+
+    <div class="col-sm-2 form-group pallet_column">
+      <a href="javascript:void(0)" class="btn btn-primary appDetails" style="margin-top: -25px;">Mapa</a>
+    </div>
+    <a class="delete-row remove-form-row-pallet" href="javascript:void(0)">X</a>
+  </div>
+</div>

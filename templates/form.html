@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block header-links %}
+  {% load staticfiles %}
+  {% load i18n %}
+{% endblock %}
+
+{% block content-header %}
+<h1>
+  {% block header-title %}{% endblock %}
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% block breadcrumb-category-url %}{% endblock %}">{% block breadcrumb-category %}{% endblock %}</a></li>
+  <li class="active">{% block breadcrumb-specific %}{% endblock %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <!-- left column -->
+  <div class="col-md-12">
+    <!-- general form elements -->
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">{% block form-box-title %}{% endblock %}</h3>
+      </div>
+      <!-- /.box-header -->
+      <!-- form start -->
+      <form id="sga-form" role="form" method="post">
+        {% csrf_token %}
+        <div class="box-body">
+          <div class="row">
+            {% block form-fields-col-width %} <!-- default is <div class="col-md-6"> in form html files -->
+            {% endblock %}
+              {% include 'form-error.html' %}
+              {% block form-fields %}
+              {% endblock %}
+            </div>
+
+            <div class="col-md-6">
+              <button type="submit" id="form-submit-btn" class="btn btn-lg btn-primary">{% trans 'Save' %}</button>
+              <button type="button" id="form-cancel-btn" class="btn btn-lg">{% trans 'Cancel' %}</button>
+            </div>
+          </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer"></div>
+      </form>
+    </div>
+    <!-- /.box -->
+
+  </div>
+</div>
+<!-- /.row -->
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+  $("#productPackagesPerBed,#productBedsPerPallet").blur(function(){
+    prod_pack = $("#productPackagesPerBed").val()
+    prod_bed = $("#productBedsPerPallet").val()
+    palet = $("#productPackagesPerPallet")
+    if ((prod_pack !='') && (prod_bed !='')){
+      palet.val(parseInt(prod_pack) * parseInt(prod_bed))
+    }
+    else{
+      palet.val(0)
+    }
+
+
+  })
+  $(document).ready(function() {
+    $(".mobile_number_format").inputmask("(99) 9999-999-999")
+    $('form').areYouSure();
+  });
+
+  document.getElementById("form-cancel-btn").onclick = function () {
+    location.href = "{% block cancel-url %}{% endblock %}";
+  };
+  $("#id_email").multiple_emails({
+         position: 'top', // Display the added emails above the input
+         theme: 'bootstrap', // Bootstrap is the default theme
+         checkDupEmail: true // Should check for duplicate emails added
+      });
+
+  $(window).load(function() {
+        $('form').parsley();
+        Parsley.addMessages('es', {
+          defaultMessage: "Este valor parece ser inválido.",
+          type: {
+            email:        "Este valor debe ser un correo válido.",
+            url:          "Este valor debe ser una URL válida.",
+            number:       "Este valor debe ser un número válido.",
+            integer:      "Este valor debe ser un número válido.",
+            digits:       "Este valor debe ser un dígito válido.",
+            alphanum:     "Este valor debe ser alfanumérico."
+          },
+          notblank:       "Este valor no debe estar en blanco.",
+          required:       "Este valor es requerido.",
+          pattern:        "Este valor es incorrecto.",
+          min:            "Este valor no debe ser menor que %s.",
+          max:            "Este valor no debe ser mayor que %s.",
+          range:          "Este valor debe estar entre %s y %s.",
+          minlength:      "Este valor es muy corto. La longitud mínima es de %s caracteres.",
+          maxlength:      "Este valor es muy largo. La longitud máxima es de %s caracteres.",
+          length:         "La longitud de este valor debe estar entre %s y %s caracteres.",
+          mincheck:       "Debe seleccionar al menos %s opciones.",
+          maxcheck:       "Debe seleccionar %s opciones o menos.",
+          check:          "Debe seleccionar entre %s y %s opciones.",
+          equalto:        "Este valor debe ser idéntico."
+        });
+
+        Parsley.setLocale('es');
+    })
+
+
+  $('#productVarWeight').on('click',function(){
+    if($(this).prop("checked")){
+      $("#productAverageWeight").removeAttr("disabled")
+    }
+    else{
+      if ($("#productAverageWeight").prop("checked")){
+        $("#productAverageWeight").trigger("click")
+      }
+
+      $("#productAverageWeight").attr("disabled", "disabled")
+    }
+  })
+</script>
+{% block additional-custom-scripts %}
+{% endblock %}
+{% endblock %}

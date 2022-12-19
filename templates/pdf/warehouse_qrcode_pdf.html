@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Warehouse Label</title>
+ <meta charset="utf-8">
+</head>
+<body>
+	{% load i18n %}
+	{% load l10n %}
+	{% load qr_tags %}
+<table style="width: 100%; box-sizing: border-box; border-collapse: collapse;">
+	{%for depth in object_list %}
+	<tr>
+		<td style="width: 100%; padding:3px; box-sizing: border-box; vertical-align: top;">
+			<table style="width: 100%; border:1px solid #000;">
+				<tr>
+					<td style="text-align: center; font-size: 14px; font-weight: 500; min-width: 50%; padding:5px; vertical-align: top; height: 153.65px; border:none;">
+						<label style="width: 100%; font-size: 12px; text-align: left; font-weight: normal; margin: 0; line-height: normal; padding: 0;">ALMACEN</label>
+						<p style="margin: 0; line-height: normal; padding: 0;">{{depth.warehouse_location.warehouse.code}}</p>
+						<label style="width: 100%; font-size: 12px; text-align: left; font-weight: normal; margin: 0;line-height: normal; padding: 0;">RACK</label>
+						<p style="margin: 0;line-height: normal; padding: 0;">{{depth.height.section.index}}</p>
+						<label style="width: 100%; font-size: 12px; text-align: left; font-weight: normal; margin: 0;line-height: normal; padding: 0;">NIVEL</label>
+						<p style="margin: 0;line-height: normal; padding: 0;">{{depth.height.description}}</p>
+						<label style="width: 100%; font-size: 12px; text-align: left; font-weight: normal; margin: 0;line-height: normal; padding: 0;">UBICACION</label>
+						<p style="margin: 0;line-height: normal; padding: 0;">{{depth.warehouse_location}}</p>
+					</td>
+					<td style="min-width: 50%; vertical-align: top; padding:0 10px; height: 153.65px; border:none;">					
+						{% qr_from_text depth.get_rack_details size=250 %}
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+{% if print_data == 1 %}
+	<style type="text/css">
+	@page {
+		size: 4in 3.4in;
+	}
+</style>
+{% else %}
+
+<style type="text/css">
+	@page {
+		size: 4in 5in;
+	}
+</style>
+
+{% endif %}
+
+</body>
+</html>

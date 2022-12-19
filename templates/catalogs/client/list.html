@@ -1,0 +1,54 @@
+{% extends 'list.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block header-title %}{% trans 'Clients' %}{% endblock %}
+{% block breadcrumb-specific %}{% trans 'Clients' %}{% endblock %}
+
+{% block create-url %}{% url 'client-create' %}{% endblock %}
+
+{% block list-header-columns %}
+<th>{% trans 'Code' %}</th>
+<th>{% trans 'Name' %}</th>
+<th>{% trans 'Phone' %}</th>
+<th>{% trans 'Email' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block list-items %}
+{% for client in client_list %}
+    <tr>
+        <td>{{ client.client_code }}</td>
+        <td>{{ client.name }}</td>
+        <td>{{ client.contact_phone }}</td>
+        <td>{{ client.email |safe}}</td>
+        <td>
+            <a role="button" href="{% url 'client-detail' client.id %}"
+               class="btn btn-success"><i class="fa fa-edit"></i></a>
+            {%if client.can_delete%}
+              <a role="button" href="javascript:void(0)"
+               class="btn btn-danger" onclick="alert('El registro esta siendo utilizado por el Sistema y no puede ser eliminado. Verifique por favor.')"> <i
+                    class="fa fa-close"></i></a>
+              {%else%}
+              <a role="button" href="{% url 'client-delete' client.id %}"
+               class="btn btn-danger btn-delete"
+               data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                    class="fa fa-close"></i></a>
+              {%endif%}
+        </td>
+    </tr>
+{% endfor %}
+
+{% endblock %}
+
+{% block list-footer-columns %}
+<th>{% trans 'Code' %}</th>
+<th>{% trans 'Name' %}</th>
+<th>{% trans 'Phone' %}</th>
+<th>{% trans 'Email' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/client/sidebar.html' %}
+{% endblock %}

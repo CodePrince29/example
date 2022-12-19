@@ -1,0 +1,35 @@
+{% extends 'form-new.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Product Families' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Product Families' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'productfamily-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Product Family' %}{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="productfamilyCode">{% trans 'Code' %}</label>
+    <input type="text" class="form-control" id="productfamilyCode" name="code"  value="{{code}}" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-9">
+    <label for="productfamilyDescription">{% trans 'Description' %}</label>
+    <input type="text" class="form-control" id="productfamilyDescription" name="description" value="{{description}}" required>
+  </div>
+</div>
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'productfamily-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/product_family/sidebar.html' %}
+{% endblock %}

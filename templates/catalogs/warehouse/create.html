@@ -1,0 +1,150 @@
+{% extends 'form-new.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Warehouses' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Warehouses' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'warehouse-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Warehouses' %}{% endblock %}
+
+{% block form-fields-col-width %}
+<div class="col-md-12">
+{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="form-group col-md-4">
+      <label for="warehouseCode">{% trans 'Code' %}</label>
+      <input type="text" class="form-control" id="warehouseCode" name="code" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-6">
+      <label for="warehouseDescription">{% trans 'Description' %}</label>
+      <input type="text" class="form-control" id="warehouseDescription" name="description" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-3">
+    <label for="warehouseRows">{% trans 'Rows' %}</label>
+    <input type="number" min="0" class="form-control" id="warehouseRows" name="rows" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-3">
+    <label for="warehouseDepthLevels">{% trans 'Depth Levels' %}</label>
+    <input type="number" min="0" class="form-control" id="warehouseDepthLevels" name="depth_levels" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-3">
+    <label for="warehouseHeightLevels">{% trans 'Height Levels' %}</label>
+    <input type="number" min="0" class="form-control" id="warehouseHeightLevels" name="height_levels" required>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-md-3">
+    <label for="warehouseSectionsPerRow">{% trans 'Sections Per Row' %}</label>
+    <input type="number" min="0" class="form-control" id="warehouseSectionsPerRow" name="sections_per_row" required>
+  </div>
+  <div class="form-group col-md-3">
+    <label for="warehouseSectionsPerRow">{% trans 'Total Locations' %}</label>
+    <input type="number" min="0" class="form-control" id="warehouseLocations" readonly required>
+  </div>
+</div>
+<input type="hidden" id="warehouseDimDescriptions" name="descriptions" required>
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'warehouse-list' %}{% endblock %}
+
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/warehouse/sidebar.html' %}
+{% endblock %}
+
+{% block additional-custom-scripts %}
+<script>
+var warehouseDimensionDescriptions = {
+  "rows": {},
+  "depth_levels": {},
+  "height_levels": {}
+};
+
+function calculateLocations() {
+  var locations = $('#warehouseRows').val() * $('#warehouseSectionsPerRow').val()
+  * $('#warehouseDepthLevels').val() * $('#warehouseHeightLevels').val();
+  $('#warehouseLocations').val(locations);
+};
+
+function addRemoveDimensions(dimension, dimensionValue, newFieldClass, newInputId, dimensionText) {
+  // Current dimension fields generated
+  var currentDimensionCount = $("div."+newFieldClass).length;
+  // Dimension text for the labels
+  var dimensionText = "{% trans '"+dimensionText+"' %}";
+
+  // If dimension value is greater than the dimension fields already generated, generate the additional ones
+  if ((dimensionValue-currentDimensionCount) > 0){
+    for (var i=1; i<=(dimensionValue-currentDimensionCount); i++){
+        var $newfield = $("<div class='form-group col-md-3 "+newFieldClass+"'><label for='"+newInputId+(currentDimensionCount+i)+"'>"+dimensionText+" #"+(currentDimensionCount+i)+" {% trans 'Description' %}</label><input type='text' class='form-control "+newFieldClass+"' id='"+newInputId+(currentDimensionCount+i)+"' required></div>");
+        $(dimension).parent().parent().append($newfield);
+    }
+  }
+  // If dimension value is less than the dimension fields already generated, remove the obsolete ones, starting from the end.
+  if ((dimensionValue-currentDimensionCount) < 0){
+    for (var i=1; i<=(currentDimensionCount-dimensionValue); i++){
+        $("div."+newFieldClass).last().remove();
+    }
+  }
+}
+
+function saveDimensionDescriptions(dimensionName, dimensionFieldClass, inputId) {
+  warehouseDimensionDescriptions[dimensionName] = {};
+
+  $("input."+dimensionFieldClass).each(function(){
+    var key = $(this).attr('id').replace(inputId, "");
+    warehouseDimensionDescriptions[dimensionName][key] = $(this).val();
+  });
+}
+
+$('#warehouseRows').change(function(){
+  addRemoveDimensions($('#warehouseRows'), $('#warehouseRows').val(), 'new-rows', 'row', 'Row');
+  // Warehouse Locations calucator
+  calculateLocations();
+});
+
+$('#warehouseDepthLevels').change(function(){
+  addRemoveDimensions($('#warehouseDepthLevels'), $('#warehouseDepthLevels').val(), 'new-depth', 'depth_level', 'Depth Level');
+  // Warehouse Locations calucator
+  calculateLocations();
+});
+
+$('#warehouseHeightLevels').change(function(){
+  addRemoveDimensions($('#warehouseHeightLevels'), $('#warehouseHeightLevels').val(), 'new-height', 'height_level', 'Height Level');
+  // Warehouse Locations calucator
+  calculateLocations();
+});
+
+$('#warehouseSectionsPerRow').change(function(){
+  calculateLocations();
+});
+
+$('#sga-form').submit( function(){
+  var json_obj;
+  saveDimensionDescriptions("rows", 'new-rows', 'row');
+  saveDimensionDescriptions("depth_levels", 'new-depth', 'depth_level');
+  saveDimensionDescriptions("height_levels", 'new-height', 'height_level');
+  // json_obj = encodeURIComponent(JSON.stringify(warehouseDimensionDescriptions));
+  json_obj = JSON.stringify(warehouseDimensionDescriptions);
+  $('#warehouseDimDescriptions').val(json_obj);
+  // console.log($('#warehouseDimDescriptions').val());
+  // console.log(json_obj);
+  // event.preventDefault();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'form-edit.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Services' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Services' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'service-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{service.code}}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{{service.code}}{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="serviceCode">{% trans 'Code' %}</label>
+    <input type="text" class="form-control" id="serviceCode" name="code"  value="{{service.code}}" required>
+  </div>
+  <div class="form-group col-md-6">
+      <div class="checkbox">
+        <label for="serviceBillable">
+          {% if service.billable %}
+          <input type="checkbox" id="serviceBillable" name="billable" checked="{{service.billable}}">
+          {% else %}
+          <input type="checkbox" id="serviceBillable" name="billable">
+          {% endif %}
+          {% trans 'Service Billable To Customer' %}
+        </label>
+      </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="form-group col-md-10">
+    <label for="serviceDescription">{% trans 'Description' %}</label>
+    <input type="text" class="form-control" id="serviceDescription" name="description" value="{{service.description}}" required>
+  </div>
+</div>
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'service-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/service/sidebar.html' %}
+{% endblock %}

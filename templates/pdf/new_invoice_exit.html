@@ -1,0 +1,138 @@
+{% extends 'pdf/header_repeat_base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+<div id="header_content">
+    <table class="firstBlock" style="width:100%; vertical-align: top;">
+        <tr>
+        <td style="width: 50%; height: 100px;" align="left">
+            <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+        </td>
+        <td style="width:50%; ">
+            <h2 style="font-size:30px; margin-top:-60px; margin-bottom:10px;" align="right">{% trans 'Exit Invoice' %} </h2>
+            <table width="100%" align="right" style="font-size:14px;">
+                <tr>
+                    <td width="40%" align="right"><strong>{% trans 'Print Date Time' %}</strong></td>
+                    <td width="60%" align="right">{{print_datetime |date:"d-m-Y H:i" }} </td>
+                </tr>
+                <tr>
+                    <td width="50%" align="right">{% trans "Exit Id" %} #</td>
+                    <td width="50%" align="center">{{entrans_id}}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    </table>
+    <table style="width:100%; margin:30px 0;">
+        <tr>
+            <td class="td_style">{% trans "Customer" %}: {{client_code}}</td>
+            <td class="td_style"></td>            
+            <td class="td_style">{% trans "Name Of The Driver" %}:&nbsp;&nbsp; {{object.driver_name}}</td>
+            <td class="td_style"></td>
+        </tr>
+        <tr>
+            <td class="td_style">{{customer_name}}</td>
+            <td class="td_style"></td>            
+            <td class="td_style">{% trans "Carrier" %}:&nbsp;&nbsp;{{transportistas}}</td>
+            <td class="td_style"></td>
+        </tr>
+        <tr>
+            <td class="td_style">{% trans "Cargo Sender" %}: {{object.cargo_sender}}</td>
+            <td class="td_style"></td>            
+            <td class="td_style">{% trans "Transport" %}:&nbsp;&nbsp;{{transporte}}</td>
+            <td class="td_style"></td>
+        </tr>
+        <tr>
+            <td class="td_style">{% trans "Reference" %}:&nbsp;&nbsp;{{object.cust_reference}}</td>
+            <td class="td_style"></td>            
+            <td class="td_style">{% trans "License Plates" %}:&nbsp;&nbsp;{{placas}}</td>
+            <td class="td_style"></td>
+        </tr>
+        <tr>
+            <td class="td_style"></td>
+            <td class="td_style"></td>            
+            <td class="td_style">{% trans "Temprature F/M/B" %}:&nbsp;&nbsp; {{object.temp_front|unlocalize}}/{{object.temp_middle|unlocalize}}/{{object.temp_back|unlocalize}}</td>
+            <td class="td_style"></td>
+        </tr>
+
+        <tr>
+            <td class="td_style"></td>
+            <td class="td_style"></td>            
+            <td class="td_style">{% trans "Flejes/Sellos" %}:&nbsp; {{object.seal1}} / &nbsp;{{object.seal2}}</td>
+            <td class="td_style"></td>
+        </tr>
+    </table>
+    </div>
+{% endblock %}
+{% block content-body %}
+ <div id="body_content">
+    <table style="width:100%; float:left;text-transform:uppercase; border-collapse:separate; border-spacing: 0px;">
+        <thead>
+            <tr style="border-bottom:1px solid #000;">
+
+                <td style="padding-top:3px; width: 25%; padding-bottom:-1px">
+                    {% trans "Prod. Code" %}
+                </td>
+                <td style=" padding-top:3px; width: 40%; padding-bottom:-1px">
+                    {% trans "PRODUCT DESCRIPTION" %}
+                </td>
+                <td style=" padding-top:3px; width: 15%; padding-bottom:-1px">
+                    {% trans "CAJAS" %}
+                </td>
+                <td style=" padding-top:3px; width: 20%; padding-bottom:-1px">
+                    {% trans "KILOGRAMOS" %}
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for confirm_product in  measurement_products %}
+
+            <tr style="border-bottom:1px solid #000;">
+                <td style="padding-top:3px; width: 25%; padding-bottom:-1px" >
+                    {{confirm_product.product__product_code }}</td>
+                <td style="padding-top:3px; width: 40%; padding-bottom:-1px" >
+                    {{confirm_product.product_description }}
+                </td>
+                <td style="padding-top:3px; width: 15%; padding-bottom:-1px" >
+                {{confirm_product.total_boxes |unlocalize }}</td>
+                <td style="padding-top:3px; width: 20%; padding-bottom:-1px" >
+                {{confirm_product.total_gross_weight |unlocalize }}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <table style="width:100%;">
+        <tr>
+         <td style="padding-top:3px; width: 25%;">
+          <td style="padding-top:3px; width: 40%;">TOTALES</td>
+          <td style="padding-top:3px; width: 15%;">{{ object.get_total_pallet_boxes | unlocalize }}</td>
+          <td style="padding-top:3px; width: 20%;">{{ object.get_total_pallet_gross_weight | unlocalize }}   </td>
+        </tr>
+    </table>
+
+    <table style="font-size: 14px;">
+        <tr>
+        <td style=" padding-top: 20px; width: 50%;">{% trans "Confirmed By" %}: _____________________</td>
+        <td style="padding-right:30px; padding-top: 20px; width: 50%;" align="right">{% trans "Driver Signature" %}: _____________________</td>
+        </tr>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block content-footer %}
+<div id="footer_content">
+    Pag <pdf:pagenumber> de <pdf:pagecount>
+</div>
+{% endblock %}
+
+<style type="text/css">
+    .td_style{
+        font-size:10px; padding: 0 10px;  box-sizing: border-box; vertical-align: top;
+    }
+</style>

@@ -1,0 +1,280 @@
+{% extends 'pdf/new_horizontal_base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+<div id="header_content">
+        <table class="firstBlock" style="width:100%; vertical-align: top;">
+            <tr>
+            <td style="width: 15%; height: 100px;" align="left">
+                <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+            </td>
+
+            <td style="width: 30%;">
+                <table width="100%" align="left" style="font-size:14px;">
+                <tr>
+                    <td width="100%" align="left">{% trans "Customer" %}: {{client_code}}</td>
+                </tr>
+                <tr>
+                    <td width="100%" align="left">{{customer_name}}</td>
+                </tr>
+                <tr>
+                    <td width="100%" align="left">{% trans "Cargo Sender" %}: {{object.cargo_sender}}</td>
+
+                </tr>
+                <tr>
+                    <td width="100%" align="left">{% trans "Reference" %}:&nbsp;&nbsp;{{object.cust_reference}}</td>
+
+                </tr>
+                <tr>
+                    <td width="100%" align="left">{% trans "Consignatario" %}:&nbsp;&nbsp; {{ object.consignee.name }}</td>
+                </tr>
+            </table>
+            </td>
+
+            <td style="width:55%;"  align="left">
+                <h5 style="font-size:25px; margin-top:-60px; margin-bottom:10px;" align="left">{% trans "Pre-exit of Merchandise 'Picking' (PICK)" %} </h5>
+                <table width="100%" align="right" style="font-size:14px;">
+                    <tr>
+                        <td width="50%" align="right"><strong>{% trans 'Print Date Time' %}</strong></td>
+                        <td width="50%" align="right">{{print_datetime |date:"d-m-Y H:i"}}</td>
+                    </tr>
+                    <tr>
+                        <td width="50%" align="right">{% trans "SALIDA" %} #</td>
+                        <td width="50%" align="right">{{entrans_id}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+    </div>
+{% endblock %}
+{% block content-body %}
+<div id="body_content">
+    
+
+    <hr>
+    <table style="width:100%; float:left;text-transform:uppercase; border-collapse:collapse;">
+        <thead>
+            <tr style="">
+                <td style="padding: 5px 5px 0px 10px; width:5%;">
+                    {% trans "LINEA" %}
+                </td>
+                <td style="padding: 5px 5px 0px 10px; width:10%;">
+                    {% trans "Prod. Code" %}
+                </td>
+                <td style=" padding: 5px 5px 0px 10px; width:25%;">
+                    {% trans "PRODUCT DESCRIPTION" %}
+                </td>
+                <td style=" padding: 5px 5px 0px 10px; width:10%;">
+                    {% trans "Location" %}
+                </td>
+                <td style=" padding: 5px 5px 0px 10px; width:10%;">
+                    {% trans "CAJAS SOLICITADAS" %}
+                </td>
+                <td style=" padding: 5px 5px 0px 10px; width:10%;">
+                    {% trans "FECHA CADUCIDAD" %}
+                </td>
+                <td style=" padding: 5px 5px 0px 10px; width:10%;">
+                    {% trans "LOTE CLIENTE" %}
+                </td>
+                <td style=" padding: 5px 5px 0px 10px; width:10%;">
+                    {% trans "LOTE TARIMA" %}
+                </td>
+                <td style=" padding: 5px 5px 0px 10px; width:10%;">
+                    {% trans "CAJAS ENTREGADAS" %}
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pallet in  pallets %}         
+            {% if forloop.counter|divisibleby:2 %}
+                {% trans "" as background_color %}
+            {% else %}
+             {% trans "background-color: #D8D8D8;" as background_color %}
+                
+            {% endif %}
+            <tr style="">                
+                <td style="width:5%;padding: 5px 5px 0px 10px; {{background_color}}">
+                    {{ forloop.counter }}
+                </td>
+                <td style="width:10%;padding: 5px 5px 0px 10px; {{background_color}}">
+                    {{ pallet.werehouse_exit_confirmation.exit_product_measurement.product.product_code }}
+                </td>
+                <td style="width:25%; padding: 5px 5px 0px 10px; {{background_color}}">
+                    {{ pallet.werehouse_exit_confirmation.exit_product_measurement.product.product_description }}
+                </td>
+                <td style="width:10%; padding: 5px 5px 0px 10px; {{background_color}}">
+                    {{ pallet.location.shortcode }}
+                </td>
+                <td style="width:10%; padding: 5px 5px 0px 10px; {{background_color}}">
+                    {{ pallet.boxes | unlocalize }}
+                </td>
+
+                <td style="width:10%; padding: 5px 5px 0px 10px; {{background_color}}">
+                     {{ pallet.exp_date }}
+                </td>
+                <td style="width:10%; padding: 5px 5px 0px 10px; {{background_color}}">
+                    {{ pallet.cost_lot }}
+                </td>
+                <td style="width:10%; padding: 5px 5px 0px 10px; {{background_color}}">
+                    {{ pallet.palet_lot }}
+                </td>
+                <td style="width:10%; padding: 5px 5px 0px 10px; {{background_color}}">
+                    _______
+                </td>
+            </tr>
+            {% endfor %}
+
+            
+        </tbody>
+    </table>
+    <hr>
+    <table style="width:100%; float:left;text-transform:uppercase; border-collapse:collapse;">
+        <thead>
+            <tr style="">
+                <td style="padding-top:5px;">
+                </td>
+                <td style="padding-top:5px;">
+                </td>
+                <td style=" padding-top:5px;">
+                </td>
+                <td style=" padding-top:5px;">
+                   
+                </td>
+                <td style=" padding-top:5px;">
+                    {{object.get_total_pallet_boxes}}
+                </td>
+
+                <td style=" padding-top:5px;">
+                </td>
+                <td style=" padding-top:5px;">
+                </td>
+                <td style=" padding-top:5px;">
+                </td>
+                <td style=" padding-top:5px;">
+                </td>
+            </tr>
+        </thead>
+    </table>
+    <h5 style="text-align: center"> Resumen De Surtido </h5>
+    <hr>
+    <table style="width:100%; float:left;text-transform:uppercase; border-collapse:collapse; font-size: 13px;">
+        <thead>
+            <tr style="">
+
+                <td style="padding-top:5px; width: 25%;">
+                    {% trans "Prod. Code" %}
+                </td>
+                <td style=" padding-top:5px; width: 40%;">
+                    {% trans "PRODUCT DESCRIPTION" %}
+                </td>
+                <td style=" padding-top:5px; width: 15%;">
+                    {% trans "CAJAS SOLICITADAS" %}
+                </td>
+                <td style=" padding-top:5px; width: 20%;">
+                    {% trans "CAJAS ENTREGADAS" %}
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for confirm_product in  measurement_products %}
+
+            <tr style="">
+                <td style="padding: 5px; width: 25%;">
+                    {{confirm_product.product__product_code }}</td>
+                <td style=" padding:5px; width: 40%;">
+                    {{confirm_product.product_description }}
+                </td>
+                <td style=" padding:5px; width: 15%;">
+                {{confirm_product.total_boxes |unlocalize }}</td>
+                <td style=" padding:5px; width: 20%;">
+                    _______
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <table style="width:100%; float:left;text-transform:uppercase; font-size: 13px;">
+        <tbody>
+            <tr style="">
+                <td style="padding: 5px; width: 25%;">
+                <td style=" padding:5px; width: 40%;"> 
+                </td>
+                <td style=" padding:5px; width: 15%;">
+                {{object.get_measurement_total_boxes}}
+                <td style=" padding:5px; width: 20%;">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <br>
+    
+
+    <table style="position: absolute;">
+        <tr>
+            <td style="width: 30%;">
+            CAPTURADO POR :  ___________________
+            </td>
+            <td style="width: 30%;">
+            PICKING:  ___________________ 
+            </td>
+            <td style="width: 40%;">
+            TARIMAS :        _____________________ 
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 30%;">
+              PREPARADO POR :  ___________________
+          </td>
+            <td style="width: 30%;">
+            FECHA :           ___________________ 
+            </td>
+            <td style="width: 40%;">
+            EMPLAYADO :_____________________ 
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 30%;">
+            VERIFICADO POR :  ___________________  </td>
+            <td style="width: 30%;">
+            HORA INICIO :  ___________________ 
+            </td>
+            <td style="width: 40%;">
+            ROMANEO :_____________________ 
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 30%;">
+            CARGADO POR :  ___________________  </td>
+            <td style="width: 30%;">
+            HORA FINAL :  ___________________ 
+            </td>
+            <td style="width: 40%;">
+            OTROS :_____________________ 
+            </td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    FIRMA CLIENTE : _____________________
+</div>
+{% endblock %}
+
+{% block content-footer %}
+<div id="footer_content">
+    Pag <pdf:pagenumber> de <pdf:pagecount>
+</div>
+{% endblock %}
+
+<style type="text/css">
+    .td_style{
+        font-size:14px; padding: 0 10px;  box-sizing: border-box; vertical-align: top;
+    }
+</style>

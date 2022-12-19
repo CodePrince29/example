@@ -1,0 +1,87 @@
+
+{% block header-links %}
+ {% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% endblock %}
+<!-- {% block content %} -->
+<style>
+.section-table h3{     background-color: #214A7B;
+    color: #fff; padding: 5px;  }
+.section-table th    {     background-color: #214A7B;
+    color: #fff;  padding: 8px; text-align: center; }
+.section-table td{ text-align: center; cursor: pointer;  }
+.mark_red{background:  red !important;}
+</style>
+<div class="row-table-wrapper">
+                    <div class="warehouse-row-table">
+                      {% for row in warehouse.rows_location_entrance %}
+                      <div class="col-md-12 warehouse-row">
+                       <h2 class="row-title">{% trans 'ROW' %} {{row.index}}</h2>
+                                          
+                        {% for section in row.sections %}
+                        <div class="section-table">
+                          <h3>{% trans "Section" %} {{section.index}}</h3>
+                          <table class="table table-bordered table-hover dataTable">
+                            <thead>
+                              <tr>
+                                {% for depth in section.heights.0.depths %}
+                                <th>
+                                  {{depth.description}}
+                                </th>
+                                {% endfor %}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for height in section.heights %}
+                              <tr>
+                                {% for depth in height.depths %}
+
+                                  {%if depth.warehouse_location.has_broduct%}
+                  
+                                     <td id="{{depth.warehouse_location}}" class="warehouse-location product-already" rack-data="{{section.index}}" location-id="{{depth.warehouse_location.id}}"  data-available-weight="{{depth.warehouse_location.available_weight | unlocalize}}" data-available-volume="{{depth.warehouse_location.available_volume | unlocalize | unlocalize }}">
+                                      {{depth.warehouse_location}}
+                                    </td>
+
+                                    {%else%}
+                                      {%if depth.warehouse_location.is_locked %}
+                                         <td id="{{depth.warehouse_location}}" class="mark_red" rack-data="{{section.index}}" data-available-weight="{{depth.warehouse_location.available_weight | unlocalize }}" location-id="{{depth.warehouse_location.id}}" data-available-volume="{{depth.warehouse_location.available_volume | unlocalize }}" >{{depth.warehouse_location}}</td>
+                                      {%else%}
+                                      <td id="{{depth.warehouse_location}}" class="warehouse-location" rack-data="{{section.index}}" data-available-weight="{{depth.warehouse_location.available_weight | unlocalize }}" location-id="{{depth.warehouse_location.id}}" data-available-volume="{{depth.warehouse_location.available_volume | unlocalize }}">{{depth.warehouse_location}}</td>
+                                      {%endif%}                                      
+                                    {%endif%}
+
+                                {% endfor %}
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                        {% endfor %}
+                      </div>
+                      <div class="clearfix"></div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <script type="text/javascript">                 
+                   
+                  $(".warehouse-location").each(function(){
+                    $(this).css("background-color","#d9e0cb");
+
+                    $(this).css("opacity","1");
+                    $(this).bind('click');
+                    $(this).attr("data-target", "#locationModal");
+                  });
+                  
+                //   $.ajaxSetup({
+                //     timeout: 3000, 
+                //     retryAfter:1000
+                // });
+                                  
+                </script>
+
+<!-- {% endblock %} -->
+
+<!-- weight = $(this).attr('data-available-weight')
+volume = $(this).attr('data-available-volume')
+set_location_and_rack(parseInt($(this).text()),parseInt($(this).attr('rack-data')),weight,volume) -->

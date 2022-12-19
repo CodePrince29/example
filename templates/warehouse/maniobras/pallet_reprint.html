@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load utilities  %}
+{% load qr_tags %}
+{% load i18n %}
+
+{% block header-links %}
+	<link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+	<style type="text/css">
+		.loader-image{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 9;  }
+		.loader-image img{ position: absolute; top: 50%; left: 50%; width:100px;  }		
+	</style>
+	<style type="text/css">	
+		#scanner-preview1 {
+		    width: 100%;
+		    margin: auto;
+		    display: block;
+		    border-style: inset;
+		    padding: 0px;
+		    border: solid 1px #ddd;
+		    border-radius: 8px;
+		    box-shadow: 0px 6px 6px rgba(0,0,0,0.15);
+		}
+		.loader-image{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 9;  }
+			.loader-image img{ position: absolute; top: 50%; left: 50%; width:100px;  }
+	</style>
+
+{% endblock %}
+
+{% block content-header %}
+<h1>
+	{% block header-title %}{% endblock %}
+	<small>{% trans 'Overview' %}</small>
+</h1>
+<ol class="breadcrumb">
+	<li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+	<li class="active">{% trans 'WAREHOUSE-ENTRANCE-MANEUVERS' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="loader-section">
+ 		</div>
+
+		<div class="box">
+			<div class="box-header">
+				<h4> {% trans 'Consult Pallet' %} </h4>				
+			</div>
+
+			<div class="box-body">
+				<div class="row">
+					{% get_client as client_lists %}
+					<div class="col-md-4  form-group">
+						<label> {% trans 'Customer' %}</label>
+							<select class="form-control select" id="id_filter_customer">
+								<option value="">Seleccione...</option>
+								{% for client in client_lists %}
+								<option value="{{client.id}}">{{client.name}}</option>
+								{% endfor %}
+							</select>
+					</div>
+					<div class="col-md-3 form-group">
+						<label> {% trans 'Lote Tarima' %}</label>
+						<input type="text" class="form-control lote_tarima" maxlength="10">
+					</div>
+					<div class="col-md-3 form-group">
+						<label> {% trans 'Folio' %}</label>
+						<input type="text" class="form-control entrances" maxlength="10">
+					</div>
+					<div class="col-md-2 form-group" style="margin-top: 20px;">
+						<input type="button" value="LOCALIZAR" class="btn btn-primary id_filter_data">
+					</div>
+
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="table-responsive">
+							<table id="data-table" class="table table-bordered table-striped">
+								<thead>
+									<tr>
+										{% block list-header-columns %}
+										<th>{% trans 'Customer' %}</th>
+										<th>{% trans 'Product' %}</th>
+										<th>{% trans 'Folio' %}</th>
+										<th>{% trans 'Lote Tarima' %}</th>
+										<th>{% trans 'Lote Cliente' %}</th>
+										<th>{% trans 'Peso Bruto' %}</th>
+										<th>{% trans 'Peso Neto' %}</th>
+										<th><a role="button" href="javascript:void(0)" class="btn btn-default" id="qr_generater_button" style="width: 37px;height: 34px; border-radius: 3px; padding: 5px; border-color: yellow;"><img src="{% static 'theme/img/QR_code.png' %}" style="width: 100%;"></a></th>
+										{% endblock %}
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			
+		</div>
+	</div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+
+	<script type="text/javascript">	
+		var scanned_data=[];
+
+		$(document).ready(function() {
+
+            var datatables = $("#data-table").DataTable({
+                "ordering": false,
+                "language": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+
+
+
+		$(".id_filter_data").click(function(){
+			get_pallet_information()
+		})
+
+		$(".entrances").on('keypress keyup', function(e){
+			if($.isNumeric(e.key)){
+				return true
+			}
+			return false
+		})
+        function get_pallet_information() {
+        	$.LoadingOverlay('show',{'text': 'Cargando'})
+           	customer = $("#id_filter_customer").val()
+			lote_tarima = $(".lote_tarima").val()
+			entrance = $(".entrances").val()
+			
+			formData = {}
+			if(entrance != "" && entrance !== undefined){
+				$.extend(formData, {entrance: entrance})
+			}
+			if(lote_tarima != "" && lote_tarima !== undefined){
+				$.extend(formData, {lote_tarima: lote_tarima})
+			}
+			if(customer != "" && customer !== undefined){
+				$.extend(formData, {customer: customer})
+			}
+            jQuery.ajax({
+                url: "{% url 'pallet-information-list' %}",
+                type: "POST",
+                dataType: "json",
+                data: formData
+            } ).done( function( response )
+            {	
+            	datatables.clear().draw();
+            	$.LoadingOverlay('hide')
+                if(response.code = "200") {
+                	if(response.pallet_info.length  == 0){
+                		Swal.fire('Resultado de búsqueda', 'No se han encontrado resultados.')
+                	}else{
+                		response.pallet_info.forEach(function(pallet) {
+                		
+                		rows = [pallet.client_name,pallet.product_description,pallet.entrance,pallet.palet_lot,pallet.cost_lot,pallet.gross_weight,pallet.net_weight,'<td colspan="3"><input type="checkbox" class="pallet_checked" data-pallet='+ pallet.id+'></td>']
+                		datatables.row.add(rows).draw( false );      
+						})
+						datatables.draw()
+                	}
+                	
+                	
+                }else{
+                   Swal.fire('Resultado de búsqueda', response.message)
+                }
+                
+            })
+            
+        }
+        $(document).on('click', '.pallet_checked', function() {
+        	checked = $(this).is(':checked');
+        	pallet = $(this).attr('data-pallet')
+        	if (checked){        		
+        		scanned_data.push(pallet)
+        	}
+        	else{
+        		scanned_data.splice($.inArray(pallet, scanned_data),1);
+        	}
+        })
+
+          $(document).on('click', '#qr_generater_button', function() {
+		    
+		    if(scanned_data.length > 0){
+		      window.open("{% url 'pallet-qr-print' %}" + "?printed_data=" + scanned_data, '_blank');
+		    }
+		    else{
+		    	alert("por favor revise la paleta para reimprimir")
+		    }
+		  })
+
+        });
+
+
+ 		$("#warehouse-catalogs").addClass("active");
+ 		$("#warehouse-catalogs .print").addClass('active')
+</script>
+
+{% endblock %}
+

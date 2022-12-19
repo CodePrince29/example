@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block header-links %}
+    {% load staticfiles %}
+    {% load i18n %}
+    {% load l10n %}
+
+    <link rel="stylesheet" href="{% static 'custom/warehouse/css/warehouse-style.css' %}">
+    
+{% endblock %}
+
+{% block content-header %}
+    <h1>
+        {% trans 'Warehouse' %} {{warehouse.code}}
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+        <li><a href="{% url 'warehouse-list' %}"><i class="fa fa-dashboard"></i> {% trans 'Warehouse' %}</a></li>
+        <li class="active">{{warehouse.code}}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {% if message %}
+      <div class="alert alert-success">
+          <strong>{% trans 'Action Message' %}:</strong> {{ message }}
+      </div>
+    {% endif %}
+    {% if errors %}
+        {% trans 'Encountered Errors' %}:
+            {% for error in errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+    {% endif %}
+    <div class="row">
+      <div class="parent-loader"></div>
+      <div class="col-md-12">
+        <div class="box box-primary">             
+          <div class="box-body">
+            <div id="warehouse-filters" class="row">
+              <div class="col-md-12">
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Code' %}</label>
+                  <input type="text" class="form-control" value="{{warehouse.code}}" readonly="true">
+                </div>                
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Description' %}</label>
+                  <input type="text" class="form-control" value="{{warehouse.description}}" readonly="true">
+                </div>
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Total Locations' %}</label>
+                  <input type="text" class="form-control" value="{{warehouse.total_locations}}" readonly="true">
+                </div>
+              </div>              
+            </div>
+            <form id="sga-form" role="form" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+            <div class="row row-table-wrapper">
+              <div class="warehouse-row-table">
+                {% for row in warehouse.rows_locations %}
+                <div class="col-md-12 warehouse-row">                  
+                  <div class="heights-table">                    
+                    <table class="table table-bordered dataTable">
+                      <thead>
+                        <tr rowspan="1"></tr>
+                      </thead>
+                      <tbody>
+                        {% for height in row.sections.0.heights %}
+                        <tr>
+                          <th>{{height.description}}</th>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  {% for section in row.sections %}
+                  {%if forloop.counter != 1 %}
+                  <div class="section-table hide">
+                  {%else%}
+                  <div class="section-table">
+                  {%endif%}                   
+                    <table class="table table-bordered table-hover dataTable custromtable table_{{row.index}}" data-index="{{row.index}}">
+                      <thead>
+                        <tr>
+                          {% for depth in section.heights.0.depths %}
+                          <th>
+                            {{depth.description}}
+                            <hr>
+                            <div class="row mr0">
+                              <div class="col-md-3 pd0 font11">Profundidad <br> (MTS)</div>
+                              <div class="col-md-3 pd0 font11">Altura  <br> (MTS) </div>
+                              <div class="col-md-3 pd0 font11">Ancho  <br> (MTS) </div>
+                              <div class="col-md-3 pd0 font11">Peso Max  <br> (KG)</div>
+                            </div>
+
+                          </th>
+                          {% endfor %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for height in section.heights %}
+                        <tr>
+                          {% for depth in height.depths %}
+                          <td id="{{depth.warehouse_location}}" class="warehouse-location" >
+                            <div class="row mr0">
+                              <div class="col-md-3 pd0">    
+                                  <input type="text" name="depth_mts" class="form-control depth_mts warehouse_update" value="{{depth.depth_mts | unlocalize}}" data-depth="{{depth.id}}" data-height="{{height.index}}" data-row="{{row.index}}" onkeypress=" return checkDecimal(event, this, 3, 2);"  id="price2">              
+                              </div>
+                              <div class="col-md-3 pd0">   
+                                <input type="text" name="height_mts" class="form-control height_mts warehouse_update" value="{{depth.height_mts | unlocalize}}" data-depth="{{depth.id}}" data-height="{{height.index}}" data-row="{{row.index}}" onkeypress=" return checkDecimal(event, this, 3, 2);"  id="price2">                              
+                              </div>
+
+                              <div class="col-md-3 pd0">
+                                <input type="text" name="width_mts" class="form-control width_mts warehouse_update" value="{{depth.width_mts | unlocalize }}" data-depth="{{depth.id}}" data-height="{{height.index}}" data-row="{{row.index}}" onkeypress=" return checkDecimal(event, this, 3, 2);"  id="price2">
+                              </div>
+                              
+                              <div class="col-md-3 pd0">    
+                                <input type="text" name="weight_kg" class="form-control weight_kg warehouse_update" value="{{depth.weight_kg | unlocalize}}" data-depth="{{depth.id}}" data-height="{{height.index}}" data-row="{{row.index}}" onkeypress=" return checkDecimal(event, this, 5, 2);"  id="price2">
+                              </div>
+                            </div>
+                        </td>
+                        {% endfor %}
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="clearfix"></div>
+              {% endfor %}
+            </div>
+          </div>
+        </form>
+        </div>
+        <div class="box-footer"></div>        
+      </div>
+    </div>
+  </div>
+<style type="text/css">
+  .validation-error{border-color: #ff0000 !important;}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+  
+  $('.warehouse-row').sort(function(a, b) {
+    if ($(a).find("h1.row-title").text().toLowerCase() < $(b).find("h1.row-title").text().toLowerCase()) {
+      return -1;
+    } else {
+      return 1;
+    }
+  }).appendTo('.row-table-wrapper');
+  $('.warehouse-row').each(function(){
+    $(this).show();
+  });
+
+
+
+});
+
+function checkDecimal(evt, item, lenBeforeDecimal, lenAfterDecimal) {
+  var charCode = evt.which;
+ 
+  var trimmed = $(item).val().replace(/\b^0+/g, "");
+  if(checkStartsWith(trimmed, '.') == true){
+    trimmed = '0' + trimmed;
+  }  
+  
+  if(charCode == 8 || charCode == 9){
+    return true;
+  } 
+
+  if(charCode == 46){
+    var dotOccurrences = (trimmed.match(/\./g) || []).length;
+    
+    if(dotOccurrences != undefined && dotOccurrences == 1){
+      return false;
+    }else{
+      return true;
+    }
+  }
+  
+  if (charCode > 31 && ((charCode < 48) || (charCode > 57))) {
+    return false;
+  }
+    if ($(item).val() != trimmed){
+        $(item).val(trimmed);}  
+  
+  if(trimmed.indexOf('.') == -1){
+    if(trimmed.length >= parseInt(lenBeforeDecimal)){
+      return false;
+    }
+  }else{
+    var inputArr = trimmed.split(".");
+    if(inputArr[0].length > parseInt(lenBeforeDecimal) || inputArr[1].length >= parseInt(lenAfterDecimal)){
+      return false;
+    }
+  }
+  
+  return true;
+}
+function checkStartsWith(str, prefix){
+  return str.indexOf(prefix) === 0;
+}
+var weight
+var volume
+$('.warehouse_update').on('change', function() {
+
+    weight = [];
+    volume = [];
+    var this_obj = $(this)
+    attr_name = $(this).attr('name')
+    current_val = $(this).val()
+    current_parent = $(this).parent()
+    current_parents = $(this).parents()
+    var tr = tr_index = current_parent.closest('tr').index()
+    var td = td_index = current_parent.closest('td').index()
+    table_id = current_parents.closest('table').attr('data-index')
+    $.LoadingOverlay('show', {
+        text: 'Procesando solicitud ...'
+    })
+    $(".table_" + table_id).each(function() {
+
+        depth_mts = $(this).find('tr:eq(' + (tr + 1) + ')').find('td:eq(' + td + ')').find('input.depth_mts')
+
+        height_mts = $(this).find('tr:eq(' + (tr + 1) + ')').find('td:eq(' + td + ')').find('input.height_mts')
+
+        width_mts = $(this).find('tr:eq(' + (tr + 1) + ')').find('td:eq(' + td + ')').find('input.width_mts')
+
+        weight_kg = $(this).find('tr:eq(' + (tr + 1) + ')').find('td:eq(' + td + ')').find('input.weight_kg')
+        if (attr_name == "depth_mts") {
+            depth_mts.val(current_val)
+        }
+
+        if (attr_name == "height_mts") {
+            height_mts.val(current_val)
+        }
+
+        if (attr_name == "width_mts") {
+            width_mts.val(current_val)
+        }
+
+        if (attr_name == "weight_kg") {
+            weight_kg.val(current_val)
+        }
+
+        depth_id = depth_mts.attr('data-depth')
+        depth_mts1 = (depth_mts.val() != "") ? depth_mts.val() : 0.0
+        height_mts1 = (height_mts.val() != "") ? height_mts.val() : 0.0
+        width_mts1 = (width_mts.val() != "") ? width_mts.val() : 0.0
+        weight_kg1 = (weight_kg.val() != "") ? weight_kg.val() : 0.0
+        get_data(depth_id, depth_mts1, height_mts1, width_mts1, weight_kg1, this_obj)
+    }).promise().done(function() {
+        setTimeout(
+            function() {
+                get_updates(weight, volume, table_id, tr, td, this_obj)
+            }, 800);
+
+
+    });
+
+});
+
+function get_updates(weight, volume, table_id, tr, td, this_obj) {
+  if (weight.length != 0) {
+    this_obj.val(0.0).addClass('validation-error')
+    alert("El peso de la ubicación debe ser mayor o igual a " + parseFloat(Math.max.apply(Math, weight)).toFixed(2) + "kg")
+  } else if (volume.length != 0) {
+    this_obj.val(0.0).addClass('validation-error')
+    alert("El volumen de la ubicación debe ser igual o mayor a " + parseFloat(Math.max.apply(Math, volume)).toFixed(2))
+  } else {
+    this_obj.removeClass('validation-error')
+  }
+  $.LoadingOverlay('hide')
+}
+
+
+async function get_data(depth_id,depth_mts1,height_mts1,width_mts1,weight_kg1,this_obj){
+   
+    await jQuery.ajax( {
+      url: "{% url 'warehouse-depth-update' %}",
+      type: "POST",
+      dataType: "json",
+
+      data: {
+        csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+        depth_id: depth_id,
+        depth_mts: depth_mts1,
+        height_mts: height_mts1,
+        width_mts: width_mts1,
+        weight_kg: weight_kg1,
+      },
+    } ).done( function( response ) {
+          if(response.code==500){
+            if(response.location_weight<0){
+              weight.push(response.available_weight)
+
+            }
+            if(response.location_volume<0){
+              volume.push(response.available_volume)
+            }
+          }
+    })
+
+    
+}
+</script>
+
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/warehouse/sidebar.html' %}
+{% endblock %}

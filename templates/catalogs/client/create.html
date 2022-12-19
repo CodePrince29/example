@@ -1,0 +1,78 @@
+{% extends 'form-new.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Clients' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Clients' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'client-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Client' %}{% endblock %}
+
+{% block form-fields-col-width %}
+<div class="col-md-12">
+{% endblock %}
+
+{% block form-fields %}
+     <div class="row">
+        <div class="form-group col-md-3">
+            <label for="clientCode">{% trans 'Code' %}</label>
+            {{form.client_code}}
+        </div>
+        <div class="form-group col-md-3">
+          <br>
+            <label for="clientCode">{% trans 'Bar Code' %}</label>
+            {{form.barcoderead}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-7">
+              <label for="clientName">{% trans 'Name' %}</label>
+              
+              {{form.name}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-7">
+              <label for="clientName">{% trans 'Login User Name' %}</label>
+              
+              {{form.username}}
+        </div>
+    </div>
+     <div class="row">
+        <div class="form-group col-md-7">
+              <label for="clientName">{% trans 'Password' %}</label>
+              
+              {{form.password}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-2">
+          <label for="clientPhone">{% trans 'Phone Number' %}</label>
+          
+          {{form.contact_phone}}
+        </div>
+        <div class="form-group col-md-5">
+            <label for="clientMail">{% trans 'E-Mail' %}</label>
+            
+            {{form.email}}
+        </div>
+        <div class="form-group col-md-5">
+            <label for="clientContactName">{% trans 'Contact Name(s)' %}</label>
+            
+            {{form.contact_name}}
+        </div>
+    </div>
+
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'client-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/client/sidebar.html' %}
+{% endblock %}

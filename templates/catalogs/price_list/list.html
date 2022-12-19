@@ -1,0 +1,50 @@
+{% extends 'list.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block header-title %}{% trans 'Pricelists' %}{% endblock %}
+{% block breadcrumb-specific %}{% trans 'Pricelists' %}{% endblock %}
+
+{% block create-url %}{% url 'pricelist-create' %}{% endblock %}
+
+{% block list-header-columns %}
+<th>{% trans 'Code' %}</th>
+<th>{% trans 'Description' %}</th>
+<th>{% trans 'Is Baseline' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block list-items %}
+{% for pricelist in pricelist_list %}
+    <tr>
+        <td>{{ pricelist.code }}</td>
+        <td>{{ pricelist.description }}</td>
+        <td>
+          {% if pricelist.is_baseline %}
+            <input type="checkbox" disabled="disabled" checked="checked">
+          {% endif %}
+        </td>
+        <td>
+            <a role="button" href="{% url 'pricelist-detail' pricelist.id %}"
+               class="btn btn-success"><i class="fa fa-edit"></i></a>
+            <a role="button" href="{% url 'pricelist-delete' pricelist.id %}"
+               class="btn btn-danger btn-delete"
+               data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                    class="fa fa-close"></i></a>
+        </td>
+    </tr>
+{% endfor %}
+{% endblock %}
+
+{% block list-footer-columns %}
+<th>{% trans 'Code' %}</th>
+<th>{% trans 'Description' %}</th>
+<th>{% trans 'Is Baseline' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/price_list/sidebar.html' %}
+{% endblock %}

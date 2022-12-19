@@ -1,0 +1,113 @@
+{% extends 'pdf/base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+
+<div style="max-width:900px;padding:20px; margin:0 auto; background:#fff; display: inline-block;">
+    <table class="firstBlock" style="width:100%; vertical-align: top;">
+        <tr>
+        <td style="width: 50%; height: 100px;" align="left">
+            <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+        </td>
+        <td style="width:50%; ">
+            <h2 style="font-size:30px; margin-top:-60px; margin-bottom:10px;" align="right">{% trans 'Reporte de Entradas' %} </h2>
+            <table width="100%" align="right" style="font-size:14px;">
+                <tr>
+                    <td width="50%" align="right"><strong>{% trans 'Print Date Time' %}</strong></td>
+                    <td width="50%" align="right">{{print_date}}</td>
+                </tr>               
+            </table>
+        </td>
+    </tr>
+    </table>
+    <br>
+    <br>
+    <div style="width:100%; float:left; min-height:560px; font-size: 13px;">
+        <table width="100%" style="text-transform:uppercase; border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th align="left">
+               {% trans 'Folio' %}
+            </th>
+            <th align="left">
+               {% trans 'Fecha' %}
+            </th>
+            <th align="left">
+               {% trans 'Cliente' %}
+            </th>
+            <th align="left">
+               {% trans 'Referencia' %}
+            </th>
+            
+            <th align="left">
+               {% trans 'Kg. Bruto' %}
+            </th>
+        </tr>
+
+        <tr style="border-bottom:1px solid #000;">
+            <th align="left">
+               {% trans 'Producto' %}
+            </th>
+            <th align="left">
+               {% trans 'Description' %}
+            </th>
+            <th align="left">
+               {% trans 'Fecha Cad' %}
+            </th>
+            <th align="left">
+               {% trans 'Lote Cte' %}
+            </th>
+            <th align="left">
+               {% trans 'Lote Tarima' %}
+            </th>
+            <th align="left">
+               {% trans 'Almacen' %}
+            </th>
+            <th align="left">
+               {% trans 'Rack' %}
+            </th>
+            <th align="left">
+               {% trans 'Ubicación' %}
+            </th>
+
+             <th align="left">
+               {% trans 'Cajas' %}
+            </th>
+        </tr>
+
+    </thead>
+    <tbody>
+   {{entrance_data|safe}}
+   <tr style="border-top:1px solid #000; padding: 5px 0;">
+            <td valign="top" > </td>
+            <td valign="top" > </td>
+            <td valign="top" > </td>
+            <td valign="top" ></td>
+             <td valign="top" >Total: {{ total_gross_weight| unlocalize}}  </td>
+            <td valign="top" > </td>
+            <td valign="top" > </td>
+            <td valign="top" > </td>
+            <td valign="top" > Total: {{total_boxes | unlocalize}}</td>
+            <!-- <td valign="top" > Total: {{ total_gross_weight| unlocalize}}</td>
+            <td valign="top" > Total: {{ total_net_weight | unlocalize}}</td> -->
+        </tr>
+    </tbody>
+    </table>
+    </div>
+
+<!-- <table style="font-size: 14px;">
+    <tr>
+    <td style=" padding-top: 100px; width: 50%;">{% trans "Confirmed By" %}: _____________________</td>
+    <td style="padding-right:30px; padding-top: 100px; width: 50%;" align="right">{% trans "Driver Signature" %}: _____________________</td>
+</tr>
+</table> -->
+</div>
+<style type="text/css">
+    @page {
+        size: landscape;
+        margin-left: 2cm;
+        margin-right: 2cm;
+    }
+</style>
+{% endblock %}

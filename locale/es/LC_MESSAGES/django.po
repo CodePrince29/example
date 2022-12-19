@@ -1,0 +1,1497 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-23 20:31+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: catalogs/clients/models.py:11 catalogs/clients/models.py:13
+#: templates/auth/detail.html:26 templates/auth/list.html:11
+#: templates/auth/list.html:36 templates/catalogs/client/create.html:28
+#: templates/catalogs/client/detail.html:28
+#: templates/catalogs/client/list.html:12
+#: templates/catalogs/client/list.html:39
+msgid "Name"
+msgstr "Nombre"
+
+#: catalogs/clients/models.py:12
+msgid "Client Code"
+msgstr "Código"
+
+#: catalogs/clients/models.py:14
+msgid "Contact Phone"
+msgstr "Tel. Contacto"
+
+#: catalogs/clients/models.py:15 templates/auth/list.html:13
+#: templates/auth/list.html:38 templates/catalogs/client/list.html:14
+#: templates/catalogs/client/list.html:41
+msgid "Email"
+msgstr "Correo Electrónico"
+
+#: catalogs/packaging/models.py:9 catalogs/price_list/forms.py:11
+#: catalogs/price_list/models.py:16 catalogs/product_family/models.py:9
+#: catalogs/service/models.py:9 catalogs/units/models.py:9
+#: catalogs/warehouse/models.py:17 templates/catalogs/client/create.html:21
+#: templates/catalogs/client/detail.html:21
+#: templates/catalogs/client/list.html:11
+#: templates/catalogs/client/list.html:38
+#: templates/catalogs/packaging/create.html:17
+#: templates/catalogs/packaging/detail.html:17
+#: templates/catalogs/price_list/detail.html:21
+#: templates/catalogs/price_list/list.html:11
+#: templates/catalogs/price_list/list.html:40
+#: templates/catalogs/product_family/create.html:17
+#: templates/catalogs/product_family/detail.html:17
+#: templates/catalogs/service/create.html:17
+#: templates/catalogs/service/detail.html:17
+#: templates/catalogs/service/list.html:11
+#: templates/catalogs/service/list.html:40
+#: templates/catalogs/unit/create.html:17
+#: templates/catalogs/unit/detail.html:17
+#: templates/catalogs/warehouse/create.html:21
+#: templates/catalogs/warehouse/list.html:11
+#: templates/catalogs/warehouse/list.html:36 templates/list.html:34
+#: templates/list.html:47
+msgid "Code"
+msgstr "Código"
+
+#: catalogs/packaging/models.py:10 catalogs/price_list/forms.py:17
+#: catalogs/price_list/models.py:17 catalogs/product_family/models.py:10
+#: catalogs/service/models.py:10 catalogs/units/models.py:10
+#: catalogs/warehouse/models.py:18
+#: templates/catalogs/general_params/create.html:23
+#: templates/catalogs/general_params/detail.html:23
+#: templates/catalogs/general_params/list.html:13
+#: templates/catalogs/general_params/list.html:38
+#: templates/catalogs/packaging/create.html:23
+#: templates/catalogs/packaging/detail.html:23
+#: templates/catalogs/price_list/detail.html:40
+#: templates/catalogs/price_list/list.html:12
+#: templates/catalogs/price_list/list.html:41
+#: templates/catalogs/product/list.html:12
+#: templates/catalogs/product/list.html:39
+#: templates/catalogs/product_family/create.html:23
+#: templates/catalogs/product_family/detail.html:23
+#: templates/catalogs/service/create.html:31
+#: templates/catalogs/service/detail.html:36
+#: templates/catalogs/service/list.html:12
+#: templates/catalogs/service/list.html:41
+#: templates/catalogs/unit/create.html:23
+#: templates/catalogs/unit/detail.html:23
+#: templates/catalogs/warehouse/create.html:27
+#: templates/catalogs/warehouse/create.html:94
+#: templates/catalogs/warehouse/list.html:12
+#: templates/catalogs/warehouse/list.html:37 templates/list.html:35
+#: templates/list.html:48
+msgid "Description"
+msgstr "Descripción"
+
+#: catalogs/price_list/forms.py:34 catalogs/price_list/models.py:41
+#: templates/catalogs/price_list/create.html:115
+#: templates/catalogs/price_list/detail.html:55
+#: templates/catalogs/pricelist_service_relation/create.html:17
+#: templates/catalogs/pricelist_service_relation/detail.html:17
+#: templates/catalogs/pricelist_service_relation/list.html:11
+#: templates/catalogs/pricelist_service_relation/list.html:36
+#: templates/catalogs/service/create.html:12
+msgid "Service"
+msgstr "Servicios"
+
+#: catalogs/price_list/forms.py:39 catalogs/price_list/models.py:42
+#: templates/catalogs/price_list/create.html:116
+#: templates/catalogs/price_list/detail.html:56
+#: templates/catalogs/pricelist_service_relation/create.html:25
+#: templates/catalogs/pricelist_service_relation/detail.html:25
+#: templates/catalogs/pricelist_service_relation/list.html:12
+#: templates/catalogs/pricelist_service_relation/list.html:37
+msgid "Price"
+msgstr "Precio"
+
+#: catalogs/price_list/models.py:13 templates/base.html:371
+#: templates/catalogs/client/create.html:32
+#: templates/catalogs/client/detail.html:32
+#: templates/catalogs/price_list/create.html:11
+#: templates/catalogs/pricelist_service_relation/create.html:29
+#: templates/catalogs/pricelist_service_relation/detail.html:29
+#: templates/catalogs/pricelist_service_relation/list.html:13
+#: templates/catalogs/pricelist_service_relation/list.html:38
+msgid "Price List"
+msgstr "Lista de Precios"
+
+#: catalogs/price_list/models.py:14 templates/catalogs/price_list/create.html:5
+#: templates/catalogs/price_list/create.html:6
+msgid "Price Lists"
+msgstr "Listas de Precios"
+
+#: catalogs/price_list/models.py:19
+msgid "Baseline Price List"
+msgstr "Lista de Precios Base"
+
+#: catalogs/price_list/models.py:20
+msgid "Use this list as baseline price list"
+msgstr "Utilizar como Lista de Precios Base"
+
+#: catalogs/product/models.py:16 templates/catalogs/product/create.html:77
+#: templates/catalogs/product/detail.html:86
+#: templates/catalogs/product/detail.html:88
+msgid "Frozen"
+msgstr "Congelado"
+
+#: catalogs/product/models.py:17 templates/catalogs/product/create.html:76
+#: templates/catalogs/product/detail.html:81
+#: templates/catalogs/product/detail.html:83
+msgid "Refrigerated"
+msgstr "Refrigerado"
+
+#: catalogs/product/models.py:21 templates/catalogs/product/create.html:22
+#: templates/catalogs/product/detail.html:22
+#: templates/catalogs/product/list.html:11
+#: templates/catalogs/product/list.html:38
+msgid "Product Code"
+msgstr "Código Producto"
+
+#: catalogs/product/models.py:26
+msgid "Customer Product Code"
+msgstr "Código Producto Cliente"
+
+#: catalogs/product/models.py:29 templates/catalogs/product/create.html:36
+#: templates/catalogs/product/detail.html:36
+#: templates/catalogs/product/list.html:13
+#: templates/catalogs/product/list.html:40
+#: templates/catalogs/warehouse/detail.html:48
+#: templates/catalogs/warehouse/detail.html:194
+msgid "Customer"
+msgstr "Cliente"
+
+#: catalogs/product/models.py:35
+msgid "Replacement Value"
+msgstr "Valor de Reposición"
+
+#: catalogs/product/models.py:37
+msgid "Storage Temperature"
+msgstr "Temperatura de Almacenamiento"
+
+#: catalogs/product/models.py:39 templates/catalogs/product/create.html:60
+#: templates/catalogs/product/detail.html:60
+msgid "Gross Weight"
+msgstr "Peso Bruto"
+
+#: catalogs/product/models.py:40 templates/catalogs/product/create.html:64
+#: templates/catalogs/product/detail.html:64
+msgid "Net Weight"
+msgstr "Peso Neto"
+
+#: catalogs/product/models.py:41 templates/catalogs/product/create.html:71
+#: templates/catalogs/product/detail.html:75
+msgid "Variable Weight"
+msgstr "Peso Variable"
+
+#: catalogs/product/models.py:43
+msgid "Storage Type"
+msgstr "Tipo de Almacenamiento"
+
+#: catalogs/product/models.py:47 templates/catalogs/product/create.html:80
+#: templates/catalogs/product/detail.html:93
+msgid "Special Observations"
+msgstr "Observaciones Especiales"
+
+#: catalogs/product/models.py:49 templates/catalogs/product/create.html:88
+#: templates/catalogs/product/detail.html:101
+msgid "Length"
+msgstr "Longitud"
+
+#: catalogs/product/models.py:50 templates/catalogs/product/create.html:92
+#: templates/catalogs/product/detail.html:105
+msgid "Width"
+msgstr "Ancho"
+
+#: catalogs/product/models.py:51 templates/catalogs/product/create.html:96
+#: templates/catalogs/product/detail.html:109
+msgid "Height"
+msgstr "Alto"
+
+#: catalogs/product/models.py:52 templates/catalogs/product/create.html:100
+#: templates/catalogs/product/detail.html:113
+msgid "Diameter"
+msgstr "Diámetro"
+
+#: catalogs/product/models.py:53
+msgid "Packages per Bed"
+msgstr "Bultos por Cama"
+
+#: catalogs/product/models.py:54
+msgid "Beds per Pallet"
+msgstr "Camas por Pallet"
+
+#: catalogs/product/models.py:55
+msgid "Packages per Pallet"
+msgstr "Bultos por Pallet"
+
+#: catalogs/product/models.py:56
+msgid "Min Expiration for Reception"
+msgstr "Caducidad Mínima para Recepción"
+
+#: catalogs/product/models.py:57
+msgid "Min Expiration for Shipping"
+msgstr "Caducidad Mínima para envío"
+
+#: catalogs/service/models.py:11
+msgid "Service Billable to the Customer"
+msgstr "Servicio Facturable al Cliente"
+
+#: catalogs/warehouse/models.py:14 templates/base.html:406
+#: templates/catalogs/warehouse/detail.html:11
+#: templates/catalogs/warehouse/detail.html:16
+#: templates/catalogs/warehouse/detail.html:168
+msgid "Warehouse"
+msgstr "Almacen"
+
+#: catalogs/warehouse/models.py:15 templates/base.html:375
+#: templates/catalogs/warehouse/create.html:6
+#: templates/catalogs/warehouse/create.html:7
+#: templates/catalogs/warehouse/create.html:12
+#: templates/catalogs/warehouse/list.html:5
+#: templates/catalogs/warehouse/list.html:6
+msgid "Warehouses"
+msgstr "Almacenes"
+
+#: catalogs/warehouse/models.py:19 templates/catalogs/warehouse/create.html:33
+msgid "Rows"
+msgstr "Renglones"
+
+#: catalogs/warehouse/models.py:20 templates/catalogs/warehouse/create.html:39
+msgid "Depth Levels"
+msgstr "Niveles Profundidad"
+
+#: catalogs/warehouse/models.py:21 templates/catalogs/warehouse/create.html:45
+msgid "Height Levels"
+msgstr "Niveles Altura"
+
+#: catalogs/warehouse/models.py:22
+msgid "Sections per Row"
+msgstr "Secciones por Renglon"
+
+#: catalogs/warehouse/models.py:44
+msgid "Warehouse Location"
+msgstr "Ubicacion Almacenes"
+
+#: catalogs/warehouse/models.py:45
+msgid "Warehouse Locations"
+msgstr "Ubicacion Almacenes"
+
+#: sga/settings.py:132
+msgid "Spanish"
+msgstr "Español"
+
+#: templates/auth/create.html:6 templates/auth/create.html:7
+#: templates/auth/detail.html:6 templates/auth/detail.html:7
+#: templates/auth/list.html:5 templates/auth/list.html:6
+#: templates/base.html:379
+msgid "Users"
+msgstr "Usuarios"
+
+#: templates/auth/create.html:12
+msgid "User"
+msgstr "Usuario"
+
+#: templates/auth/create.html:17
+msgid "User Name"
+msgstr "Nombre"
+
+#: templates/auth/create.html:24 templates/auth/detail.html:33
+msgid "First Name"
+msgstr "Primer Nombre"
+
+#: templates/auth/create.html:28 templates/auth/detail.html:37
+msgid "Last Name"
+msgstr "Apellidos"
+
+#: templates/auth/create.html:35 templates/auth/detail.html:44
+#: templates/catalogs/client/create.html:43
+#: templates/catalogs/client/detail.html:43
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: templates/auth/create.html:39 templates/auth/detail.html:48
+#: templates/auth/list.html:12 templates/auth/list.html:37
+msgid "Role"
+msgstr "Rol"
+
+#: templates/auth/create.html:46 templates/auth/detail.html:55
+msgid "Password"
+msgstr "Contraseña"
+
+#: templates/auth/create.html:50 templates/auth/detail.html:59
+msgid "Confirm Password"
+msgstr "Confirmar Contraseña"
+
+#: templates/auth/list.html:14 templates/auth/list.html:39
+#: templates/catalogs/client/list.html:15
+#: templates/catalogs/client/list.html:42
+#: templates/catalogs/general_params/list.html:14
+#: templates/catalogs/general_params/list.html:39
+#: templates/catalogs/price_list/create.html:117
+#: templates/catalogs/price_list/list.html:14
+#: templates/catalogs/price_list/list.html:43
+#: templates/catalogs/pricelist_service_relation/list.html:14
+#: templates/catalogs/pricelist_service_relation/list.html:39
+#: templates/catalogs/product/list.html:15
+#: templates/catalogs/product/list.html:42
+#: templates/catalogs/service/list.html:14
+#: templates/catalogs/service/list.html:43
+#: templates/catalogs/warehouse/list.html:14
+#: templates/catalogs/warehouse/list.html:39 templates/list.html:36
+#: templates/list.html:49
+msgid "Actions"
+msgstr "Acciones"
+
+#: templates/auth/list.html:28 templates/catalogs/client/list.html:30
+#: templates/catalogs/general_params/list.html:28
+#: templates/catalogs/packaging/list.html:24
+#: templates/catalogs/price_list/create.html:153
+#: templates/catalogs/price_list/detail.html:92
+#: templates/catalogs/price_list/list.html:32
+#: templates/catalogs/pricelist_service_relation/list.html:28
+#: templates/catalogs/product/list.html:30
+#: templates/catalogs/product_family/list.html:24
+#: templates/catalogs/service/list.html:32 templates/catalogs/unit/list.html:24
+#: templates/catalogs/warehouse/list.html:28
+msgid "Are you sure to delete this item?"
+msgstr "Está seguro de eliminar este dato?"
+
+#: templates/auth/login.html:8
+msgid "Login"
+msgstr "Acceso"
+
+#: templates/auth/login.html:38
+msgid "USER NAME"
+msgstr "Usuario"
+
+#: templates/auth/login.html:42
+msgid "PASSWORD"
+msgstr "Contraseña"
+
+#: templates/auth/login.html:45
+msgid "Submit"
+msgstr "Enviar"
+
+#: templates/base.html:58
+msgid "Toggle navigation"
+msgstr "Activar Navegación"
+
+#: templates/base.html:351
+msgid "MAIN NAVIGATION"
+msgstr "Navegación Principal"
+
+#: templates/base.html:354
+msgid "Catalogs"
+msgstr "Catálogos"
+
+#: templates/base.html:363
+msgid "General System Parameters"
+msgstr "Parámetros Generales"
+
+#: templates/base.html:364 templates/catalogs/packaging/create.html:6
+#: templates/catalogs/packaging/create.html:7
+#: templates/catalogs/packaging/create.html:12
+#: templates/catalogs/packaging/detail.html:6
+#: templates/catalogs/packaging/detail.html:7
+#: templates/catalogs/packaging/list.html:5
+#: templates/catalogs/packaging/list.html:6
+msgid "Packaging"
+msgstr "Empaques"
+
+#: templates/base.html:366 templates/catalogs/unit/create.html:6
+#: templates/catalogs/unit/create.html:7 templates/catalogs/unit/detail.html:6
+#: templates/catalogs/unit/detail.html:7 templates/catalogs/unit/list.html:5
+#: templates/catalogs/unit/list.html:6
+msgid "Units"
+msgstr "Unidades"
+
+#: templates/base.html:368 templates/catalogs/product_family/create.html:6
+#: templates/catalogs/product_family/create.html:7
+#: templates/catalogs/product_family/detail.html:6
+#: templates/catalogs/product_family/detail.html:7
+#: templates/catalogs/product_family/list.html:5
+#: templates/catalogs/product_family/list.html:6
+msgid "Product Families"
+msgstr "Familias de Productos"
+
+#: templates/base.html:370 templates/catalogs/service/create.html:6
+#: templates/catalogs/service/create.html:7
+#: templates/catalogs/service/detail.html:6
+#: templates/catalogs/service/detail.html:7
+#: templates/catalogs/service/list.html:5
+#: templates/catalogs/service/list.html:6
+msgid "Services"
+msgstr "Servicios"
+
+#: templates/base.html:381
+msgid "Vehicles"
+msgstr "Vehículos"
+
+msgid "Capicity"
+msgstr "Capacidad (TON)"
+
+msgid "capicity"
+msgstr "Capacidad (TON)"
+
+
+#: templates/base.html:382
+msgid "Carriers"
+msgstr "Transportistas"
+
+#: templates/base.html:383
+msgid "Consignees"
+msgstr "Consignatarios"
+
+#: templates/base.html:389 templates/catalogs/client/create.html:6
+#: templates/catalogs/client/create.html:7
+#: templates/catalogs/client/detail.html:6
+#: templates/catalogs/client/detail.html:7
+#: templates/catalogs/client/list.html:5 templates/catalogs/client/list.html:6
+msgid "Clients"
+msgstr "Clientes"
+
+#: templates/base.html:398 templates/catalogs/product/create.html:6
+#: templates/catalogs/product/create.html:7
+#: templates/catalogs/product/detail.html:6
+#: templates/catalogs/product/detail.html:7
+#: templates/catalogs/product/list.html:5
+#: templates/catalogs/product/list.html:6
+msgid "Products"
+msgstr "Productos"
+
+#: templates/base.html:412
+msgid "Inputs"
+msgstr "Entradas"
+
+#: templates/base.html:414
+msgid "Outputs"
+msgstr "Salidas"
+
+#: templates/base.html:415
+msgid "Relocations"
+msgstr "Reubicaciones"
+
+#: templates/base.html:416
+msgid "Incidences"
+msgstr "Incidencias"
+
+msgid "Incidence"
+msgstr "Incidencia"
+
+#: templates/base.html:417
+msgid "Maneuver"
+msgstr "Maniobras"
+
+#: templates/base.html:422
+msgid "Reports"
+msgstr "Reportes"
+
+#: templates/base.html:428
+msgid "ACTIONS"
+msgstr "Acciones"
+
+#: templates/base.html:430
+msgid "Logout"
+msgstr "Salir"
+
+#: templates/catalogs/client/create.html:12
+msgid "Client"
+msgstr "Clientes"
+
+#: templates/catalogs/client/create.html:39
+#: templates/catalogs/client/detail.html:39
+msgid "Phone Number"
+msgstr "Teléfono"
+
+#: templates/catalogs/client/create.html:47
+#: templates/catalogs/client/detail.html:47
+msgid "Contact Name(s)"
+msgstr "Nombre(s) de Contacto(s)"
+
+#: templates/catalogs/client/list.html:13
+#: templates/catalogs/client/list.html:40
+msgid "Phone"
+msgstr "Teléfono"
+
+#: templates/catalogs/general_params/create.html:6
+#: templates/catalogs/general_params/create.html:7
+#: templates/catalogs/general_params/create.html:12
+#: templates/catalogs/general_params/detail.html:6
+#: templates/catalogs/general_params/detail.html:7
+#: templates/catalogs/general_params/list.html:5
+#: templates/catalogs/general_params/list.html:6
+msgid "General Parameters"
+msgstr "Parámetros Generales"
+
+#: templates/catalogs/general_params/create.html:17
+#: templates/catalogs/general_params/detail.html:17
+#: templates/catalogs/general_params/list.html:11
+#: templates/catalogs/general_params/list.html:36
+msgid "Key"
+msgstr "Llave"
+
+#: templates/catalogs/general_params/create.html:29
+#: templates/catalogs/general_params/detail.html:29
+#: templates/catalogs/general_params/list.html:12
+#: templates/catalogs/general_params/list.html:37
+msgid "Value"
+msgstr "Valor"
+
+#: templates/catalogs/price_list/create.html:34
+#: templates/catalogs/price_list/create.html:109
+#: templates/catalogs/price_list/detail.html:49
+#: templates/catalogs/pricelist_service_relation/create.html:6
+#: templates/catalogs/pricelist_service_relation/create.html:7
+#: templates/catalogs/pricelist_service_relation/detail.html:6
+#: templates/catalogs/pricelist_service_relation/detail.html:7
+#: templates/catalogs/pricelist_service_relation/list.html:5
+#: templates/catalogs/pricelist_service_relation/list.html:6
+msgid "Price List Items"
+msgstr "Listas de Precios"
+
+#: templates/catalogs/price_list/create.html:110
+#: templates/catalogs/price_list/detail.html:50
+msgid "Add New Price List Item"
+msgstr "Listas de Precios"
+
+#: templates/catalogs/price_list/create.html:189
+msgid "Add another"
+msgstr "Añadir otro"
+
+msgid "Add Another"
+msgstr "Añadir otro"
+
+#: templates/catalogs/price_list/create.html:190
+msgid "Remove"
+msgstr "Eliminar"
+
+#: templates/catalogs/price_list/detail.html:6
+#: templates/catalogs/price_list/detail.html:7
+#: templates/catalogs/price_list/list.html:5
+#: templates/catalogs/price_list/list.html:6
+msgid "Pricelists"
+msgstr "Listas de Precios"
+
+#: templates/catalogs/price_list/detail.html:32
+#: templates/catalogs/price_list/list.html:13
+#: templates/catalogs/price_list/list.html:42
+msgid "Is Baseline"
+msgstr "Es Base"
+
+#: templates/catalogs/pricelist_service_relation/create.html:12
+msgid "Price List Item"
+msgstr "Listas de Precios"
+
+#: templates/catalogs/product/create.html:12
+#: templates/catalogs/warehouse/detail.html:69
+#: templates/catalogs/warehouse/detail.html:196
+msgid "Product"
+msgstr "Producto"
+
+#: templates/catalogs/product/create.html:26
+#: templates/catalogs/product/detail.html:26
+msgid "Customer Prod. Code"
+msgstr "Codigo Producto Cliente"
+
+#: templates/catalogs/product/create.html:30
+#: templates/catalogs/product/detail.html:30
+#: templates/catalogs/product/list.html:14
+#: templates/catalogs/product/list.html:41
+#: templates/catalogs/product_family/create.html:12
+#: templates/catalogs/warehouse/detail.html:57
+msgid "Product Family"
+msgstr "Familia de Producto"
+
+#: templates/catalogs/product/create.html:42
+#: templates/catalogs/product/detail.html:42
+msgid "Product Description as it appears in outer package label"
+msgstr "Descripción del producto como en etiqueta del paquete"
+
+#: templates/catalogs/product/create.html:46
+#: templates/catalogs/product/detail.html:46
+msgid "Replacement Values"
+msgstr "Valor de Reposición"
+
+#: templates/catalogs/product/create.html:50
+#: templates/catalogs/product/detail.html:50
+msgid "Package Type"
+msgstr "Tipo de Empaque"
+
+#: templates/catalogs/product/create.html:56
+#: templates/catalogs/product/detail.html:56
+msgid "Storage Temperature "
+msgstr "Temperatura Almacenamiento"
+
+#: templates/catalogs/product/create.html:106
+#: templates/catalogs/product/detail.html:119
+msgid "Packages Per Bed"
+msgstr "Bultos por Cama"
+
+#: templates/catalogs/product/create.html:110
+#: templates/catalogs/product/detail.html:123
+msgid "Beds Per Pallet"
+msgstr "Camas por Pallet"
+
+#: templates/catalogs/product/create.html:114
+#: templates/catalogs/product/detail.html:127
+msgid "Packages Per Pallet"
+msgstr "Bultos por Pallet"
+
+#: templates/catalogs/product/create.html:119
+#: templates/catalogs/product/detail.html:132
+msgid "Min. Expiration For Reception"
+msgstr "Caducidad Mínima para recepción"
+
+#: templates/catalogs/product/create.html:123
+#: templates/catalogs/product/detail.html:136
+msgid "Min. Expiration For Shipping"
+msgstr "Caducidad Mínima para Envío"
+
+#: templates/catalogs/service/create.html:24
+#: templates/catalogs/service/detail.html:28
+msgid "Service Billable To Customer"
+msgstr "Servicio Facturable a Cliente"
+
+#: templates/catalogs/service/list.html:13
+#: templates/catalogs/service/list.html:42
+msgid "Billable"
+msgstr "Facturable"
+
+#: templates/catalogs/unit/create.html:12
+msgid "Unit"
+msgstr "Unidad"
+
+#: templates/catalogs/warehouse/create.html:51
+msgid "Sections Per Row"
+msgstr "Secciones por Renglón"
+
+#: templates/catalogs/warehouse/create.html:55
+#: templates/catalogs/warehouse/list.html:13
+#: templates/catalogs/warehouse/list.html:38
+msgid "Total Locations"
+msgstr "Posiciones Totales"
+
+#: templates/catalogs/warehouse/create.html:89
+msgid "\"+dimensionText+\""
+msgstr "\"+dimensionText+\""
+
+#: templates/catalogs/warehouse/detail.html:15 templates/form.html:14
+#: templates/list.html:15
+msgid "Home"
+msgstr "Inicio"
+
+#: templates/catalogs/warehouse/detail.html:25
+msgid "Action Message"
+msgstr "Acciones"
+
+#: templates/catalogs/warehouse/detail.html:29
+msgid "Encountered Errors"
+msgstr "Errores encontrados"
+
+#: templates/catalogs/warehouse/detail.html:78
+msgid "Filter"
+msgstr "Filtrar"
+
+#: templates/catalogs/warehouse/detail.html:79
+msgid "Clean"
+msgstr "Limpiar"
+
+#: templates/catalogs/warehouse/detail.html:88
+msgid "ROW"
+msgstr "RENGLON"
+
+#: templates/catalogs/warehouse/detail.html:93
+msgid "Levels"
+msgstr "Niveles"
+
+msgid "Level"
+msgstr "Nivel"
+
+#: templates/catalogs/warehouse/detail.html:107
+#: templates/catalogs/warehouse/detail.html:176
+msgid "Section"
+msgstr "Rack"
+
+#: templates/catalogs/warehouse/detail.html:159
+msgid "Close"
+msgstr "Cerrar"
+
+#: templates/catalogs/warehouse/detail.html:161
+msgid "Position ID"
+msgstr "Posición ID"
+
+#: templates/catalogs/warehouse/detail.html:172
+msgid "Row"
+msgstr "Renglón"
+
+#: templates/catalogs/warehouse/detail.html:180
+msgid "Height Level"
+msgstr "Nivel Altura"
+
+#: templates/catalogs/warehouse/detail.html:184
+msgid "Depth Level"
+msgstr "Nivel Profundidad"
+
+#: templates/catalogs/warehouse/detail.html:195
+msgid "Prod Code"
+msgstr "Productos"
+
+#: templates/catalogs/warehouse/detail.html:197
+msgid "Date Entered"
+msgstr "Fecha Igreso"
+
+#: templates/catalogs/warehouse/detail.html:198
+msgid "Lot"
+msgstr "Lote"
+
+#: templates/catalogs/warehouse/detail.html:199
+msgid "Exp. Date"
+msgstr "Fecha Caducidad"
+
+#: templates/catalogs/warehouse/detail.html:200
+msgid "Weight KG"
+msgstr "Peso KG"
+
+#: templates/catalogs/warehouse/detail.html:201
+msgid "Dimension M3"
+msgstr "Dimensiones M3"
+
+#: templates/form-edit.html:12
+msgid "Edit"
+msgstr "Editar"
+
+#: templates/form-new.html:12
+msgid "Create New"
+msgstr "Crear Nuevo"
+
+#: templates/form-new.html:13
+msgid "New"
+msgstr "Nuevo"
+
+#: templates/form.html:43
+msgid "Save"
+msgstr "Guardar"
+
+#: templates/form.html:44
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: templates/list.html:12
+msgid "Overview"
+msgstr "Resumen"
+
+#: templates/list.html:26
+msgid "New Record"
+msgstr "Nuevo Registro"
+
+#: users/forms.py:45
+msgid "Passwords don't match. Please enter both fields again."
+msgstr "Contraseñas no coinciden. Por favor capturar nuevamente."
+
+#:carriers/list.html
+
+msgid "Carrier"
+msgstr "Transportista"
+
+msgid "Carrier Code"
+msgstr "Código"
+
+msgid "Carrier Telephone"
+msgstr "Teléfono de Contacto"
+
+msgid "Carrier Address"
+msgstr "Dirección"
+
+msgid "Carrier AttendPerson"
+msgstr "Persona que atiende"
+
+msgid "Carrier Name"
+msgstr "Nombre"
+
+msgid "Carrier Email"
+msgstr "Correo Electrónico"
+
+
+
+msgid "Consignee Code"
+msgstr "Código"
+
+msgid "Consignee Name"
+msgstr "Nombre Consignatario"
+
+
+msgid "Contact Phone Number"
+msgstr "Telefono de contacto"
+
+msgid "Consignee Customer"
+msgstr "Cliente"
+
+
+msgid "Signature"
+msgstr "Firma"
+
+msgid "Photo Evidence"
+msgstr "Evidencia Fotográfica"
+
+msgid "VEHICLE INSPECTION"
+msgstr "REVISION DEL VEHICULO"
+
+msgid "REGISTER INCIDENCE"
+msgstr "REGISTRAR INCIDENCIA"
+
+msgid "CONFIRM ENTRANCE"
+msgstr "CONFIRMAR ENTRADA"
+
+msgid "Vehicle"
+msgstr "Transporte"
+
+msgid "License Plates"
+msgstr "Placas"
+
+msgid "Total Kg"
+msgstr "Kg Totales"
+
+msgid "Prices"
+msgstr "Piezas"
+
+msgid "Kg Per Price"
+msgstr "Kg X Pieza"
+
+
+msgid "Kg Per Box"
+msgstr "Kg X  Caja"
+
+msgid "Entrance Date"
+msgstr "Fecha de cita"
+
+msgid "Entrance Hour"
+msgstr "Hora de cita"
+
+msgid "Exit Hour"
+msgstr "Hora"
+
+msgid "GRAND TOTAL"
+msgstr "GRAN TOTAL"
+
+
+msgid "ABLE"
+msgstr "APTO"
+
+msgid "NOT ABLE"
+msgstr "No APTO"
+
+msgid "NO APPLIES"
+msgstr "NO APLICA"
+
+
+
+msgid "Vehicle has Termograph"
+msgstr "Vehículo Cuenta Termograficador"
+
+msgid "Temperature °C"
+msgstr "Temperatura °C"
+
+msgid "Container Floor Status"
+msgstr "Estado Piso remolque"
+
+msgid "Clean No Stains, Odorless and No Humidity"
+msgstr "Limpio sin manchas, inodoro y sin humedad"
+
+
+msgid "Fasteners"
+msgstr "Aditamentos de Sujeción"
+
+
+msgid "Inside The Container is in Good Condition"
+msgstr "El Interior del compartimento de carga se encuentra en buenas condiciones"
+
+msgid "Mattress, Retentions Bars , Tensor, Stabilizing Bar"
+msgstr "Colchón, barras de retenciones, tensor, barra estabilizadora"
+
+msgid "Spike free,screws or other element that could damage the package"
+msgstr "Libre de puntillas tornillos u otro elemento que podría dañar Ios empaques"
+
+
+
+msgid "Container Clean"
+msgstr "Limpieza de contenedor"
+
+msgid "Floor, Roof, Walls"
+msgstr "Piso, techo, paredes"
+
+
+msgid "REVISION VEHICLE INSPECTION"
+msgstr "REVISIÓN DE VEHÍCULO"
+
+msgid "VEHICLE ABLE FOR LOADING/UNLOADING"
+msgstr "VEHÍCULO APTO PARA CARGA"
+
+msgid "Notes"
+msgstr "Observaciones"
+
+
+msgid "Please fill all details properlly."
+msgstr "Por favor complete todos los detalles correctamente"
+
+msgid "Please enter incidence details"
+msgstr "Por favor ingrese los detalles de incidencia"
+
+msgid "Please select product image"
+msgstr "Seleccione la imagen del producto"
+
+msgid "THE EXIT INFORMATION MATCHES PRINTED INVOICE"
+msgstr "LA INFORMACIÓN DE SALIDA COINCIDE CON LA FACTURA IMPRESA"
+
+msgid "Location"
+msgstr "Ubicación"
+
+msgid "Exit Product"
+msgstr "Producto"
+
+msgid "Cust Lot"
+msgstr "Lote Cliente"
+
+msgid "Palet Lot"
+msgstr "Lote Tarima"
+
+msgid "Expiration Date"
+msgstr "Caducidad"
+
+msgid "Net Waeight"
+msgstr "Peso Neto"
+
+msgid "Entrance Invoice Weight"
+msgstr "Cant. En Recibo"
+
+msgid "Invoice Weight"
+msgstr "Cant. Solicitada"
+
+msgid "Retained Qty"
+msgstr "Cant. retenida"
+
+msgid "Retainment Reason"
+msgstr "Motivo retención"
+
+msgid "No Product"
+msgstr "Sin producto"
+
+msgid "EXIT WITHOUT APPOINTMENT"
+msgstr "SALIDA SIN CITA"
+
+msgid "WAREHOUSE-EXIT-APPOINTMENTS"
+msgstr "SALIDA DE ALMACEN - CITAS"
+
+msgid "WAREHOUSE-ENTRANCE-APPOINTMENTS"
+msgstr "ENTRADA DE ALMACEN - CITAS"
+
+msgid "WAREHOUSE-ENTRANCE-MANEUVERS"
+msgstr "ENTRADA DE ALMACEN - MANIOBRAS"
+
+msgid "WAREHOUSE-EXIT-MANEUVERS"
+msgstr "SALIDA DE ALMACEN - MANIOBRAS"
+
+msgid "ENTRANCE WITHOUT APPOINTMENT"
+msgstr "ENTRADA SIN CITA"
+
+msgid "Check locations"
+msgstr "Consultar ubicaciones"
+
+msgid "WAREHOUSE ENTRANCE CONFIRMATION"
+msgstr "CONFIRMACIÓN DE LA ENTRADA AL ALMACÉN"
+
+msgid "WAREHOUSE EXIT CONFIRMATION"
+msgstr "CONFIRMACIÓN DE SALIDA DEL ALMACÉN"
+
+msgid "Exit Date"
+msgstr "Fecha de salida"
+
+msgid "Exit date"
+msgstr "Fecha"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Please fill all details of product code "
+msgstr "Por favor complete todos los detalles del código de producto "
+
+msgid "EXIT CONFIRMATION"
+msgstr "CONFIRMACIÓN DE SALIDA"
+
+msgid "Start Date"
+msgstr "Fecha Inicio"
+
+msgid "End Date"
+msgstr "Fecha Final"
+
+
+msgid "Mov. Type"
+msgstr "Tipo Mov."
+
+msgid "History Movements"
+msgstr "Movimientos de históricos"
+
+
+msgid "Entrance ID"
+msgstr "Folio de Entrada"
+
+msgid "Source Warehouse"
+msgstr "Almacen Origen"
+
+msgid "Source Location"
+msgstr "Ubicacion Origen"
+
+msgid "Reason for Relocation"
+msgstr "Motivo de la reubicacion"
+
+msgid "Destination Warehouse"
+msgstr "Almacen Destino"
+
+msgid "Destination Location"
+msgstr "Ubicacion Destino"
+
+msgid "Relocation Date"
+msgstr "Fecha Reubicación"
+
+msgid "NEW RELOCATIONS"
+msgstr "NUEVA REUBICACION"
+
+msgid "RELOCATIONS"
+msgstr "REUBICACIONES"
+
+msgid "FIND"
+msgstr "LOCALIZAR"
+
+msgid "Please enter filter data"
+msgstr "Por favor ingrese los datos del filtro"
+
+msgid "Accept"
+msgstr "Aceptar"
+
+msgid "Do you wish to confirm the entrance of the selected products and location?"
+msgstr "Desea Confirmar la entrada para los productos y la ubicación indicada?"
+
+msgid "Confirmation"
+msgstr "Confirmación"
+
+msgid "Do you wish to confirm the exit of the selected products and location?"
+msgstr "Desea Confirmar la salida para los productos y la ubicación indicada?"
+
+msgid "Entrance Invoice"
+msgstr "Remisión de Entrada"
+
+msgid "Exit Invoice"
+msgstr "Remisión de Salida"
+
+msgid "Print Date Time"
+msgstr "Fecha-Hora Impresión"
+
+msgid "Entrance Id"
+msgstr "Entrada"
+
+msgid "Exit ID"
+msgstr "Salida"
+
+msgid "Exit Id"
+msgstr "Folio Salida"
+
+msgid "Transport"
+msgstr "Transporte"
+
+msgid "Prod. Code"
+msgstr "CODIGO"
+
+msgid "Due Date"
+msgstr "FECHA"
+
+msgid "Cust. Lot"
+msgstr "LOTE"
+
+msgid "Warehouse Lot"
+msgstr "TARIMA"
+
+msgid "PRODUCT DESCRIPTION"
+msgstr "DESCRIPCIÓN"
+
+msgid "TOTAL QTY"
+msgstr "CANTIDAD TOTAL"
+
+msgid "WEIGHT UNIT"
+msgstr "PESO UNIDAD"
+
+msgid "TOTAL QUANTITIES"
+msgstr "CANTIDADES TOTALES"
+
+msgid "Boxes"
+msgstr "Cajas"
+
+msgid "TOTAL GROSS WEIGHT"
+msgstr "TOTAL PESO BRUTO"
+
+msgid "TOTAL NET WEIGHT"
+msgstr "TOTAL PESO NETO"
+
+msgid "Confirmed By"
+msgstr "Confirmado por"
+
+msgid "Driver Signature"
+msgstr "Firma Chofer"
+
+msgid "Confirm Exit Product"
+msgstr "Confirmar salida del producto"
+
+msgid "Confirm Product Entry"
+msgstr "Confirmar la entrada del producto"
+
+msgid "Cargo Type"
+msgstr "Tipo de carga"
+
+msgid "Cargo Sender"
+msgstr "Remitente"
+
+msgid "Name Of The Driver"
+msgstr "Nombre  del  Chofer"
+
+msgid "Temprature Front"
+msgstr "Temperatura Frente"
+
+msgid "Temprature Middle"
+msgstr "Temperatura Medio"
+
+msgid "Temprature Back"
+msgstr "Temperatura Espalda"
+
+msgid "Temprature F/M/B"
+msgstr "Temperatura F/M/B"
+
+msgid "Reference"
+msgstr "Referencia"
+
+msgid "Fleje/Sello 1"
+msgstr "Fleje/Sello 1"
+
+msgid "Fleje/Sello 2"
+msgstr "Fleje/Sello 2"
+
+msgid "Flejes/Sellos"
+msgstr "Flejes/Sellos"
+
+msgid "Location Management"
+msgstr "Administrar ubicaciones"
+
+msgid "there are products with missing data and/or location definition , please check"
+msgstr "Existen productos con datos incompletos y/o ubicación no definida , por favor verifique"
+
+
+msgid "The location is not empty , please realocate the product before blocking the location"
+msgstr "La ubicación no está vacía. Reubique el producto antes de bloquear la ubicación"
+
+msgid "The warehouse cannot be deleted because is not empty. Please realocate the products so the warehouse is empty before deleting it"
+msgstr "El almacén no puede ser eliminado ya que contiene productos. Por favor reubique el producto para que el almacén se encuentre vacío antes de eliminarlo"
+
+msgid "Picking"
+msgstr "Picking"
+
+msgid "PRINT PICKING"
+msgstr "IMPRIMIR  PICKING"
+
+msgid "Pre-exit of Merchandise 'Picking' (PICK)"
+msgstr "Pre-salida  de  Mercancia  'Picking' (PICK)"
+
+msgid "Location-Warehouse"
+msgstr "Ubicacion-Almacén"
+
+msgid "Requested Boxes"
+msgstr "Cajas  Solicitadas"
+
+msgid "Automatic Picking"
+msgstr "Picking Automático"
+
+msgid "WAREHOUSE ENTRY REPORT"
+msgstr "EXPORTAR A EXCEL"
+
+msgid "Warehouse Entrance Report"
+msgstr "Informe de entrada al almacén"
+
+msgid "Operator"
+msgstr "Operador"
+
+msgid "Field"
+msgstr "Campo"
+
+msgid "Negate"
+msgstr "Negar"
+
+msgid "Auto Pick Removed Boxes"
+msgstr "Recuperación automática de cuadros eliminados"
+
+msgid "Auto Pick Location Number"
+msgstr "Número de ubicación de selección automática"
+
+
+msgid "Inventory Report"
+msgstr "Inventario Almacén"
+
+msgid "WAREHOUSE INVENTORY REPORT"
+msgstr "INFORME DE INVENTARIO DE ALMACÉN"
+
+msgid "WAREHOUSE-INVENTORY"
+msgstr "INVENTARIO DE ALMACÉN"
+
+msgid "Warehouse Exit Report"
+msgstr "Informe de salida de almacén"
+
+
+msgid "Email address %(email)s already taken."
+msgstr "Dirección de correo electrónico %(email)s ya tomada."
+
+msgid "Login User Name"
+msgstr "Nombre de usuario para iniciar sesión"
+
+msgid "User name already exists."
+msgstr "Nombre de usuario ya existe."
+
+msgid "Boxes to collect"
+msgstr "Cajas a Recolectar"
+
+msgid "Auto Pick Removed Kg"
+msgstr "Recuperación automática de kgs eliminados:"
+
+msgid "Customer User Name"
+msgstr "Nombre de usuario del cliente"
+
+msgid "Contact Name"
+msgstr "Nombre de contacto"
+
+msgid "GENERATE PDF"
+msgstr "GENERAR PDF"
+
+msgid "WAREHOUSE EXIT REPORT"
+msgstr "INFORME DE SALIDA DEL ALMACÉN"
+
+msgid "Warehouse Occupation"
+msgstr "Ocupación Bodega"
+
+
+msgid "WAREHOUSE OCUPACION BODEGA"
+msgstr "INFORME DE OCUPACION BODEGA"
+
+msgid "Summary Entries"
+msgstr "Entradas Resumido"
+
+msgid "Summary Exit"
+msgstr "Salidas Resumido"
+
+msgid "Summary Inventory"
+msgstr "Inventario Resumido"
+
+msgid "Product Descriptions"
+msgstr "Descripcion de Producto"
+
+
+msgid "Pending Entrance Boxes"
+msgstr "En Recibo"
+
+msgid "Pending Exit Boxes"
+msgstr "En Preparacion"
+
+msgid "Pending Entrance Exit"
+msgstr "Cantidad Retenida"
+
+msgid "Retained boxes"
+msgstr "Cajas Retenidas"
+
+msgid "Available Boxes"
+msgstr "Cajas Disponibles"
+
+msgid "Rack Number"
+msgstr "Rack"
+
+msgid "Available Volume"
+msgstr "Espacio Disponible m3"
+
+msgid "Available Weight"
+msgstr "Peso Disponible Kg"
+
+msgid "Box Kg"
+msgstr "Caja Kg"
+
+msgid "Boxes KG"
+msgstr "Caja Kg"
+
+msgid "TOTAL BOX KGS"
+msgstr "CAJA TOTAL KGS"
+
+msgid "Maneuvers"
+msgstr "Maniobras"
+
+msgid "Send to Maneuvers"
+msgstr "Enviar a Maniobras"
+msgid "Pallet Confirmed"
+msgstr "Pallet Confirmado"
+
+
+msgid "CONFIRM PALLET"
+msgstr "CONFIRMAR PALLET"
+
+msgid "ROMANEO"
+msgstr "ROMANEO"
+
+msgid "Reserve/Release Product"
+msgstr "Reservar/Liberar Producto"
+
+msgid "Reserve Product"
+msgstr "Retener Producto"
+
+msgid "New Reserve"
+msgstr "Nueva Retención"
+
+msgid "Total Price"
+msgstr "Precio total"
+
+msgid "Created At"
+msgstr "Fecha de creacion"
+
+msgid "Updated At"
+msgstr "Fecha actualizada"
+
+msgid "Warehouse Exit Status"
+msgstr "Estado de salida"
+
+msgid "Warehouse Entrance Status"
+msgstr "Estado de entrada"
+
+msgid "Taking inventory"
+msgstr "Toma de Inventario"
+
+msgid "Consult Pallet"
+msgstr "Consulta Pallet"
+
+msgid "Blocked Inventory"
+msgstr "Inventario bloqueado"
+
+msgid "Warehouse Entrance"
+msgstr "Entrada de almacén"
+
+msgid "Warehouse Product Measurement"
+msgstr "Medición de producto de almacén"
+
+msgid "Warehouse Product Entrance Confirmation"
+msgstr "Confirmación de entrada de productos de almacén"
+
+msgid "Warehouse Incidence Product"
+msgstr "Producto de incidencia de almacén"
+
+msgid "Warehouse exit"
+msgstr "Salida de almacén"
+
+msgid "Warehouse Product Exit Confirmation"
+msgstr "Confirmación de salida de producto de almacén"
+
+msgid "Warehouse Inventory"
+msgstr "Inventario de almacén"
+
+msgid "Select the available time for"
+msgstr "Seleccione el tiempo disponible para"
+
+msgid "Please select branch"
+msgstr "Por favor indique la sucursal"
+
+msgid "Truck Bays"
+msgstr "Espacios de Andén"
+
+msgid "Service Interval"
+msgstr "Intervalo de Carga HR"
+
+msgid "Address"
+msgstr "Dirección"
+
+msgid "ID"
+msgstr "Identificador"
+
+msgid "Truck Bay"
+msgstr "Bahía de camiones"
+
+msgid "Contain Vehicle is loading"
+msgstr "Contiene que el vehículo se está cargando"
+
+msgid "Branch"
+msgstr "Sucursales"
+
+msgid "Warehouse Truck Bays"
+msgstr "Almacén Truck Bay"
+
+msgid "Select"
+msgstr "Seleccionar"
+
+msgid "Total Stored Boxes"
+msgstr "Total de cajas"
+
+msgid "pending"
+msgstr "Pendiente"
+
+msgid "finish"
+msgstr "Finalizado"
+
+msgid "InManeuvers"
+msgstr "En Maniobras"
+
+msgid "ManeuverComplete"
+msgstr "Maniobra Completa"
+
+
+msgid "in_receipt"
+msgstr "En Recibo"
+
+msgid "control"
+msgstr "Pre-Captura"
+
+msgid "Pallet Num."
+msgstr "Num. Tarima"
+
+msgid "Physical Total boxes"
+msgstr "Cajas Totales Fisico"
+
+msgid "Physical Gross Weight"
+msgstr "Peso Bruto Fisico"
+
+msgid "Load Inventory"
+msgstr "Cargar Inventario"
+
+msgid "Bar Code"
+msgstr "Utiliza Código de Barras"
+
+msgid "Boxes Read"
+msgstr "Códigos Leídos"
+
+msgid "Weight Read"
+msgstr "Kg. Totales"
+
+msgid "Barcode"
+msgstr "Códigos"
+
+msgid "Barcode To Use"
+msgstr "Código de barras"
+
+msgid "Control Total Boxes"
+msgstr "Controlar Cajas Totales"
+
+msgid "Control Total Kg"
+msgstr "Controlar Kg Totales"
+
+msgid "Average Weight"
+msgstr "Peso Promedio"

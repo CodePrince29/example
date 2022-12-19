@@ -1,0 +1,60 @@
+<html>
+<head>
+  <title></title>
+  <style type="text/css">
+    body {
+       padding: 0;
+       margin: 0;
+       font-family: 'Humnst777 BT';
+       -webkit-font-smoothing: antialiased;
+       width: 100% !important;
+       -webkit-text-size-adjust: none;
+       box-sizing: border-box;
+       color: #00386C;
+      }
+      table tr { page-break-inside: always; page-break-after: always; page-break-before: always; }
+      table tbody tr { page-break-inside: always; page-break-after: always; page-break-before: always; }
+      
+
+      @media print {
+        .new-page {
+          page-break-before: always;
+        }
+      }
+
+        @page{
+        size: A4;
+        
+
+      @frame footer_frame{
+        -pdf-frame-content: footer_content;
+         left: 60pt;
+         width: 512pt;
+         bottom: 10px;
+         height: 30pt;
+      }
+      @frame content_frame{
+        left: 20pt;
+        width: 512pt;
+        margin-top: 10px;
+        margin-bottom: 45px;
+        height: 620pt;
+      }
+    }
+  </style>
+</head>
+
+<body>
+    {% block content-header %}
+    {% endblock %}
+
+  
+    {% block content-body %}
+    {% endblock %}
+
+    {% block content-footer %}
+    {% endblock %}
+
+
+</body>
+</html>

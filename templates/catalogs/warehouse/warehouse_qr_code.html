@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+
+{% block header-links %}
+    {% load staticfiles %}
+    {% load i18n %}
+    {% load l10n %}
+
+<link rel="stylesheet" href="{% static 'custom/warehouse/css/warehouse-style.css' %}">
+{% endblock %}
+
+{% block content-header %}
+    <h1>
+        {% trans 'Warehouse' %} {{warehouse.code}}
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+        <li><a href="{% url 'warehouse-list' %}"><i class="fa fa-dashboard"></i> {% trans 'Warehouse' %}</a></li>
+        <li class="active">{{warehouse.code}}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {% if message %}
+      <div class="alert alert-success">
+          <strong>{% trans 'Action Message' %}:</strong> {{ message }}
+      </div>
+    {% endif %}
+    {% if errors %}
+        {% trans 'Encountered Errors' %}:
+            {% for error in errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+    {% endif %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-primary">             
+          <div class="box-body">
+            <div id="warehouse-filters" class="row">
+              <div class="col-md-8">
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Rack' %}</label>
+                  <select class="form-control rack_number">
+                    <option value="">---</option>
+                    {% for section in sections %}
+                    <option value="{{section.id}}">{{section.index}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                
+                <div class="form-group col-md-6">
+                  <label>&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                  <button id="warehouse-filter-btn" class="btn-primary btn btn-lg">{% trans 'Filter' %}</button>
+                  <button id="warehouse-filter-clean" class="btn btn-lg">{% trans 'Clean' %}</button>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group col-md-6">
+
+                </div>
+                <div class="form-group col-md-6">
+                  <button id="qrcode_generate" class="btn-primary btn btn-lg">{% trans 'Imprimir QR' %}</button>
+                </div>
+              </div>
+            </div>
+            <div class="row row-table-wrapper">
+              <div class="warehouse-row-table">
+                {% for row in warehouse.rows_locations %}
+                <div class="col-md-12 warehouse-row  warehouse_row_{{row.id}}">
+                  <h2 class="row-title">{% trans 'ROW' %} {{row.index}}</h2>
+                  <div class="heights-table">
+                    <h3>{{row.description}}</h3>
+                    <table class="table table-bordered dataTable">
+                      <thead>
+                        <tr rowspan="1"><th>{% trans 'Levels' %}
+                        </th></tr>
+                      </thead>
+                      <tbody>
+                        {% for height in row.sections.0.heights %}
+                        <tr>
+                          <th>{{height.description}}</th>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                  {% for section in row.sections %}
+                  <div class="section-table rack_data section_{{section.id}}" data-row-id="{{row.id}}">
+                    <h3>{% trans "Section" %} {{section.index}}</h3>
+                    <table class="table table-bordered table-hover dataTable">
+                      <thead>
+                        <tr>
+                          {% for depth in section.heights.0.depths %}
+                          <th>
+                            {{depth.description}}
+                          </th>
+                          {% endfor %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for height in section.heights %}
+                        <tr>
+                          {% for depth in height.depths %}
+                          <td id="{{depth.warehouse_location}}" class="warehouse-location" onclick="select_location(this);"
+                          data-row="{{row.id}}"
+                          data-depth="{{depth.id}}"
+                          data-location-id="{{depth.warehouse_location.id}}"
+                          data-location="{{depth.warehouse_location.location_number}}"
+                          data-warehouse="{{object.id}}"
+                          >
+                        {{depth.warehouse_location}}</td>
+                        {% endfor %}
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="clearfix"></div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+
+        <div class="box-footer"></div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <div class="modal fade product-list" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" id="modal-close-btn" class="btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">{% trans 'Close' %}</span></button>
+          <div class="form-group col-md-3">
+            <label>{% trans 'Position ID' %}</label>
+            <input type="text" id="modal-location-id" class="form-control" readonly>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-md-3">
+              <label>{% trans 'Warehouse' %}</label>
+              <input type="text" id="modal-location-warehouse" class="form-control" value="{{warehouse.code}}" readonly>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{% trans 'Row' %}</label>
+              <input type="text" id="modal-location-row" class="form-control" readonly>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{% trans 'Section' %}</label>
+              <input type="text" id="modal-location-section" class="form-control" readonly>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{% trans 'Height Level' %}</label>
+              <input type="text" id="modal-location-height" class="form-control" readonly>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{% trans 'Depth Level' %}</label>
+              <input type="text" id="modal-location-depth" class="form-control" readonly>
+            </div>
+          </div>
+          <div class="row">
+
+            <div class="form-group col-md-2">
+              <label>{% trans 'Total Kg' %}</label>
+              <input type="text" id="modal-location-total-kg" class="form-control"  readonly>
+            </div>
+
+            <div class="form-group col-md-2">
+              <label>{% trans 'Cajas Disponibles' %}</label>
+              <input type="text" id="modal-location-total-boxes" class="form-control"  readonly>
+            </div>
+
+            <div class="form-group col-md-2">
+              <label>{% trans 'Cajas Retenidas' %}</label>
+              <input type="text" id="modal-location-retained-boxes" class="form-control"  readonly>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>{% trans 'Available Volume' %}</label>
+              <input type="text" id="modal-available-volume" class="form-control"  readonly>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>{% trans 'Available Weight' %}</label>
+              <input type="text" id="modal-available-weight" class="form-control"  readonly>
+            </div>
+
+          </div>
+        </div>
+
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="tab" href="#warehouse_inventory">INVENTARIO</a></li>
+          <li><a data-toggle="tab" href="#warehouse_entrance">ENTRADAS</a></li>
+          <li><a data-toggle="tab" href="#salidas">SALIDAS</a></li>
+          <li><a data-toggle="tab" href="#reubicaciones">REUBICACIONES</a></li>
+        </ul>
+
+
+        <div class="tab-content">
+          <div id="warehouse_inventory" class="tab-pane fade in active">
+            <div class="box-body">
+              <table id="data-table_inventory" class="table table-striped">
+                <thead>
+                  <tr>                    
+
+                    <th>{% trans 'Customer' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Palet Lot' %}</th>
+                    <th>{% trans 'Cust Lot' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>                   
+                    <th>{% trans 'Exp. Date' %}</th>
+                    <th>{% trans 'Cajas' %}</th>
+                    <th>{% trans 'Retained boxes' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="warehouse_entrance" class="tab-pane fade">
+            <div class="box-body">
+              <table id="data-table_product" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{% trans 'Customer' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Palet Lot' %}</th>
+                    <th>{% trans 'Cust Lot' %}</th>
+                    <th>{% trans 'Exp. Date' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>
+                    <th>{% trans 'Available Boxes' %}</th>
+                    <th>{% trans 'Retained boxes' %}</th>
+                    <th>{% trans 'Actions' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="salidas" class="tab-pane fade">
+            <div class="box-body">
+              <table id="data-table_exit" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{% trans 'Customer' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Palet Lot' %}</th>
+                    <th>{% trans 'Cust Lot' %}</th>
+                    <th>{% trans 'Exp. Date' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>
+                    <th>{% trans 'Available Boxes' %}</th>
+                    <th>{% trans 'Retained boxes' %}</th>
+                    <th>{% trans 'Actions' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="reubicaciones" class="tab-pane fade">
+            <div class="box-body">
+              <table id="data-table_reubicacion" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{% trans 'Customer' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Palet Lot' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>
+
+                    <th>{% trans 'Almacen Origen' %}</th>
+                    <th>{% trans 'Ubicacion Origen' %}</th>
+                    <th>{% trans 'Almacen Destino' %}</th>
+                    <th>{% trans 'Ubicacion Destino' %}</th>
+
+                    
+                    <th>{% trans 'Actions' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>          
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+
+<style type="text/css">
+.selected_yellow{
+  background-color: yellow !important;
+}
+</style>
+
+<script>
+$(document).ready(function(){
+  
+  $('.warehouse-row').sort(function(a, b) {
+    if ($(a).find("h1.row-title").text().toLowerCase() < $(b).find("h1.row-title").text().toLowerCase()) {
+      return -1;
+    } else {
+      return 1;
+    }
+  }).appendTo('.row-table-wrapper');
+  $('.warehouse-row').each(function(){
+    $(this).show();
+  });
+  // Set on click functionality to filter buttons
+  $("#warehouse-filter-clean").click(function(){
+    resetButton();
+  });
+  $("#warehouse-filter-btn").click(function(){
+    filterLocations();
+  });
+
+});
+</script>
+
+<script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+   
+
+<script>
+  function select_location(location){
+    var locationId = location.id;
+    if ($("#"+locationId).hasClass("selected_warehouse"))
+    {
+      location_id = $("#"+locationId).removeClass("selected_warehouse")
+      location_id = $("#"+locationId).removeClass("selected_yellow")
+    }
+    else{
+      location_id = $("#"+locationId).addClass("selected_warehouse")
+      location_id = $("#"+locationId).addClass("selected_yellow")
+    }
+  }
+
+  $("#qrcode_generate").click(function(){
+    array = []
+      $(".selected_warehouse").each(function() {
+        location_data = $(this).attr('data-depth')        
+        array.push(location_data)
+     });
+      if (array.length > 0){
+        var win = window.open("{% url 'warehouse-qr-code-printer' %}" + "?printed_data=" + array, '_blank');
+
+      }else{
+        alert("please select location to generate QR")
+      }
+  })
+</script>
+
+<script>
+
+function filterLocations() {
+  rack = $(".rack_number").val()
+  if(rack != ""){
+    $(".rack_data").addClass('hide')
+    rack_column = $(".section_"+ rack)
+    row_id = rack_column.attr("data-row-id")
+    $(".section_"+ rack).removeClass('hide')
+    $(".warehouse-row").addClass('hide')
+    row_data = $(".warehouse_row_"+row_id)
+    row_data.removeClass("hide")
+  }else{
+    resetButton()
+  }
+    
+}
+
+function resetButton() {
+  $(".warehouse-row").removeClass('hide')
+    $(".rack_data").removeClass('hide')
+    $(".rack_number").val('')
+}
+
+</script>
+
+
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/warehouse/sidebar.html' %}
+{% endblock %}

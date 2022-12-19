@@ -1,0 +1,40 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=0" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style type="text/css">
+    	body {
+		   padding: 0;
+		   margin: 0;
+		   font-family: 'Humnst777 BT';
+		   -webkit-font-smoothing: antialiased;
+		   width: 100% !important;
+		   -webkit-text-size-adjust: none;
+		   box-sizing: border-box;
+		   color: #00386C;
+		  }
+    	table tr { page-break-inside: always; page-break-after: always; page-break-before: always; }
+    	table tbody tr { page-break-inside: always; page-break-after: always; page-break-before: always; }
+    	
+
+    	@media print {
+			  .new-page {
+			    page-break-before: always;
+			  }
+			}
+		/*table, th, td {
+		  border: 1px solid black;
+		}*/
+    </style>
+</head>
+<body>
+	{% block content-header %}
+	{% endblock %}
+</body>
+</html>

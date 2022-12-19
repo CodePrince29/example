@@ -1,0 +1,2327 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+
+
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'warehouse-exit-list' %}">{% trans 'WAREHOUSE-EXIT-APPOINTMENTS' %}</a></li>
+  <li class="active">{{warehouseexit.id}}</li>
+</ol>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+
+  <div class="col-md-12">
+    <div class="box box-primary">
+      <input type="hidden" id="id_customer" data-name="{{object.customer}}" value="{{object.customer.id}}">
+      <input type="hidden" id="id_customer_barcoderead" data-barcoderead="{{object.customer.barcoderead}}" value="{{object.customer.barcoderead}}">
+
+      <form id="sga-form" role="form" method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+        {{form.print_picking}}
+        <input type="hidden" name="status" value="{{object.status}}" id="id_status">
+        <input type="hidden" name="process_print_picking" value="0" id="id_process_print_picking">
+        <div class="box-body">
+          <div class="row">            
+            {% include 'form-error.html' %}
+
+          </div>
+
+          <div class="row">
+            <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">{% trans 'WAREHOUSE EXIT CONFIRMATION' %}
+              </h4>
+
+            </div>
+
+            <div class="modal-body" >
+              <div class="row">
+                <div class="col-md-12">
+                  <table class="table new-tab">
+                    <thead>
+                      <tr><th class="input-group-0">ID
+                      </th>
+                      <th class="pallet_th_i"> 
+                        {% trans 'Product' %}
+                      </th>
+                      <th class="pallet_th_i">
+                        {% trans 'Description' %}
+                      </th>
+                      <th class="pallet_th_i">
+                        {% trans 'Kg Totales' %}
+                      </th>
+
+                      <th class="pallet_th_i">
+                        {% trans 'Piezas' %}
+                      </th>
+
+                      <th class="pallet_th_i">
+                        {% trans 'Kg X pieza' %}
+                      </th>
+
+                      <th class="pallet_th_i">
+                        {% trans 'Cajas' %}
+                      </th>
+
+                      <th class="pallet_th_i">
+                        {% trans 'Kg X Caja' %}
+                      </th>
+
+                    </tr>
+                  </thead>
+                  <tbody class="partial_product points_table_scrollbar">
+                    {% with object.list_product as list_products %}
+                      {% for product_measure in list_products %}
+                      <tr style='{5}' data-row='product-{{forloop.counter0}}-location' data-measurement='{{product_measure.id}}' >
+                        <td class='input-group-0'>{{forloop.counter}}</td>
+                        <td>
+                          <input type="hidden" name="" class="product_bar_code" value="{{product_measure.product.barcode_to_use }}">
+                          <div class='form-group td-group'>
+                            <span onfocus='this.blur()' class='form-control input-group product_code'><p>{{product_measure.product}}</p></span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class='form-group td-group'>
+                            <span  onfocus='this.blur()' class='form-control input-group product_description'><p>{{product_measure.product_description }}</p></span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class='form-group td-group'>
+                            <span onfocus='this.blur()' class='form-control input-group total_kg'><p>{{product_measure.total_kg | unlocalize}}</p>
+                            </span>
+                          </div>
+                          <input type='hidden' value = '{{product_measure.product.id}}' class='product_id'>
+
+                        </td>
+                        <td>
+                          <div class='form-group td-group'>
+                            <span  onfocus='this.blur()' class='form-control input-group total_price'><p>{{product_measure.price | unlocalize}}</p></span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class='form-group td-group'>
+                            <span  onfocus='this.blur()' class='form-control input-group kg_per_price'><p>{{product_measure.kg_per_price | unlocalize}}</p></span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class='form-group td-group'>
+                            <span  onfocus='this.blur()' class='form-control input-group  boxes'><p>{{product_measure.boxes | unlocalize}}</p></span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class='form-group td-group'>
+                            <span  onfocus='this.blur()' class='form-control input-group kg_per_boxes'><p>{{product_measure.kg_per_boxes | unlocalize }}</p></span>
+                          </div>
+                        </td>
+                      </tr>
+                      {% endfor  %}
+                    {% endwith %}
+                  </tbody>
+                </table>
+
+              </div>
+
+
+              <div class="col-md-12">
+                <div class="form-group">
+
+                  <div class="row">
+                    <div class="col-md-1">
+                      <h3>{%trans 'Picking' %}:</h3>
+                    </div>
+                    <div class="form-group col-md-2 col-mds-2">
+                      <label>{% trans 'Folio Entrada:' %}</label>
+                      <div>
+                        <input type="text" class="form-control folio_entrada">
+                      </div>
+                    </div>
+                    <div class="form-group col-md-1 col-mds-2">
+                      <label>{% trans 'Reference' %}:</label>
+                      <div>
+                        <input type="text" class="form-control referencia">
+                      </div>
+                    </div> 
+                    <div class="form-group col-md-1 col-mds-2">
+                      <label>{% trans 'Caducidad' %}:</label>
+                      <div>
+                        <input type="text" class="form-control caducidad datepicker">
+                      </div>
+                    </div>
+
+                    <div class="form-group col-md-2 col-mds-2">
+                      <label>{% trans 'Lote Cliente' %}:</label>
+                      <div>
+                        <input type="text" class="form-control lote_cliente">
+                      </div>
+                    </div>
+
+                    <div class="form-group col-md-2 col-mds-2">
+                      <label>{% trans 'Lote Tarima' %}:</label>
+                      <div>
+                        <input type="text" class="form-control lote_tarima">
+                      </div>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                      <label>&nbsp;</label>
+                      <div>                             
+
+                        <input type="button" value="{% trans 'Filter' %}" class="btn btn-primary entrance-filter">
+                        <input type="button" value="{% trans 'Clean' %}" class="btn btn-default entrance-reset">
+                      </div>
+                    </div>
+                    <div class="col-md-2 col-mds-2">
+                      <label>&nbsp;</label>
+                      <div>
+                        {%if warehouseexit.get_picking_value%}
+                        <button type="button" class="btn btn-primary automatic_picking">{%trans 'Automatic Picking' %}</button>
+                        {%else%}
+                        <button type="button" class="btn btn-primary" disabled="true">{%trans 'Automatic Picking' %}</button>
+                        {%endif%}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="row">                  
+
+              <div class="col-md-12" id="exit_product_detail">
+                {{ w_exit_confirmation_pallet.management_form }}
+                <div class="form-group col-xs-12 form-group-list">
+                  {% with exit_confirmations as list_exit_confirmations %}
+                  {% for exit_confirmation in list_exit_confirmations %} 
+                    {% with forloop.counter0 as outer_counter %}                
+                  <input id="id_wexitconfirmation_set-{{outer_counter}}-id" name="wexitconfirmation_set-{{outer_counter}}-id" type="hidden" value="{{exit_confirmation.id}}">
+
+                  <div class="row {{ w_exit_confirmation_pallet.prefix }}" data-role="w_exit_confirmation_pallet_row_{{ exit_confirmation.exit_product_measurement }}">
+
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-product">Producto:</label>
+                      <select class="form-control exit_product skip_validation" id="id_wexitconfirmation_set-{{forloop.counter0}}-product" name="wexitconfirmation_set-{{forloop.counter0}}-product">
+                        <option value="{{exit_confirmation.product_id}}">{{exit_confirmation.product_name}}</option>
+                      </select>
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-cost_lot">Lote Cliente:</label>
+                      <input class="form-control move_next warehouse_cost_lot skip_validation" id="id_wexitconfirmation_set-{{forloop.counter0}}-cost_lot" maxlength="255" name="wexitconfirmation_set-{{forloop.counter0}}-cost_lot" type="text" value="{{exit_confirmation.cost_lot}}">
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-exp_date">Caducidad:</label>
+                      <input class="form-control  warehouse_exp_date datepicker skip_validation" id="id_wexitconfirmation_set-{{forloop.counter0}}-exp_date" maxlength="255" name="wexitconfirmation_set-{{forloop.counter0}}-exp_date" type="text" value="{{exit_confirmation.exp_date}}" readonly="">
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-gross_weight">Peso Bruto:</label>
+                      <input class="form-control move_next skip_validation peso_bruto" id="id_wexitconfirmation_set-{{forloop.counter0}}-gross_weight" name="wexitconfirmation_set-{{forloop.counter0}}-gross_weight" onkeypress=" return checkDecimal(event, this, 5, 3);" type="text" value="{{exit_confirmation.gross_weight|unlocalize}}">
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-net_weight">Peso Neto:</label>
+                      <input class="form-control move_next skip_validation peso_neto" id="id_wexitconfirmation_set-{{forloop.counter0}}-net_weight" name="wexitconfirmation_set-{{forloop.counter0}}-net_weight" onkeypress=" return checkDecimal(event, this, 5, 3);" type="text" value="{{exit_confirmation.net_weight|unlocalize}}">
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-invoice_weight">Cant. Solicitada:</label>
+                      <input class="form-control move_next warehouse_invoice_weight" id="id_wexitconfirmation_set-{{forloop.counter0}}-invoice_weight" name="wexitconfirmation_set-{{forloop.counter0}}-invoice_weight" step="0.01" type="number" value="{{exit_confirmation.invoice_weight|unlocalize}}">
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-retained_quantity">Cant. retenida:</label>
+                      <input class="form-control move_next warehouse_retained_quantity" id="id_wexitconfirmation_set-{{forloop.counter0}}-retained_quantity" name="wexitconfirmation_set-{{forloop.counter0}}-retained_quantity" type="number" value="0" readonly="" data-value="{{exit_confirmation.retained_quantity|unlocalize}}">
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-retained_reason">Motivo retención:</label>
+                      <input class="form-control move_next warehouse_retained_reason" id="id_wexitconfirmation_set-{{forloop.counter0}}-retained_reason" maxlength="255" name="wexitconfirmation_set-{{forloop.counter0}}-retained_reason" type="text" value="{{exit_confirmation.retained_reason}}">                          
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important"></div>                        
+
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <div class="hide">
+                        <select class="form-control exit_product_measurement skip_validation" id="id_wexitconfirmation_set-{{forloop.counter0}}-exit_product_measurement" name="wexitconfirmation_set-{{forloop.counter0}}-exit_product_measurement">
+                          <option value="{{exit_confirmation.exit_product_measurement}}">{{exit_confirmation.exit_product_measurement}}</option>
+                        </select>
+                      </div>                          
+                    </div>                        
+
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-auto_pick_data"></label>
+                      <textarea class="form-control  hide" cols="40" id="id_wexitconfirmation_set-{{forloop.counter0}}-auto_pick_data" name="wexitconfirmation_set-{{forloop.counter0}}-auto_pick_data" rows="10" value=""></textarea>                          
+                    </div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important"></div>
+                    <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                      <label for="id_wexitconfirmation_set-{{forloop.counter0}}-DELETE">Eliminar:</label>
+                      <input id="id_wexitconfirmation_set-{{forloop.counter0}}-DELETE" name="wexitconfirmation_set-{{forloop.counter0}}-DELETE" type="checkbox">
+                    </div>
+
+                    <div class="table-scroll">
+                      <div class="col-md-12">
+                        <table class="table new-tab">
+                          <thead>
+                            <tr>
+                              <th class="input-group-th pallet_th"> 
+                                {% trans 'Palet Lot' %}
+                              </th>
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Boxes' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Boxes KG' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Warehouse' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Rack Number' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Location' %}
+                              </th>
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Cust Lot' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Expiration Date' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Gross Weight' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Net Weight' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'exit Invoice Weight' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Retained Qty' %}
+                              </th>
+
+                              <th class="input-group-th pallet_th">
+                                {% trans 'Retainment Reason' %}
+                              </th>
+                              <th class="input-group-th pallet_th">
+
+                              </th>
+                            </tr>
+                          </thead>
+
+                        </table>
+
+                      </div>
+                      <div class="pallete_form_list">    
+                        <input id="id_pallete-wexitconfirmation_set-{{forloop.counter0}}-warehouseexitpallet_set-TOTAL_FORMS" name="pallete-wexitconfirmation_set-{{forloop.counter0}}-warehouseexitpallet_set-TOTAL_FORMS" type="hidden" value="{{exit_confirmation.total_pallet_count}}">
+
+                        <input id="id_pallete-wexitconfirmation_set-{{forloop.counter0}}-warehouseexitpallet_set-INITIAL_FORMS" name="pallete-wexitconfirmation_set-{{forloop.counter0}}-warehouseexitpallet_set-INITIAL_FORMS" type="hidden" value="{{exit_confirmation.total_pallet_count}}">
+
+                        <input id="id_pallete-wexitconfirmation_set-{{forloop.counter0}}-warehouseexitpallet_set-MIN_NUM_FORMS" name="pallete-wexitconfirmation_set-{{forloop.counter0}}-warehouseexitpallet_set-MIN_NUM_FORMS" type="hidden" value="0">
+
+                        <input id="id_pallete-wexitconfirmation_set-{{forloop.counter0}}-warehouseexitpallet_set-MAX_NUM_FORMS" name="pallete-wexitconfirmation_set-{{forloop.counter0}}-warehouseexitpallet_set-MAX_NUM_FORMS" type="hidden" value="1000">
+
+                        {% with  exit_confirmation.exit_pallet_data as  exit_confirmation_exit_pallet_data %}
+                          {% for pallet_form in exit_confirmation_exit_pallet_data %}
+                            <div class="row col-xs-12 table-row">
+                              <input type="hidden" class="form-control inventory_id" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-inventory_id"  value="{{pallet_form.inventory_id}}">
+
+                              <input type="hidden" class="form-control inventory_gross_weight" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-inventory_gross_weight"  value="{{pallet_form.inventory_gross_weight|unlocalize}}">
+
+                               <input type="hidden" class="form-control inventory_net_weight" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-inventory_net_weight"  value="{{pallet_form.inventory_net_weight|unlocalize}}">
+                              
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control palet_lot" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-palet_lot" maxlength="255" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-palet_lot" type="text" value="{{pallet_form.palet_lot}}" readonly="">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control boxes required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-boxes" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-boxes" type="text" value="{{pallet_form.boxes|unlocalize}}" readonly="">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control box_kg required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-box_kg" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-box_kg" type="text" value="{{pallet_form.box_kg|unlocalize}}" readonly="">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <select class="form-control warehouse required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-warehouse" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-warehouse">
+                                  <option value="{{pallet_form.warehouse}}" selected="selected">{{pallet_form.warehouse_name}}</option>
+                                </select>
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <select class="form-control rack_number required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-rack_number" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-rack_number">
+                                  <option value="{{pallet_form.rack_number}}" selected="selected">{{pallet_form.warehouse_number}}</option>
+                                  </select>
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <select class="form-control location required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-location" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-location">
+                                  <option value="{{pallet_form.location}}" selected="selected">{{pallet_form.warehouse_location_number}}</option>
+                                </select>
+                              </div>
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control cost_lot required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-cost_lot" maxlength="255" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-cost_lot" type="text" value="{{pallet_form.cost_lot}}">
+                              </div>
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control exp_date" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-exp_date" maxlength="255" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-exp_date" type="text" value="{{pallet_form.exp_date}}" readonly="">
+                              </div>                           
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control gross_weight required-field required-pallet gross_weight_validation" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-gross_weight" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-gross_weight" onkeypress=" return checkDecimal(event, this, 5, 3);" step="0.01" type="number" value="{{pallet_form.gross_weight|unlocalize}}">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control net_weight required-field required-pallet net_weight_validation" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-net_weight" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-net_weight" onkeypress=" return checkDecimal(event, this, 5, 3);" step="0.01" type="number" value="{{pallet_form.net_weight|unlocalize}}">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control invoice_weight required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-invoice_weight" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-invoice_weight" step="0.01" type="number" value="{{pallet_form.invoice_weight|unlocalize}}">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control retained_quantity required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-retained_quantity" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-retained_quantity" type="number" value="0" readonly="" data-value="{{pallet_form.retained_quantity|unlocalize}}">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <input class="form-control retained_reason" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-retained_reason" maxlength="255" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-retained_reason" type="text" value="{{pallet_form.retained_reason}}">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column">
+                                <select class="form-control inventory required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-inventory" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-inventory">
+                                  <option value="{{pallet_form.inventory}}">{{pallet_form.inventory}}</option>
+                                </select>
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column empty-block">
+                                <input id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-werehouse_exit_confirmation" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-werehouse_exit_confirmation" type="hidden" value="{{pallet_form.werehouse_exit_confirmation}}">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column empty-block id-pallet" data-pallet-id="{{pallet_form.id}}">
+                                <input id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-id" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-id" type="hidden" value="{{pallet_form.id}}">
+                              </div>
+
+                              <div class="col-sm-2 form-group pallet_column delete-block">
+                                <input id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-DELETE" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-{{forloop.counter0}}-DELETE" type="checkbox">
+                              </div>
+                              <div class="col-sm-2 form-group pallet_column">
+                              </div>
+                              <div class="col-sm-2 form-group pallet_column">
+                                <a href="javascript:void(0)" class="btn btn-success romaneo" style="margin-top: -25px;">ROMANEO</a>
+                              </div>
+                            </div>
+                          {% endfor %}
+                        {% endwith %}
+                      </div>
+                      <div class="row col-xs-12 table-row-total">
+                        <div class="col-sm-2 form-group total-block text-right">
+                          Total
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                          <input type="text" name="" class="form-control total_boxes" value="0" readonly="true">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                          <input type="text" name="" class="form-control total_gross_weight" value="0" readonly="true">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                          <input type="text" name="" class="form-control total_net_weight" value="0" readonly="true">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block delete-block">
+                        </div>
+                        <div class="col-sm-2 form-group total-block">
+                        </div>
+                      </div>                          
+
+                    </div>
+
+                    <div class="btn-line text-right">
+                      <button type="button" class="btn btn-primary after_submit_data">Guardar</button>
+                    </div>
+
+                    <div class="hide empty_pallate_detail_form">
+
+                      <div class="row col-xs-12 table-row">
+                        
+                         <input  type="hidden"   id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-inventory_id"  class="form-control inventory_id" value="0">
+
+                         <input  type="hidden"   id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-inventory_gross_weight"  class="form-control inventory_gross_weight" value="0">
+
+                         <input  type="hidden"   id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-inventory_net_weight"  class="form-control inventory_net_weight" value="0">
+                      
+                        
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="text" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-palet_lot" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-palet_lot" readonly="" class="form-control palet_lot" maxlength="255">
+                        </div>
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="text" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-boxes" value="0" readonly="" class="form-control boxes required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-boxes">
+                        </div>
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="text" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-box_kg" value="0" readonly="" class="form-control box_kg required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-box_kg">
+                        </div>
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <select name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-warehouse" class="form-control warehouse required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-warehouse">
+                            <option value="" selected="">---------</option>
+                            {% for ware in warehouses %}
+                              <option value="{{ware.id}}" class="hide">{{ware.code}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>                            
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <select name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-rack_number" class="form-control rack_number required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-rack_number">
+                            <option value="" selected="">---------</option>
+                            {% for section in sections %}                                
+                              <option value="{{section.id}}" class="hide">{{section.index}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>                           
+
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <select name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-location" class="form-control location required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-location">
+                            <option value="" selected="">---------</option>
+                            {% for location in locations %}
+                                  <option value="{{location.id}}" class="hide">{{location.location_number}}</option>
+                              {% endfor %}
+                          </select>
+                        </div>                            
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="text" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-cost_lot" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-cost_lot" class="form-control move_next cost_lot required-field required-pallet" maxlength="255">
+                        </div>
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="text" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-exp_date" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-exp_date" readonly="" class="form-control exp_date" maxlength="255">
+                        </div>
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="number" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-gross_weight" value="0.0" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-gross_weight" step="0.01" class="form-control move_next gross_weight required-field required-pallet gross_weight_validation" onkeypress=" return checkDecimal(event, this, 5, 3);">
+                        </div>                           
+
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="number" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-net_weight" value="0.0" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-net_weight" step="0.01" class="form-control move_next net_weight required-field required-pallet gross_net_validation" onkeypress=" return checkDecimal(event, this, 5, 3);">
+                        </div>                            
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="number" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-invoice_weight" value="0" step="0.01" class="form-control move_next invoice_weight required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-invoice_weight">
+                        </div>                           
+
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="number" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-retained_quantity" value="0" class="form-control move_next retained_quantity required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-retained_quantity" readonly="">
+                        </div>                           
+
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <input type="text" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-retained_reason" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-retained_reason" class="form-control move_next retained_reason" maxlength="255">
+                        </div>                            
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <select name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-inventory" class="form-control inventory required-field required-pallet" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-inventory">
+                            <option value="" selected="">---------</option>
+                            {% for inventory in inventories %}
+                                  <option value="{{inventory.id}}" class="hide">{{inventory.id}}</option>
+                              {% endfor %}
+                          </select>
+                        </div>
+
+                        <div class="col-sm-2 form-group pallet_column empty-block">
+                          <input type="hidden" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-werehouse_exit_confirmation" value="{{exit_confirmation.id}}" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-werehouse_exit_confirmation">
+                        </div>
+
+                        <div class="col-sm-2 form-group pallet_column empty-block">
+                          <input type="hidden" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-id" id="id_pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-id">
+                        </div>
+
+                        <div class="col-sm-2 form-group pallet_column delete-block">
+                          <input type="checkbox" name="pallete-wexitconfirmation_set-{{outer_counter}}-warehouseexitpallet_set-__prefix__-DELETE" id="id_pallete-wexitconfirmation_set{{outer_counter}}warehouseexitpallet_set-__prefix__-DELETE">
+                        </div>                            
+
+
+                        <div class="col-sm-2 form-group pallet_column">
+                          <a href="javascript:void(0)" class="btn btn-primary appDetails" style="margin-top: -25px;">Mapa</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <hr>
+                  {% endwith %}
+                  {% endfor %}
+                {% endwith %}
+                </div> 
+              </div>   
+            </div>
+
+            <div id="empty_product_detail_form" class="hide">
+
+              <div class="1 row wexitconfirmation_set" data-role="w_exit_confirmation_pallet_row___prefix__">
+                {{w_exit_confirmation_pallet.empty_form.id}}
+
+                {% for field in w_exit_confirmation_pallet.empty_form %}
+
+                <div class="col-sm-1 form-group" style="width: 12.333333% !important">
+                  {% if not field.is_hidden %}
+                  {%if field.name == "exit_product_measurement" %}
+                      <div class="hide">{{ field }}</div>
+                    {%else%}
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {%endif%}
+                  {% endif %}
+                </div>
+                {% endfor %}                    
+                <div class="table-scroll">
+                  <div class="col-md-12">
+                    <table class="table new-tab">
+                      <thead>
+                        <tr>
+                          <th class="input-group-th pallet_th"> 
+                            {% trans 'Palet Lot' %}
+                          </th>
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Boxes' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Boxes KG' %}
+                          </th>
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Warehouse' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Rack Number' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Location' %}
+                          </th>
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Cust Lot' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Expiration Date' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Gross Weight' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Net Weight' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Entrance Invoice Weight' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Retained Qty' %}
+                          </th>
+
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Retainment Reason' %}
+                          </th>
+                          <th class="input-group-th pallet_th">
+                            {% trans 'Inventory' %}
+                          </th>
+                        </tr>
+                      </thead>
+
+                    </table>
+
+                  </div>
+                  <div class="pallete_form_list">    
+                    <input type="hidden" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-TOTAL_FORMS" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-TOTAL_FORMS" value="0">                       
+
+                    <input type="hidden" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-INITIAL_FORMS" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-INITIAL_FORMS" value="0">
+
+                    <input type="hidden" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-MIN_NUM_FORMS" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-MIN_NUM_FORMS" value="0">
+
+                    <input type="hidden" name="pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-MAX_NUM_FORMS" id="id_pallete-wexitconfirmation_set-__position__-warehouseexitpallet_set-MAX_NUM_FORMS" value="1000">   
+                                  
+                  </div>
+
+                  <div class="row col-xs-12 table-row-total">
+                           
+                    <div class="col-sm-2 form-group total-block text-right">
+                      Total
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                      <input type="text" name="" class="form-control total_boxes" value="0" readonly="true">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                      <input type="text" name="" class="form-control total_gross_weight" value="0" readonly="true">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                      <input type="text" name="" class="form-control total_net_weight" value="0" readonly="true">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block delete-block">
+                    </div>
+                    <div class="col-sm-2 form-group total-block">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="btn-line text-right">
+                  <button type="button" class="btn btn-primary before_submit_data">Guardar</button>
+                </div>
+                <!-- empty palet field list -->                        
+                {% include 'empty_palet.html' %}
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        <div class="col-md-12">            
+          <div class="col-md-2">
+            <a href="/warehouse_exit/update-exit/{{warehouseexit.id}}" class="btn btn-default"><i class="fa fa-arrow-left" aria-hidden="true"></i>{% trans 'Back' %}</a>
+          </div>
+
+          <div class="col-md-2">
+            <button type="button" class="btn btn-primary print_picking" disabled="true">
+              &nbsp;<i class="fa fa-print" aria-hidden="true"></i> &nbsp; {% trans 'PRINT PICKING' %} &nbsp;</button>
+            </div>
+
+            <div class="col-md-2">
+              <button type="button" class="btn btn-success send_to_maneuvers" disabled="true">{% trans 'Send to Maneuvers' %}</button>
+            </div>
+
+            <div class="col-md-2">
+              <button type="button" class="btn btn-primary" id="confirm_button">{% trans 'EXIT CONFIRMATION' %}</button>
+            </div>
+
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary" id="submit_button">{% trans 'Save' %}</button>
+            </div>
+            <div class="col-md-2">
+              <a href="/warehouse_exit/warehouse-exit-list" class="btn btn-default">{% trans 'Cancel' %}</a>
+            </div>
+
+          </div>
+
+
+
+          <div class="modal fade" id="modal-sure-confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog sure-confirmation">
+              <div class="modal-content text-center">              
+                <div class="modal-body confirm-sure">
+                  <p>{% trans 'Do you wish to confirm the exit of the selected products and location?' %}</p>              
+                  <button type="button" class="btn btn-primary" id="accept">{%trans 'Accept' %}</button>
+                  <button type="button" class="btn btn-default" id="reject">{%trans 'Cancel' %}</button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="modal-error-confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog error-confirmation">
+              <div class="modal-content text-center">
+
+                <div class="modal-body confirm-sure">
+                  <p style="margin: 0 0 30px 0;">{% trans 'there are products with missing data and/or location definition , please check' %}</p>              
+
+                  <button type="button" class="btn btn-default" data-dismiss="modal">{%trans 'Cancel' %}</button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade romaneo-confirm" id="modal-romaneo-confirm"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" >
+            <div class="modal-dialog sure-confirmation">
+              <div class="modal-content text-center">
+
+                <div class="modal-body confirm-sure">
+                  <p style="margin: 0 0 30px 0;"></p>
+
+                  <button type="button" class="btn btn-primary" id="romaneo-yes">{%trans 'Yes' %}</button>
+                  <button type="button" class="btn btn-default" id="romaneo-No">{%trans 'No' %}</button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="pallet_romaneo" class="modal fade" role="dialog" width="90%;" aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog romaneo-peso-modal" data-backdrop="false" style="width: 80% !important;">
+    <div class="modal-content" style="
+    border-radius: 6px;">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="modal-title">ROMANEO-PESO VARIABLE</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="loader-romaneo">
+        </div>
+        <div class="col-md-10">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="notes">{% trans 'Cliente' %}</label>
+              <input type="text" readonly="true" class="romaneo_client form-control">
+            </div>                
+          </div>          
+          <div class="col-md-2">
+
+            <div class="form-group">
+              <label for="notes">{% trans 'Código Producto' %}</label>
+              <input type="text" readonly="true" class="romaneo_product_code form-control">
+            </div> 
+
+
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Producto' %}</label>
+              <input type="text" readonly="true" class="romaneo_product_description form-control">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">          
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Lote Tarima' %}</label>
+              <input type="text" readonly="true" class="romaneo_lote_tarima form-control">
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes"> {% trans 'Cajas' %}</label>
+              <input type="text" readonly="true" class="romaneo_cajas form-control">
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="notes">{% trans 'Caducidad' %}</label>
+              <input type="text" readonly="true" class="romaneo_exit_date form-control">
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Peso Bruto' %}</label>
+              <input type="text" readonly="true" class="romaneo_peso_bruto form-control">
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Peso Neto' %}</label>
+              <input type="text" readonly="true" class="romaneo_peso_neto form-control">
+            </div>             
+          </div>
+        </div>
+        <div class="col-md-4">            
+        </div>          
+      </div>
+      <br>
+      <br>
+      <input type="hidden" readonly="true" class="romaneo_pallet_id form-control">
+      <div class="box_peso_veriable" style="max-height: 360px; overflow-y: auto; margin:20px ">
+        <div class="row box_peso_veriable_apend">
+
+        </div>        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success barcode_scanner">{% trans 'LECTURA DE CODIGOS' %}</button>
+        <label class="label label-info error-msg"></label>
+        <button type="button" class="btn btn-primary romaneo_submit">{% trans 'Save' %}</button>
+        <button type="button" class="btn btn-default romaneo_cancle">{% trans 'Cancel' %}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+<div id="pallet_warehouse" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content" style="
+    border-radius: 6px;">
+    <div class="modal-body">
+      <div class="row">
+        <div class="loader-section">
+        </div>
+        <div class="box" align="center">
+          <div class="box-header">
+            <h3 class="box-title">{%trans 'Warehouse' %}</h3>
+            <div class="form-group">
+
+              <select class="form-control" id="warehouse_select_id">
+                <option value="">---------</option>
+                {% with warehouses as list_warehouses %}
+                  {% for warehouse in list_warehouses %}
+                  <option value="{{warehouse.id}}">{{warehouse.code}}</option>
+                  {% endfor %}
+                {% endwith %}
+              </select>
+
+            </div>
+
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary" type="button" onclick="return load_location()">{% trans 'Check locations' %}</button>
+          </div>
+
+
+          <div id="list_location">
+
+          </div>                        
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div id="romanio_pallet_barcode" class="modal fade" role="dialog"  aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content" style="
+    border-radius: 6px;">
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="notes">{% trans 'Boxes Read' %}</label>
+                <input type="text" readonly="true" class="form-control weight_count" value="0">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                  <label for="notes">{% trans 'Weight Read' %}</label>
+                  <input type="text" readonly="true" class="total_weight_kg_count form-control" value="0">
+                </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                  <label for="notes">{% trans 'Barcode' %}</label>
+                  <input type="text" min="0" class="barcode_reader form-control">
+                </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                  <label for="notes"></label>
+                  <textarea rows="10" style="height:100%; width: 100%;" class="barcode_total_read" readonly="true"></textarea>
+                </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary barcode_scanner_submit" disabled="disabled">{% trans 'Save' %}</button>
+
+        <button type="button" class="btn btn-default barcode_scanner_cancle_button" data-dismiss="modal">{% trans 'Cancel' %}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+{% endblock %}
+
+
+{% block header-links %}
+  <link rel="stylesheet" href="{%static 'custom/warehouse/css/warehouse-exit.css' %}">
+  <style type="text/css">
+   .romaneo-confirm{
+    z-index:99999 !important; 
+   }
+  </style>
+{% endblock %}
+
+
+{% block scripts %}
+  <script src="{% static 'theme/js/jquery.are-you-sure.min.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/exit_detail.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/download_pdf.js' %}"></script>
+  <script type="text/javascript">
+
+  $('.datepicker').datepicker({
+    autoclose: false,
+    format: 'yyyy-mm-dd',
+  })
+
+
+
+  load_count_boxes()
+
+  function load_count_boxes(){
+
+    $(".row.wexitconfirmation_set").each(function(){
+
+      var total_boxes_value=0
+      var total_gross_value=0
+      var total_net_value=0
+
+      if($(this).find('.table-scroll .pallete_form_list .table-row').length){
+
+$(this).find('.table-row-total').removeClass("hide");
+
+$(this).find('.boxes').each(function(e){
+  if($(this).val()!=''){
+    total_boxes_value += parseInt($(this).val())
+  }
+
+})
+$(this).find('.total_boxes').val(total_boxes_value);
+
+$(this).find('.net_weight').each(function(e){
+  if($(this).val()==''){
+     $(this).val(0.0)
+  }
+  total_net_value += parseFloat($(this).val())
+})
+$(this).find('.total_net_weight').val(total_net_value.toFixed(3));
+$(this).find('.gross_weight').each(function(e){
+
+  if($(this).val()==''){
+     $(this).val(0.0)
+  }
+  total_gross_value += parseFloat($(this).val())
+})
+$(this).find('.total_gross_weight').val(total_gross_value.toFixed(3));
+
+}
+else
+{
+  $(this).find('.table-row-total').addClass("hide");
+}
+
+
+});
+
+  }    
+
+  function load_partial_product()
+  {
+
+  }
+
+
+
+  function load_location(){
+    $("#list_location").empty()
+
+    warehouse = $("#warehouse_select_id").val()
+    if(warehouse != '')
+    {
+      div_data = $( "<div class='loader-image'> <img src='{% static 'theme/img/loader.gif' %}' alt='loader'/ ></div> " )
+      $(".loader-section").append(div_data)       
+
+
+
+      produce = $(".partial_product > .active_p").find(".product_id")
+      product_id = produce.val()
+      jQuery.ajax( {
+        url: "/warehouse_exit/warehouse-exit-location-detail/",
+        type: "POST",
+        dataType: "json",
+        data:{
+          csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+          warehouse: warehouse,                
+          product_id: product_id,
+        }
+      } ).done( function( response )
+
+      {
+        warehouse_locations = response;
+        $("#list_location").append(response.warehouse)
+        $(".loader-section").html('')           
+      })
+
+
+    }
+
+  }
+function addConfirmProduct(is_dual, position) {
+  // w_exit_confirmation_pallet_row_1
+  // wexitconfirmation_set
+  // w_exit_confirmation_pallet_row_2
+          var selected= $('.wexitconfirmation_set[data-role="w_exit_confirmation_pallet_row_{0}"]'.f(position))
+
+           if(is_dual) {
+               var id_form = $('#id_wexitconfirmation_set-TOTAL_FORMS');
+               var form_idx = id_form.val();
+               if(selected.length == 1){
+                $("#id_wexitconfirmation_set-{0}-id".f(position)).next().show()
+                $("#id_wexitconfirmation_set-{0}-DELETE".f(position)).attr("checked", false)
+                $("#id_wexitconfirmation_set-{0}-id".f(position)).show()
+               }
+               else{
+
+                $('#exit_product_detail').find(".form-group-list").append($('#empty_product_detail_form').html().replace(/__prefix__/g, position).replace(/__position__/g, position));
+
+                measurement = $("tbody.partial_product tr.active_p").attr('data-measurement')
+       
+                 $("#id_wexitconfirmation_set-{0}-exit_product_measurement ".f(position)).closest('.wexitconfirmation_set').addClass("measurement_"+measurement)
+
+                $("#id_wexitconfirmation_set-{0}-exit_product_measurement ".f(position)).val(measurement)
+               }
+               id_form.val(parseInt(form_idx) + 1);
+           }
+           else{              
+               var id_form = $('#id_wexitconfirmation_set-TOTAL_FORMS');
+               var form_idx = id_form.val();
+               if($("#id_wexitconfirmation_set-{0}-id".f(position)).val() == ''){
+                id_form.val(parseInt(form_idx) - 1);
+              }
+
+               // var id_form = $('#id_wexitconfirmation_set-TOTAL_FORMS');
+               // id_form.val(parseInt(form_idx) - 1);
+               
+               if(selected.length == 1){
+                if($("#id_wexitconfirmation_set-{0}-id".f(position)).val() != ''){
+                       $("#id_wexitconfirmation_set-{0}-id".f(position)).next().hide()
+                       $("#id_wexitconfirmation_set-{0}-DELETE".f(position)).prop('checked', true);
+                       $("#id_wexitconfirmation_set-{0}-id".f(position)).hide()
+                   }
+                 else{
+                     // $("#id_wexitconfirmation_set-{0}-id".f(position)).next().remove()
+                     selected.remove()
+                   }
+                 }
+
+           }
+
+           $('#id_wexitconfirmation_set-{0}-exp_date'.f(position)).datepicker({
+           autoclose: false,
+           format: 'yyyy-mm-dd',
+        }).datepicker("setDate", new Date());       
+       }
+
+  $(document).on("blur change",".net_weight", function () {
+    net_weight = parseFloat($(this).val())
+    active_total_kg = parseFloat($(".partial_product").find('.active_p').find('.total_kg').text())
+    if (net_weight > active_total_kg) {
+      alert("Existen diferencias entre el peso del producto y la sumatoria de pesos del romaneo. Verifique")
+      $(this).val($(this).attr("value"))
+      val_data = $(this).closest(".row.wexitconfirmation_set").find(".total_net_weight").attr("value")
+      $(this).closest(".row.wexitconfirmation_set").find(".total_net_weight").val(val_data)
+    }
+    else{
+      change_singlepallet_netweight($(this));
+    }
+  })
+  function change_singlepallet_netweight(e){
+    total_net_wight1=0.0
+    e.closest(".row.wexitconfirmation_set").find(".net_weight").each(function(){
+      if($(this).val()==''){
+        $(this).val(0.0)
+      }
+      total_net_wight1 += parseFloat($(this).val())
+    })
+    e.closest(".row.wexitconfirmation_set").find(".total_net_weight").val(parseFloat(total_net_wight1).toFixed(3))
+  }
+
+  $(document).on("blur change",".gross_weight", function () {
+    
+    gross_weight = parseFloat($(this).val())
+    active_total_kg = parseFloat($(".partial_product").find('.active_p').find('.total_kg').text())
+    if (gross_weight > active_total_kg) {
+      alert("Existen diferencias entre el peso del producto y la sumatoria de pesos del romaneo. Verifique")
+      $(this).val($(this).attr("value"))
+      val_data = $(this).closest(".row.wexitconfirmation_set").find(".total_gross_weight").attr("value")
+      $(this).closest(".row.wexitconfirmation_set").find(".total_gross_weight").val($(this).attr(val_data))
+    }else{
+      change_singlepallet_grossweight($(this));
+    }
+  })
+
+  function change_singlepallet_grossweight(e){
+    total_gross_weight_val=0.0
+
+    e.closest(".row.wexitconfirmation_set").find(".gross_weight").each(function(){
+      if($(this).val()==''){
+         $(this).val(0.0)
+      }
+      total_gross_weight_val +=parseFloat($(this).val())
+    })
+
+    e.closest(".row.wexitconfirmation_set").find(".total_gross_weight").val(parseFloat(total_gross_weight_val).toFixed(3))
+  }
+
+  function set_status(value){
+// $(".required-field").removeClass('validation-error')
+$(".validation-error").removeClass('validation-error')
+if(value != 'Guardar'){
+  var error = false;
+  var error_data = false;
+  $("#exit_product_detail").find(".wexitconfirmation_set:visible").each(function(){
+    $(this).find(".skip_validation").each(function(){
+      if($(this).val() == ''){
+        $(this).addClass('validation-error')
+        error = true;
+      }
+    })    })
+  if(error){      alert("{% trans 'Please fill all details of product code ' %}"+ String($(".partial_product1").find('.active_p .product_code p').text()))
+
+}
+else
+{
+  $(".pallete_form_list .required-field").each(function(){
+    if($(this).val()== ''){
+      $(this).addClass('validation-error')
+      error_data = true        }      $(".pallete_form_list .gross_weight").each(function(){
+        if(parseFloat($(this).val())<= 0){
+          $(this).addClass('validation-error')
+          error_data = true
+        }
+      });      $(".pallete_form_list .net_weight").each(function(){
+        if(parseFloat($(this).val())<= 0){
+          $(this).addClass('validation-error')
+          error_data = true        }
+        });      });
+}    if(error_data == false && error == false){
+  return true
+// $("#exit_confirmation_model").modal('hide')
+}
+else{
+  return false
+}
+}}
+
+
+
+$("#accept").click(function(){
+  $("#id_status").val("finish")
+  $.LoadingOverlay("show");
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", ""); 
+  xhr.responseType= 'blob';
+  xhr.onload = function(event){ 
+      $.LoadingOverlay("hide");
+      download_pdf(event.target.response, "Salida_{{object.id}}_"+new Date().toLocaleDateString()+".pdf")
+      window.location = '/warehouse_exit/warehouse-exit-list';
+  }; 
+  // or onerror, onabort
+  var formData = new FormData(document.getElementById("sga-form")); 
+  xhr.send(formData);
+
+})
+
+$("#reject").click(function(){
+  $("#id_status").val("Guardar")
+  $( "#sga-form" ).submit();
+})
+
+
+$(".entrance-reset").click(function(){
+  $(".folio_entrada").val('')
+  $(".referencia").val('')
+  $(".caducidad").val('')
+  $(".lote_cliente").val('')
+  $(".lote_tarima").val('')
+  warehouse_select_id
+  warehouse = $("#warehouse_select_id")
+  warehouse.html('')
+  warehouse.append('<option value="">---------</option>')
+  {% with warehouse_location as list_warehouse_location %}
+    {% for warhouse in list_warehouse_location %}
+    warehouse.append('<option value="{{warhouse.id}}">{{warhouse.code}}</option>')
+    {% endfor %}
+  {% endwith %}
+
+})
+
+
+
+
+$("#confirm_button").click(function(){
+  confirmation = set_status('CONFIRM EXIT')
+  if(confirmation){
+    $('#modal-sure-confirm').modal('show');                  
+  }
+    else
+    {
+      $('#modal-error-confirm').modal('show');
+    }
+  })
+
+
+
+
+$(".print_picking").click(function(e){
+  // $("#sga-form").submit()
+  // GGV
+  e.preventDefault();
+  $("#id_print_picking").val(true)
+  $("#id_process_print_picking").val(1);
+  $.LoadingOverlay("show");
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "");
+
+  xhr.responseType= 'blob';
+  xhr.onload = function(event){ 
+      $.LoadingOverlay("hide");
+      $("#id_process_print_picking").val(0);
+      download_pdf(event.target.response, "Salida_{{object.id}}_"+new Date().toLocaleDateString()+".pdf")
+   }; 
+  // or onerror, onabort
+  var formData = new FormData(document.getElementById("sga-form"));
+  xhr.send(formData);
+  // GGV enable send to maneuvers
+  $('.send_to_maneuvers').prop('disabled', false)
+}) 
+
+
+// disabled button if pallet not completed
+setInterval(function(){
+  check_pallet_status()
+}, 100)
+
+check_print_picking("{{object.id}}")
+setInterval(function(){ 
+  check_print_picking("{{object.id}}")
+}, 5000)
+
+function check_pallet_status(){
+  var current_status = "{{object.status}}";
+  $("#confirm_button").prop('disabled', true)
+  if(current_status == "ManeuverComplete"){
+    $("#confirm_button").prop('disabled', false)
+  }
+
+
+}
+
+
+$(document).on("click",".after_submit_data", function () {
+  div_data = $( "<div class='picking-loader-image'> <img src='/static/theme/img/loader.gif' alt='loader'/ ></div> " )
+  $(".parent-loader").append(div_data) 
+  data_role = $(this).closest('.wexitconfirmation_set').attr('data-role')
+  selector= $(this).closest('.wexitconfirmation_set')
+  postion_data = data_role.replace ( /[^\d.]/g, '' );
+  exp_prod_name = $(this).closest('.wexitconfirmation_set').find('.exit_product').attr('name')
+  exp_prod_position = exp_prod_name.replace ( /[^\d.]/g, '' );
+
+  $(".validation-error").removeClass('validation-error')
+  var error = false;
+  var error_data = false;
+  $(this).closest('.wexitconfirmation_set').find('.pallete_form_list').each(function(){ 
+    $(this).find(".skip_validation").each(function(){
+
+      if($(this).val() == '' || $(this).val() == 'None' || $(this).val() == undefined){
+        $(this).addClass('validation-error')
+        error = true;
+      }
+    })
+
+  })
+  if(error){
+
+    alert("{% trans 'Please fill all details of product code ' %}"+ String($(".partial_product").find('.active_p .product_code p').text()))
+  }
+  else
+  {      
+    $(this).closest('.wexitconfirmation_set').find('.pallete_form_list').find('.required-field').each(function(){
+      if($(this).val()== ''|| $(this).val() == 'None' || $(this).val() == undefined){
+        $(this).addClass('validation-error')
+        error_data = true
+      }
+
+    });
+  }
+
+  if(error_data == false && error == false){
+    pallet_arr = []
+    confirmation_array=[]
+      w_confirmation_id = $("#id_wexitconfirmation_set-"+exp_prod_position+"-id").val()
+      if (w_confirmation_id!=""){
+        confirmation_hash = {
+          "w_confirmation_id":w_confirmation_id,
+          "cost_lot":$("#id_wexitconfirmation_set-"+exp_prod_position+"-cost_lot").val(),
+          "exp_date":$("#id_wexitconfirmation_set-"+exp_prod_position+"-exp_date").val(),
+          "gross_weight":$("#id_wexitconfirmation_set-"+exp_prod_position+"-gross_weight").val(),
+          "net_weight":$("#id_wexitconfirmation_set-"+exp_prod_position+"-net_weight").val(),
+           "invoice_weight":$("#id_wexitconfirmation_set-"+exp_prod_position+"-invoice_weight").val(), 
+           "retained_quantity":$("#id_wexitconfirmation_set-"+exp_prod_position+"-retained_quantity").attr('data-value'), 
+           "warehouse_retained_reason":$("#id_wexitconfirmation_set-"+exp_prod_position+"-retained_reason").val()
+          }
+         
+         confirmation_array.push(confirmation_hash)
+
+      }
+    $(this).closest('.wexitconfirmation_set').find('.pallete_form_list .table-row').each(function(){
+      palet_lot = $(this).find('.pallet_column .palet_lot').val()
+      boxes = $(this).find('.pallet_column .boxes').val()
+      box_kg = $(this).find('.pallet_column .box_kg').val()
+      warehouse = $(this).find('.pallet_column .warehouse').val()
+      rack_number = $(this).find('.pallet_column .rack_number').val()
+      warehouse_location = $(this).find('.pallet_column .location').val()
+      cost_lot = $(this).find('.pallet_column .cost_lot').val()
+      exp_date = $(this).find('.pallet_column .exp_date').val()
+      gross_weight = $(this).find('.pallet_column .gross_weight').val()
+      net_weight = $(this).find('.pallet_column .net_weight').val()
+      invoice_weight = $(this).find('.pallet_column .invoice_weight').val()
+      retained_quantity = $(this).find('.pallet_column .retained_quantity').attr('data-value')
+      retained_reason = $(this).find('.pallet_column .retained_reason').val()
+      inventory = $(this).find('.pallet_column .inventory').val()
+      palet_id = $(this).find('.pallet_column.id-pallet').attr('data-pallet-id')
+      deleted = $(this).find('.pallet_column').find('input[type="checkbox"]').prop('checked')
+
+      if (palet_id == null) {
+        palet_id = ""
+      }
+      pallet_hash = {
+        "palet_lot":palet_lot,
+        "boxes":parseInt(boxes),
+        "box_kg":box_kg,
+        "warehouse":warehouse,
+        "rack_number":rack_number, 
+        "warehouse_location":warehouse_location, 
+        "cost_lot":cost_lot, 
+        "exp_date":exp_date,
+        "gross_weight":gross_weight, 
+        "net_weight":net_weight,
+        "invoice_weight":invoice_weight,
+        "retained_quantity":retained_quantity, 
+        "retained_reason":retained_reason,
+        'inventory': inventory,
+        'palet_id': palet_id,
+        'is_deleted': deleted,
+        'w_exit_conf': $("#id_wexitconfirmation_set-"+exp_prod_position+"-id").val()
+      }
+      pallet_arr.push(pallet_hash)
+
+    })
+
+  
+    measurement_row1 = selector.find('.exit_product').attr('name').replace ( /[^\d.]/g, '' )
+    measurement_row = $(".partial_product tr").eq(measurement_row1)
+    measurement_id = measurement_row.attr('data-measurement')
+    
+    if (measurement_id == "") {
+      measurement_id="N/A"
+    } 
+
+    measurement_hash = {
+      "measurement_id": measurement_id,
+      "total_kg": measurement_row.find('.total_kg').text(),
+      "total_price": measurement_row.find('.total_price').text(),
+      "kg_per_price": measurement_row.find('.kg_per_price').text(),
+      "boxes": measurement_row.find('.boxes').text(),
+      "kg_per_boxes": measurement_row.find('.kg_per_boxes').text(),
+    }
+    $.LoadingOverlay('show')
+    jQuery.ajax( {
+      url: "{% url 'save-exit-pallet' %}",
+      type: "POST",
+      dataType: "json",
+      data: {
+        pallet_type: "existing",
+        pallet_arr: JSON.stringify(pallet_arr),
+        confirmation_array: JSON.stringify(confirmation_array),
+        measurement_data: JSON.stringify(measurement_hash)
+      }
+    } ).done( function( response )
+    {
+      if (response["code"] == "200") {
+        $(".parent-loader").find(".picking-loader-image").fadeOut(1000, function(){ $(this).remove();});
+        $('#submit_button').prop('disabled', true);
+        location.reload(true);
+      }
+      else{
+        $.LoadingOverlay('hide')
+        alert(response['error'])
+      }
+      
+  })
+
+  }
+
+})
+
+
+$("#submit_button").click(function(e){
+    e.preventDefault()
+    $("#id_status").val('pending')
+    $.LoadingOverlay("show");
+    // GGV Enable Print Picking button
+    $(".print_picking").removeAttr('disabled')
+    $("#id_print_picking").val(true)
+
+    $("#sga-form").submit()
+})
+
+
+
+$(document).on("click",".before_submit_data", function () {
+  selected_product = $(this).closest('.wexitconfirmation_set').find('.exit_product').val()
+  if (selected_product != "") {
+
+
+    data_role = $(this).closest('.wexitconfirmation_set').attr('data-role')
+    localStorage.setItem('exit_id', '{{warehouseeexit.id}}');
+    localStorage.setItem('data_role',data_role );
+    postion_data = data_role.replace ( /[^\d.]/g, '' );
+
+    measurement_row = $(".partial_product tr").eq(postion_data)
+
+
+
+    $(".validation-error").removeClass('validation-error')
+    var error = false;
+    var error_data = false;
+    $(this).closest('.wexitconfirmation_set').find('.pallete_form_list').each(function(){ 
+      $(this).find(".skip_validation").each(function(){
+
+        if($(this).val() == ''){
+          $(this).addClass('validation-error')
+          error = true;
+        }
+      })
+
+    })
+    if(error){
+
+      alert("{% trans 'Please fill all details of product code ' %}"+ String($(".partial_product").find('.active_p .product_code p').text()))
+    }
+    else
+    {      
+      $(this).closest('.wexitconfirmation_set').find('.pallete_form_list').find('.required-field').each(function(){
+        if($(this).val()== ''){
+          $(this).addClass('validation-error')
+          error_data = true
+        }
+
+      });
+    }
+
+    if(error_data == false && error == false){
+      pallet_arr = []
+      confirmation_id = '{{object.id}}'
+
+      exit_product = $(this).closest('.wexitconfirmation_set').find('.exit_product').val()
+      warehouse_cost_lot = $(this).closest('.wexitconfirmation_set').find('.warehouse_cost_lot').val()
+      warehouse_exp_date = $(this).closest('.wexitconfirmation_set').find('.warehouse_exp_date').val()
+      peso_bruto = $(this).closest('.wexitconfirmation_set').find('.peso_bruto').val()
+      peso_neto = $(this).closest('.wexitconfirmation_set').find('.peso_neto').val()
+      warehouse_invoice_weight = $(this).closest('.wexitconfirmation_set').find('.warehouse_invoice_weight').val()
+      warehouse_retained_quantity = $(this).closest('.wexitconfirmation_set').find('.warehouse_retained_quantity').attr('data-value')
+      warehouse_retained_reason = $(this).closest('.wexitconfirmation_set').find('.warehouse_retained_reason').val()
+      deleted = $(this).closest('.wexitconfirmation_set').find('input[type="checkbox"]').prop('checked')
+
+
+      conf_hash = {
+        "exit_product": exit_product,
+        "warehouse_cost_lot": warehouse_cost_lot,
+        "warehouse_exp_date": warehouse_exp_date,
+        "peso_bruto": peso_bruto,
+        "peso_neto": peso_neto,
+        "warehouse_invoice_weight": warehouse_invoice_weight,
+        "warehouse_retained_quantity": warehouse_retained_quantity,
+        "warehouse_retained_reason": warehouse_retained_reason,
+        "warehouse_exit_id": confirmation_id
+      }
+
+        $(this).closest('.wexitconfirmation_set').find('.pallete_form_list .table-row').each(function(){       
+          palet_lot = $(this).find('.pallet_column .palet_lot').val()
+          boxes = $(this).find('.pallet_column .boxes').val()
+          box_kg = $(this).find('.pallet_column .box_kg').val()
+          warehouse = $(this).find('.pallet_column .warehouse').val()
+          rack_number = $(this).find('.pallet_column .rack_number').val()
+          warehouse_location = $(this).find('.pallet_column .location').val()
+          cost_lot = $(this).find('.pallet_column .cost_lot').val()
+          exp_date = $(this).find('.pallet_column .exp_date').val()
+          gross_weight = $(this).find('.pallet_column .gross_weight').val()
+          net_weight = $(this).find('.pallet_column .net_weight').val()
+          invoice_weight = $(this).find('.pallet_column .invoice_weight').val()
+          retained_quantity = $(this).find('.pallet_column .retained_quantity').attr('data-value')
+          retained_reason = $(this).find('.pallet_column .retained_reason').val()
+          inventory = $(this).find('.pallet_column .inventory').val()        
+
+          pallet_hash = {
+            "palet_lot":palet_lot,
+            "boxes":boxes,
+            "box_kg":box_kg,
+            "warehouse":warehouse,
+            "rack_number":rack_number, 
+            "warehouse_location":warehouse_location, 
+            "cost_lot":cost_lot, 
+            "exp_date":exp_date,
+            "gross_weight":gross_weight, 
+            "net_weight":net_weight,
+            "invoice_weight":invoice_weight,
+            "retained_quantity":retained_quantity, 
+            "retained_reason":retained_reason,
+            'inventory': inventory,
+            "is_deleted": deleted
+          }
+
+          pallet_arr.push(pallet_hash)
+
+        })
+
+        measurement_id = measurement_row.attr('data-measurement')
+
+        if (measurement_id == "") {
+          measurement_id="N/A"
+        } 
+
+        measurement_hash = {
+          "measurement_id": measurement_id,
+          "total_kg": measurement_row.find('.total_kg').text(),
+          "total_price": measurement_row.find('.total_price').text(),
+          "kg_per_price": measurement_row.find('.kg_per_price').text(),
+          "boxes": measurement_row.find('.boxes').text(),
+          "kg_per_boxes": measurement_row.find('.kg_per_boxes').text(),
+        }
+        $.LoadingOverlay('show')
+        jQuery.ajax( {
+          url: "{% url 'save-exit-pallet' %}",
+          type: "POST",
+          dataType: "json",
+          data: {
+            pallet_type: "new_pallet",
+            pallet_arr: JSON.stringify(pallet_arr),
+            confirmation_data: JSON.stringify(conf_hash),
+            measurement_data: JSON.stringify(measurement_hash)
+          }
+        } ).done( function( response )
+        {
+          if (response["code"] == "200") {
+            $(".parent-loader").find(".picking-loader-image").fadeOut(1000, function(){ $(this).remove();});
+            $('#submit_button').prop('disabled', true);
+            location.reload(true);
+
+          }else{
+            $.LoadingOverlay('hide')
+          }
+        })
+
+    }
+  }
+  else{
+    alert("Producto no disponible")
+  }
+
+})
+
+
+
+$(document).on("click",".romaneo", function (){
+  if($(this).closest('.wexitconfirmation_set').hasClass('active_p')){
+  $(".romaneo_clicked").removeClass('romaneo_clicked')
+  $(this).addClass('romaneo_clicked')
+  var pos = $(this).closest('.wexitconfirmation_set').attr('data-role').replace ( /[^\d.]/g, '' )
+  var measurements_id = $(this).closest('.wexitconfirmation_set').find('.exit_product_measurement').val()
+  
+  exp_prod_name = $(this).closest('.wexitconfirmation_set').find('.exit_product').attr('name')
+  exp_prod_position = exp_prod_name.replace ( /[^\d.]/g, '' );
+  var description = ""
+  var code = ""
+  var active_product = $(".partial_product").find("tr[data-measurement="+measurements_id+"]")
+
+  code = active_product.find('.product_code').text()
+  description = active_product.find('.product_description').text()
+  palet_lot = $(this).closest('.row').find('.palet_lot').val()
+  boxes = $(this).closest('.row').find('.boxes').val()
+  exp_date = $(this).closest('.row').find('.exp_date').val()
+  gross_weight = $(this).closest('.row').find('.gross_weight').val()
+  net_weight = $(this).closest('.row').find('.net_weight').val()
+  id_pallet = $(this).closest('.row').find(".id-pallet").attr('data-pallet-id')
+  var product_bar_code = $(".partial_product").find('.active_p').find('.product_bar_code').val()
+
+  $("#pallet_romaneo").modal('show')
+  div_data = $( "<div class='loader-image'> <img src='{% static 'theme/img/loader.gif' %}' alt='loader'/ ></div> " )
+  $(".loader-romaneo").append(div_data)
+  $(".romaneo_client").val($("#id_customer").attr('data-name'))
+  $(".romaneo_product_code").val(code)
+  $(".romaneo_product_description").val(description)
+
+  $(".romaneo_lote_tarima").val(palet_lot)
+  $(".romaneo_cajas").val(boxes)
+  $(".romaneo_exit_date").val(exp_date)
+  $(".romaneo_peso_bruto").val(parseFloat(gross_weight).toFixed(3))
+  $(".romaneo_peso_neto").val(parseFloat(net_weight).toFixed(3))
+  $(".romaneo_pallet_id").val(id_pallet)
+  barcodes = ["bc_sasa", "BC_Yoreme", "BC_LaVeinte", "BC_Carnicos",
+    "BC_GCM", "BC_Cicaba", "BC_Integra", "BC_Integra2", "BC_Bonacarne", "BC_Soles", "Codigo Ayvi"]
+    id_customer_barcoderead = $("#id_customer_barcoderead").val()
+    product_bar_code_exists = false
+    if($.inArray(product_bar_code, barcodes) > -1)
+    {
+      product_bar_code_exists = true
+    }
+    if( id_customer_barcoderead == "True" && product_bar_code_exists){
+      $(".barcode_scanner").removeClass("hide")
+    }
+    else{
+      $(".barcode_scanner").addClass("hide")
+    }
+
+  jQuery.ajax( {
+    url: "{% url 'exit-get-pallet-peso-variable' 0 %}".replace('0', id_pallet),
+    type: "GET",
+    dataType: "json",
+  } ).done( function( response )
+  {
+    $(".box_peso_veriable").find('.box_peso_veriable_apend').html('')
+
+    existing = response.peso_variable.length
+    
+    if (response["data-matched"] == "yes") {
+
+      peso_html=""
+      for (i = 0; i < response.peso_variable.length; i++) {
+        
+        palet_id = ""
+        if(i < parseInt(boxes) ){
+
+          peso_html += 
+          "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkDecimal(event, this, 5, 3);' class='romaneo_peso_variable form-control' value="+ response.peso_variable[i].peso_variable_quantity +"  data-palet-id="+ palet_id +"></div></div>"
+        }
+        else if(parseInt(boxes)>response.peso_variable.length){
+ 
+          peso_html += 
+          "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkDecimal(event, this, 5, 3);' class='romaneo_peso_variable form-control' value='0'  data-palet-id="+ palet_id +"></div></div>"
+        }
+      }  
+      $('.romaneo_peso_variable:first').select();
+      $('.romaneo_peso_variable:first').focus() 
+
+      $(".box_peso_veriable").find('.box_peso_veriable_apend').append(peso_html)
+    }else if (response["data-matched"] == "true") {      
+      total_box = parseInt(boxes)
+      new_box = total_box - existing
+      peso_html=""
+
+      if (total_box >= existing) {
+        for (i = 0; i < existing; i++) { 
+          palet_id = response.peso_variable[i].id
+          peso_html += 
+          "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkDecimal(event, this, 5, 3);' class='romaneo_peso_variable form-control' value="+ response.peso_variable[i].peso_variable_quantity +"  data-palet-id="+ palet_id +"></div></div>"
+        }
+
+        for (i = 0; i < new_box; i++) { 
+          peso_html += 
+          "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkDecimal(event, this, 5, 3);' class='romaneo_peso_variable form-control' value='0'  data-palet-id="+ "" +"></div></div>"
+        } 
+      }
+      else{
+        counter=0;
+        for (i = 0; i < total_box; i++) { 
+
+          counter+=1
+          palet_id = response.peso_variable[i].id
+          peso_html += 
+          "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkDecimal(event, this, 5, 3);' class='romaneo_peso_variable form-control' value="+ response.peso_variable[i].peso_variable_quantity +"  data-palet-id="+ palet_id +"></div></div>"
+        }
+        deleted = existing - total_box
+
+        for (i = counter; i < existing; i++) {
+          palet_id = response.peso_variable[i].id
+          peso_html += 
+          "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkDecimal(event, this, 5, 3);' class='romaneo_peso_variable form-control hide' value="+ response.peso_variable[i].peso_variable_quantity +"  data-palet-id="+ palet_id +" data-palet-removed="+ palet_id +"></div></div>"
+        }
+
+      }
+
+
+      $('.romaneo_peso_variable:first').select();
+      $('.romaneo_peso_variable:first').focus() 
+      $(".box_peso_veriable").find('.box_peso_veriable_apend').append(peso_html)
+    }
+
+    else{  
+      peso_html=""
+      for (i = 0; i < parseInt(boxes); i++) { 
+        peso_html += 
+        "<div class='col-md-2'><div class='form-group'><input type='number' onkeypress=' return checkDecimal(event, this, 5, 3);' min='0' class='romaneo_peso_variable form-control' value='0.0'></div></div>"
+      } 
+      $('.romaneo_peso_variable:first').select();
+      $('.romaneo_peso_variable:first').focus()  
+      $(".box_peso_veriable").find('.box_peso_veriable_apend').append(peso_html)
+    }
+    $(".loader-romaneo").html('')
+  })
+}else
+{
+  alert("Por favor, seleccione primero el producto");
+}
+});
+
+
+
+
+function checkDecimal(evt, item, lenBeforeDecimal, lenAfterDecimal) {
+  var charCode = evt.which;
+
+  var trimmed = $(item).val().replace(/\b^0+/g, "");
+  if(checkStartsWith(trimmed, '.') == true){
+    trimmed = '0' + trimmed;
+  }  
+
+  if(charCode == 8 || charCode == 9){
+    return true;
+  } 
+
+  if(charCode == 46){
+    var dotOccurrences = (trimmed.match(/\./g) || []).length;
+
+    if(dotOccurrences != undefined && dotOccurrences == 1){
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  if (charCode > 31 && ((charCode < 48) || (charCode > 57))) {
+    return false;
+  }
+  if ($(item).val() != trimmed){
+    $(item).val(trimmed);}  
+
+    if(trimmed.indexOf('.') == -1){
+      if(trimmed.length >= parseInt(lenBeforeDecimal)){
+        return false;
+      }
+    }else{
+      var inputArr = trimmed.split(".");
+      if(inputArr[1].length >= parseInt(lenAfterDecimal) && charCode != 13){
+      $(item).val(0)
+    }
+      // if(inputArr[0].length > parseInt(lenBeforeDecimal) || inputArr[1].length >= parseInt(lenAfterDecimal)){
+      //   return false;
+      // }
+    }
+
+    return true;
+  }
+  function checkStartsWith(str, prefix){
+    return str.indexOf(prefix) === 0;
+  }
+
+
+
+  $(document).on("blur",".romaneo_peso_variable", function () {
+    total_values= 0
+    $(".romaneo_peso_variable:visible").each(function(){
+      if($(this).val()==""){
+        $(this).val(0)
+      }
+        total_values += parseFloat($(this).val())
+    })
+    $(".romaneo_peso_neto").val(total_values.toFixed(3))
+    $(".romaneo_peso_bruto").val(total_values.toFixed(3))
+
+    $('.romaneo_clicked').closest('.table-row').find('.net_weight').val(total_values.toFixed(3))
+    change_singlepallet_netweight($('.romaneo_clicked'));
+    $('.romaneo_clicked').closest('.table-row').find('.gross_weight').val(total_values.toFixed(3))
+    change_singlepallet_grossweight($('.romaneo_clicked'));
+  })
+
+  $(document).on("keypress",".romaneo_peso_variable", function (e) {
+    if(e.which === 13){   
+      focus_input = $(this).parent().parent().next().find('input')
+      if(focus_input.hasClass('romaneo_peso_variable')){
+        focus_input.select()
+        focus_input.focus()
+      }
+      else{
+        $('.romaneo_peso_variable:first').select();
+        $('.romaneo_peso_variable:first').focus()
+      }
+    }
+
+  })
+
+  $(document).on("keypress",".move_next", function (e) {
+  if(e.which === 13){
+    e.preventDefault();
+    focus_input = $(this).parent().next().find('input')
+    if(focus_input.length!= 0 && focus_input.hasClass('move_next')){
+
+      focus_input.select();
+      focus_input.focus()
+    }
+    else{
+      if(focus_input.hasClass("datepicker")){
+        focus_input.parent().next().find('input').select();
+        focus_input.parent().next().find('input').focus()
+      }else{
+       
+      $(this).parent().parent().find('.move_next:eq(0)').select();
+      $(this).parent().parent().find('.move_next:eq(0)').focus()
+      }
+      
+    }
+  }
+
+})
+
+  $(document).on("click",".romaneo_cancle", function () {
+    $("#pallet_romaneo").modal('hide')
+  })
+
+  $(document).on("click",".romaneo_submit", function () {
+    div_data = $( "<div class='loader-image'> <img src='{% static 'theme/img/loader.gif' %}' alt='loader'/ ></div> " )
+    $(".loader-romaneo").append(div_data)
+    box_peso_veriable = $(this).parent().parent()
+    pallet_id = box_peso_veriable.find(".romaneo_pallet_id").val()
+    total_peso = box_peso_veriable.find(".romaneo_peso_variable")
+    active_total_kg = parseFloat($(".partial_product").find('.active_p').find('.total_kg').text())
+    product_measurement_id = parseInt($(".partial_product").find('.active_p').attr('data-measurement'))
+    romaneo_peso_bruto = parseFloat($(".romaneo_peso_bruto").val())
+    pallet_boxes =  parseInt($('.romaneo_clicked').closest('.table-row').find('.boxes').val())
+    boxes = parseFloat($(".partial_product").find('.active_p').find('.boxes').text())
+     array = []
+      arr_counter = 0
+      total_peso.each(function(){
+        deleted_id = 'False'
+        if($(this).attr('data-palet-removed') != undefined){
+          deleted_id = 'True'
+        }
+        arr_counter+=1
+        array.push(
+        {
+          "palet_value": $(this).val(),
+          "palet_id": pallet_id,
+          "id": $(this).attr('data-palet-id'),
+          "delete": deleted_id
+        }
+        )
+      })
+
+    product_total_weight = 0
+    pallet_array=[]
+    $('.wexitconfirmation_set.active_p .pallete_form_list').find('.table-row').each(function(){
+      product_total_weight += parseFloat($(this).find('.gross_weight').val())
+      pallet_array.push(
+      {
+        "pallet_boxes":$(this).find('.boxes').val(),
+        "pallet_id":parseInt($(this).find('.id-pallet').attr('data-pallet-id'))
+      })
+
+    })
+
+    product_total_weight = product_total_weight-parseFloat($('.romaneo_clicked').closest('.table-row').find('.net_weight').val())
+    
+    product_total_weight += romaneo_peso_bruto
+
+  var question = 'El peso del romaneo: '+romaneo_peso_bruto+' es diferente al peso esperado del producto. Verifique'
+    weight_array = []
+     weight_array.push(
+    {
+      "romaneo_total_weight" : product_total_weight,
+      "product_measurement_id":product_measurement_id,
+      "boxes":boxes,
+      "pallet_boxes":pallet_boxes,
+      "pallet_id":pallet_id
+    })
+     
+    var callback = function() {
+         $.ajax({
+              url: "{% url 'exit-save-romaneo-product-weight' %}",
+              type: "POST",
+              dataType: "json",
+              data: {
+                  weight_array :JSON.stringify(weight_array),
+                  pallet_array :JSON.stringify(pallet_array)
+              },
+              
+          }).done( function( response )
+          {
+            if (response["code"] == "200") {
+               save_peso_variable(array,arr_counter)
+               kg_per_box=truncateToDecimals(parseFloat(product_total_weight/boxes))
+
+               $('.wexitconfirmation_set.active_p .pallete_form_list').find('.table-row').each(function(){
+                  box_kg=kg_per_box*($(this).find('.boxes').val())
+                  $(this).find('.box_kg').val(box_kg)
+
+              })
+            }
+            
+          })
+    }
+    if(active_total_kg != romaneo_peso_bruto){
+      $(".loader-romaneo").html('')
+      confirm(question,callback);
+    }
+    else{
+      callback();
+    }
+
+  })
+
+function save_peso_variable(array,arr_counter){
+      jQuery.ajax( {
+        url: "{% url 'exit-save-pallet-peso-variable' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+          palet_values: array,
+          arr_counter: arr_counter
+        }
+      } ).done( function( response )
+      {
+        if (response["code"] == "200") {
+          Swal.fire('Romaneo Peso Variable',response["message"],'success')
+          $(".loader-romaneo").html('')
+          $("#pallet_romaneo").modal('hide')
+          $('.romaneo_clicked').closest('.table-row').find('.net_weight').val(parseFloat($(".romaneo_peso_neto").val()).toFixed(3))
+          $('.romaneo_clicked').closest('.table-row').find('.gross_weight').val(parseFloat($(".romaneo_peso_bruto").val()).toFixed(3))
+
+        }else{
+          Swal.fire('Romaneo Peso Variable','Pallet peso variable details failed to update','error')
+        }
+
+      })
+}
+
+  function confirm(question, callback) {
+
+    var confirmModal = $('#modal-romaneo-confirm')
+    confirmModal.modal('show')
+    confirmModal.find('.sure-confirmation').find('p').text(question)
+    confirmModal.find('#romaneo-yes').unbind().click(function(event) {
+       callback();
+       confirmModal.modal('hide')
+    });
+    confirmModal.find('#romaneo-No').unbind().click(function(event) {
+     
+       confirmModal.modal('hide')
+    });
+
+  }
+
+
+
+  $(".send_to_maneuvers").click(function(){
+    $("#id_status").val("InManeuvers")
+    error = false
+ 
+    $("#exit_product_detail").find(".wexitconfirmation_set.active_p").each(function(){ 
+      
+      $(this).find(".gross_weight_validation:visible").each(function(){ 
+        
+        if(parseFloat($(this).val()) > parseFloat($(this).closest('.table-row').find('.inventory_gross_weight').val())){
+
+          $(this).addClass('validation-error')
+          error = true
+          
+        }else{
+           $(this).removeClass('validation-error')
+           error = false
+        }
+      })
+        $(this).find(".net_weight_validation:visible").each(function(){ 
+          
+          if(parseFloat($(this).val()) > parseFloat($(this).closest('.table-row').find('.inventory_net_weight').val())){
+
+            $(this).addClass('validation-error')
+            error = true
+
+          }else{
+           $(this).removeClass('validation-error')
+           error = false
+        }
+        })
+      
+    })
+    if (error==false)
+    {
+      // check total kg and all pallet box kg are same of different
+      var active_total_kg = $(".partial_product").find('.total_kg').map(function(){ 
+        return parseFloat($(this).text())}).get().reduce((pv,cv)=>{ 
+        return pv + (parseFloat(cv)||0); 
+      },0);
+
+      var product_total_weight = 0; 
+
+      $('.pallete_form_list').find('.table-row').each(function(){ 
+        product_total_weight += parseFloat($(this).find('.gross_weight').val()) 
+      })
+
+      var question = 'El peso del romaneo: '+product_total_weight+' es diferente al peso esperado del producto: '+active_total_kg +', Desea utilizar el peso del romaneo en lugar del peso del producto?';
+
+      if(active_total_kg != product_total_weight){
+
+        var confirmModal = $('#modal-romaneo-confirm')
+        confirmModal.modal('show')
+        confirmModal.find('.sure-confirmation').find('p').text(question)
+        confirmModal.find('#romaneo-yes').unbind().click(function(event) {
+            var indexer = 0;
+            $('#exit_product_detail').find('.wexitconfirmation_set').each(function(){
+              var total_gross_weight = parseFloat($(this).find('.total_gross_weight').val())
+              $($('.partial_product').find('tr')[indexer]).find('.total_kg').text(total_gross_weight)
+              var boxes = $(this).find('.total_boxes').val()
+              var kg_per_boxes = parseInt(total_gross_weight/parseFloat(boxes))
+              $($('.partial_product').find('tr')[indexer]).find('.kg_per_boxes').text(kg_per_boxes)
+              console.log(total_gross_weight, kg_per_boxes, boxes)
+
+              jQuery.ajax( {
+                url: "{% url 'update_exit_romaneo_product_kg' %}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                  product_measurement_id: $($('.partial_product').find('tr')[indexer]).attr('data-measurement'),
+                  total_kg: total_gross_weight,
+                  kg_per_boxes: kg_per_boxes
+                },
+              }).done( function( response )
+              {
+                console.log(response)
+              })
+              
+            indexer = indexer+1;
+
+          })
+          confirmModal.modal('hide')
+          $("#sga-form").submit();
+          $.LoadingOverlay("show");
+
+        });
+        confirmModal.find('#romaneo-No').unbind().click(function(event) {
+           confirmModal.modal('show')
+        });
+
+      }
+      else{
+        $("#sga-form" ).submit();
+        $.LoadingOverlay("show");
+      }
+      
+
+    }else{
+      $.LoadingOverlay("hide");
+     alert("El peso solicitado es mayor al disponible. Verifique con Mesa de Control")
+   }
+ })
+
+
+  $(document).ready(function(){
+    
+    setTimeout(function(){ 
+      exit_id = localStorage.getItem('exit_id')
+      data_role = localStorage.getItem('data_role')
+      if (exit_id != null && data_role != null) {
+        if ('{{object.id}}' == exit_id) {
+          last_val = data_role.slice(-1)[0]
+          $(".confirm_exit").trigger('click')        
+          $('.partial_product tr').eq(last_val).trigger('click')
+        }
+        else{
+          localStorage.removeItem('exit_id')
+          localStorage.removeItem('data_role')
+        }
+      }
+    }, 1000); 
+
+  })
+
+  $(".cancle_button").click(function(){
+    localStorage.removeItem('exit_id')
+    localStorage.removeItem('data_role')
+    $("#exit_confirmation_model").modal('hide') 
+  })
+
+  $.get('{% url "clear-sessions" %}', function(response, status){
+    
+  })
+
+
+  $(document).on("click",".appDetails", function () {
+    $("#pallet_warehouse").modal('show')
+    var warehouse = $(this).closest('.row').find('.warehouse');
+    var rack_number = $(this).closest('.row').find('.rack_number');
+    var location = $(this).closest('.row').find('.location');   
+  });
+
+  $(document).on("click",".barcode_scanner", function () {
+    $("#romanio_pallet_barcode").modal('show')
+    localStorage.setItem("barcode_reader_codes", JSON.stringify([]))
+    localStorage.setItem("barcode_weight_kg", JSON.stringify([]))
+    var stored_datas = JSON.parse(localStorage["barcode_reader_codes"]);
+    $(".barcode_total_read").val("")
+    $(".barcode_reader").val("")
+    $(".weight_count").val(0)
+    $(".total_weight_kg_count").val(0)
+    $(".barcode_reader").removeAttr("readonly")
+    $(".barcode_scanner_submit").attr("disabled", "disabled")
+  });
+
+  $(document).on("keypress",".barcode_reader", function (e) {
+  var key = e.which;
+  console.log(key)
+  if(key == 13) {
+    var barcode_reader_val = $(this).val();
+    
+    if (barcode_reader_val.length <=23 ){
+      alert("Ingrese el código de barras correcto.")
+    }
+    else{
+      if (localStorage["barcode_reader_codes"]){
+
+      }
+      else{
+        localStorage.setItem("barcode_reader_codes", JSON.stringify([]));
+      }
+      if (localStorage["barcode_weight_kg"]){
+      }
+      else{
+        localStorage.setItem("barcode_weight_kg", JSON.stringify([]));
+      }
+      var stored_bar_code_reader = JSON.parse(localStorage.getItem("barcode_reader_codes"));
+      var stored_bar_code_weight = JSON.parse(localStorage.getItem("barcode_weight_kg"));
+      if (stored_bar_code_reader.includes(barcode_reader_val)){
+        alert("El código de barras ya está escaneado")
+      }
+      else{
+        stored_bar_code_reader.push(barcode_reader_val)
+
+        localStorage.setItem("barcode_reader_codes", JSON.stringify(stored_bar_code_reader));
+        local_storage_code_data = JSON.parse(localStorage.getItem("barcode_reader_codes")).toString()
+        local_storage_code_data = local_storage_code_data.replace(/,+/g, '\n ') 
+        $(".barcode_total_read").val(local_storage_code_data)
+        weight_count = $(".weight_count").val()
+        weight_count = parseInt(weight_count) + 1
+        $(".weight_count").val(weight_count)
+         product_bar_code = $(".partial_product").find('.active_p').find('.product_bar_code').val()
+        var total_val = calculate_barcode_weight_val(barcode_reader_val, product_bar_code)
+        stored_bar_code_weight.push(total_val)
+        localStorage.setItem("barcode_weight_kg", JSON.stringify(stored_bar_code_weight));
+        total_weight = eval(JSON.parse(localStorage["barcode_weight_kg"]).join("+"))
+        total_weight = parseFloat(total_weight).toFixed(3)
+        $(".total_weight_kg_count").val(total_weight)
+        if($(".romaneo_peso_variable:visible").length == parseInt(weight_count)){
+          $(".barcode_reader").attr("readonly", true)
+          $(".barcode_scanner_submit").removeAttr("disabled")
+          alert("Todo el código de barras se escanea correctamente")
+        }
+        else{
+          $(".barcode_reader").removeAttr("readonly")
+          $(".barcode_scanner_submit").attr("disabled", "disabled")
+        }
+        }
+      }
+      $(".barcode_reader").val("")
+    }    
+
+  })
+
+$(document).on("click", ".barcode_scanner_submit", function(){
+  barcode_weight_kg = JSON.parse(localStorage["barcode_weight_kg"])
+  if (barcode_weight_kg.length > 0){
+    $( ".romaneo_peso_variable" ).each(function( index ) {
+      $(this).val(barcode_weight_kg[index])
+    })
+  }
+  $("#romanio_pallet_barcode").modal("hide")
+  localStorage.setItem("barcode_reader_codes", JSON.stringify([]));
+  localStorage.setItem("barcode_weight_kg", JSON.stringify([]));
+  $(".romaneo_peso_variable").blur()
+})
+
+$(document).on("click", ".barcode_scanner_cancle_button", function(){
+  localStorage.setItem("barcode_reader_codes", JSON.stringify([]));
+  localStorage.setItem("barcode_weight_kg", JSON.stringify([]));
+})
+
+</script>
+
+
+{% block additional-custom-scripts %}
+{% endblock %}
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}
+
+

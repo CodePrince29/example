@@ -1,0 +1,129 @@
+{% extends 'form-edit.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Pricelists' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Pricelists' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'pricelist-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{pricelist.code}}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{{pricelist.code}}{% endblock %}
+
+{% block form-fields-col-width %}
+<div class="col-md-12">
+{% endblock %}
+
+{% block form-fields %}
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label for="plCode">{% trans 'Code' %}</label>
+            <input type="text" class="form-control" id="plCode" name="code" value="{{pricelist.code}}" required>
+        </div>
+        <div class="form-group col-md-6">
+            <div class="checkbox">
+              <label for="plIsBaseline">
+                {% if pricelist.is_baseline %}
+                <input type="checkbox" id="plIsBaseline" name="is_baseline" checked="{{pricelist.is_baseline}}">
+                {% else %}
+                <input type="checkbox" id="plIsBaseline" name="is_baseline">
+                {% endif %}
+                {% trans 'Is Baseline' %}
+              </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+              <label for="plDescription">{% trans 'Description' %}</label>
+              <input type="text" class="form-control" id="plDescription" name="description" value="{{pricelist.description}}" required>
+        </div>
+    </div>
+
+    {% if pricelist.services.count > 0 %}
+    <div class="row">
+      <!-- /.box-header -->
+      <div class="box-header">
+        <h3 class="box-title">{% trans 'Price List Items' %}</h3>
+        <!-- <a href="{% url 'pricelistservicerelation-create' %}" target="_blank" type="button" class="btn btn-primary btn-sm pull-right">{% trans 'Add New Price List Item' %}</a> -->
+      </div>
+      <div class="box-body">
+        <table id="price-list" class="table table-bordered">
+          <tr>
+            <th>{% trans 'Service' %}</th>
+            <th>{% trans 'Price' %}</th>
+          </tr>
+          {% for service in pricelist.services %}
+          <tr>
+            <td>{{service.service}}</td>
+            <td>{{service.price}}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'pricelist-list' %}{% endblock %}
+
+{% block additional-custom-scripts %}
+<script>
+var index = 1;
+function insertRow(){
+    var table=document.getElementById("price-list");
+    var row=table.insertRow(table.rows.length);
+    var cell1=row.insertCell(0);
+    var t1=document.createElement("input");
+        t1.id = "serviceDescription"+index;
+        t1.className="form-control";
+        cell1.appendChild(t1);
+    var cell2=row.insertCell(1);
+    var t2=document.createElement("input");
+        t2.id = "servicePrice"+index;
+        t2.className="form-control";
+        cell2.appendChild(t2);
+    var cell3=row.insertCell(2);
+    var t3=document.createElement("button");
+    var dataConfirm = document.createAttribute("data-confirm");
+        dataConfirm.value = "{% trans 'Are you sure to delete this item?' %}";
+        t3.id = "serviceDelete"+index;
+        t3.type = "button";
+        t3.setAttributeNode(dataConfirm);
+        t3.className = "btn btn-danger btn-delete";
+        t3.innerHTML="<i class='fa fa-close'></i>";
+        cell3.appendChild(t3);
+    index++;
+    deleteButtonConfirm(t3);
+}
+function deleteRow (el) {
+var delBtn = document.getElementById(el);
+delBtn.parentNode.parentNode.parentNode.removeChild(delBtn.parentNode.parentNode);
+}
+
+</script>
+
+<script>
+function deleteButtonConfirm(btn) {
+  btn.addEventListener('click', function (event) {
+      event.preventDefault();
+
+      var choice = confirm(btn.getAttribute('data-confirm'));
+
+      if (choice) {
+          deleteRow(btn.id);;
+      }
+  });
+}
+deleteButtonConfirm(document.getElementById("serviceDelete"));
+</script>
+{% endblock %}
+
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/price_list/sidebar.html' %}
+{% endblock %}

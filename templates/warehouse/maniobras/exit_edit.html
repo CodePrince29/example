@@ -1,0 +1,1064 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'warehouse-exit-list' %}">{% trans 'WAREHOUSE-EXIT-APPOINTMENTS' %}</a></li>
+  <li class="active">{{warehouseexit.id}}</li>
+</ol>
+{% endblock %}
+
+
+
+<a href="{% url 'packaging-list' %}"></a>
+
+{% block content %}
+<div class="parent-loader"></div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-primary">
+      <input type="hidden" id="id_customer" data-name="{{object.customer}}" value="{{object.customer.id}}">
+      <input type="hidden" name="" value="{{object.id}}" id="id_warehouse_exit">
+      <input type="hidden" name="" class="status_class" value="{{object.status}}">
+      <input type="hidden" id="id_customer_barcoderead" value="{{object.customer.barcoderead}}">
+      <form id="sga-form" role="form" method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+        <div class="box-body">
+          <input type="hidden" name="status" value="{{object.status}}" id="id_status">
+          <input type="hidden" name="id" value="{{object.id}}" id="warehouse_exit_id">
+
+          <div class="box-body">
+            <div class="row">
+              {% include 'form-error.html' %}
+            </div> 
+
+            <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">{% trans 'WAREHOUSE EXIT CONFIRMATION' %}
+              </h4>
+            </div>    
+
+            <div class="modal-body" >
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group td-group">
+                    {% trans 'Product Code' %}
+                    <select class="form-control select2" id="product_measurement_select_id">
+                      {% with object.list_product as list_products %} 
+                      <option value="">---------</option> 
+                      {% for product_measure in list_products %}
+                      <option value="{{product_measure.id}}"
+                      data-product-id="{{product_measure.product.id}}"
+                      data-product-code="{{product_measure.product}}"
+                      data-product-description="{{product_measure.product_description}}"
+                      data-barcode_to_use="{{product_measure.product.barcode_to_use}}"
+                      data-packages_per_pallet="{{product_measure.product.packages_per_pallet}}"
+                      data-net_weight="{{product_measure.product.net_weight|unlocalize}}"
+                      data-gross_weight="{{product_measure.product.gross_weight|unlocalize}}"
+                      data-price="{{product_measure.price | unlocalize}}"
+                      data-kg_per_price="{{product_measure.kg_per_price | unlocalize}}"
+                      data-boxes="{{product_measure.boxes | unlocalize}}"
+                      data-kg_per_boxes="{{product_measure.kg_per_boxes | unlocalize}}"
+                      data-variable_weight="{{product_measure.product.variable_weight}}"
+
+                      data-total_kg="{{product_measure.total_kg | unlocalize}}"
+                      >{{product_measure.product.product_code}}</option>
+                      {% endfor %}
+                      {% endwith %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class='form-group td-group'>
+                    <label>{% trans 'Description' %}</label>
+                    <input type="text" name="" class='form-control input-group product_description' readonly="true">
+                  </div>
+                </div>
+              </div>
+
+              <div class="pallet_details hide">
+                <div class="col-md-12" id="">
+                  <div class="table-scroll">
+                    <div class="col-md-12">
+                      <table class="table new-tab">
+                        <thead>
+                          <tr>
+                            <input type="hidden" name="" value="{{pallet.id}}" id="id_pallet">
+                            <th class="input-group-th"> 
+                              <label>Tarima Actual</label>
+                              <input type="text" name=""class="form-control current_pallet" disabled="true" value="1">
+                            </th>
+                            <th class="input-group-th"> 
+                              <label>Tarimas Totales</label>
+                              <input type="text" name=""class="form-control total_pallet" disabled="true" value="">
+                            </th>
+                            <th class="input-group-th"> 
+                              <label>Cajas Totales</label>
+                              <input type="text" name=""class="form-control total_boxes" disabled="true">
+                            </th>
+                            <th class="input-group-th"> 
+                              <label>Peso bruto Total</label>
+                              <input type="text" name=""class="form-control total_gross_weight" disabled="true">
+                            </th>
+                            <th class="input-group-th">
+                              <input type="text" name="" class="form-control confirm_level" disabled="true">
+                            </th>
+                            <th class="input-group-th">
+                              <button type="button" class="btn btn-primary prev_pallet"><< Anterior</button>
+                            </th>
+                            <th class="input-group-th"> 
+                              <button type="button" class="btn btn-primary next_pallet"> Siguiente >> </button>
+                            </th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="table-scroll single_pallet_detail">
+                        <table class="table new-tab">
+                          <thead>
+                            <tr>
+                              <th class="input-group-th"> 
+                                <label>{% trans 'Lote Tarima' %}</label>
+                                <input type="text" name=""class="form-control pallet_lote_tarima" disabled="true" value="{{pallet.palet_lot}}">
+                              </th>
+                              <th class="input-group-th"> 
+                                <label>{% trans 'Cajas' %}</label>
+                                <input type="hidden" name="" value="" class="pallet_exp_date">
+                                <input type="text" name=""class="form-control pallet_boxes" disabled="true" value="{{pallet.boxes | unlocalize}}">
+                              </th>
+                              <th class="input-group-th"> 
+                                <label>{% trans 'Lote Cliente' %}</label>
+                                <input type="text" name=""class="form-control pallet_lote_cliente" disabled="true" value="{{pallet.cust_lot}}">
+                              </th>
+                              <th class="input-group-th"> 
+                                <label>{% trans 'Peso Bruto' %}</label>
+                                <input type="text" name=""class="form-control pallet_gross_weight" disabled="true" value="{{pallet.gross_weight | unlocalize}}">
+                              </th>
+
+                              <th class="input-group-th"> 
+                                <label>{% trans 'Peso Neto' %}</label>
+                                <input type="text" name=""class="form-control pallet_net_weight" disabled="true" value="{{pallet.net_weight | unlocalize}}">
+                              </th>
+
+                              <th class="input-group-th"> 
+                                <label>{% trans 'Codigo Ubication' %}</label>
+                                <input type="text" name=""class="form-control pallet_location" disabled="true" value="{{pallet.location.shortcode}}">
+                              </th>
+
+                              <th class="input-group-th romaneo_th"> 
+                                <button name=""class="btn btn-success pallet_romaneo" > ROMANEO </button>
+                              </th>
+                            </tr>
+                          </thead>
+                        </table>
+                      </div>
+                    </div>                    
+                  </div>
+                  <div class="btn-line text-right">
+                    <a href="/maneuver/maniobras-exit-list" class="btn btn-default">Cancelar</a>
+                    <button type="button" class="btn btn-primary confirm_pallet">Guardar Pallet</button>
+                    <button type="button" class="btn btn-success pallet_selection"> Reubicar Pallet</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div id="pallet_romaneo" class="modal fade" role="dialog" width="90%;" aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog romaneo-peso-modal" data-backdrop="false" style="width: 80% !important;">
+    <div class="modal-content" style="
+    border-radius: 6px;">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="modal-title">ROMANEO-PESO VARIABLE</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="loader-romaneo">
+        </div>
+        <div class="col-md-10">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="notes">{% trans 'Cliente' %}</label>
+              <input type="text" readonly="true" class="romaneo_client form-control">
+            </div>                
+          </div>          
+          <div class="col-md-2">
+
+            <div class="form-group">
+              <label for="notes">{% trans 'Código Producto' %}</label>
+              <input type="text" readonly="true" class="romaneo_product_code form-control">
+            </div> 
+
+
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Producto' %}</label>
+              <input type="text" readonly="true" class="romaneo_product_description form-control">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">          
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Lote Tarima' %}</label>
+              <input type="text" readonly="true" class="romaneo_lote_tarima form-control">
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes"> {% trans 'Cajas' %}</label>
+              <input type="text" readonly="true" class="romaneo_cajas form-control">
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="notes">{% trans 'Caducidad' %}</label>
+              <input type="text" readonly="true" class="romaneo_exit_date form-control">
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Peso Bruto' %}</label>
+              <input type="text" readonly="true" class="romaneo_peso_bruto form-control">
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="notes">{% trans 'Peso Neto' %}</label>
+              <input type="text" readonly="true" class="romaneo_peso_neto form-control">
+            </div>             
+          </div>
+        </div>
+        <div class="col-md-4">            
+        </div>          
+      </div>
+      <br>
+      <br>
+      <input type="hidden" readonly="true" class="romaneo_pallet_id form-control">
+      <div class="box_peso_veriable" style="max-height: 360px; overflow-y: auto; margin:20px ">
+        <div class="row box_peso_veriable_apend">
+
+        </div>        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success barcode_scanner">{% trans 'LECTURA DE CODIGOS' %}</button> 
+        <button type="button" class="btn btn-primary romaneo_submit">{% trans 'Save' %}</button>
+        <button type="button" class="btn btn-default romaneo_cancle">{% trans 'Cancel' %}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="reallocation_modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document" style="width: 900px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{%trans 'NUEVA REUBICACION' %}</h4>
+      </div>
+      <div class="modal-body" align="center">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-4 col-sm-4">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Palet Lot' %}</label>
+                  <input type="text" value="" id="pallete_palet_lot_id"  class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-md-2" style="margin-top: 25px;">
+                <input type="button" class="btn btn-primary" value="{% trans 'FIND' %}"
+                  onclick="return load_for_filter_data()">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Product Code' %}</label>
+                  <input type="text" value="" id="id_reallocation_product_code"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">Descripción</label>
+                  <input type="text" value="" id="id_reallocation_product_description"  class="form-control" readonly="true">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Palet Lot' %}</label>
+                  <input type="text" value="" id="id_reallocation_pallet_lot"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Rack' %}</label>
+                  <input type="text" value="" id="id_reallocation_rack"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'cajas' %}</label>
+                  <input type="text" value="" id="id_reallocation_boxes"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Peso Bruto' %}</label>
+                  <input type="text" value="" id="id_reallocation_gross_weight"  class="form-control" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Peso Neto' %}</label>
+                  <input type="text" value="" id="id_reallocation_net_weight"  class="form-control" readonly="true">
+                  <input type="hidden" name="" id="id_reallocation_pallet_id" readonly="true">
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Location' %}</label>
+                  <input type="text" value="" id="id_pallet_location"  class="form-control" readonly="true">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                  <label for="notes">{% trans 'Location' %}</label>
+                  <input type="text" value="" id="id_reallocation_new_location"  class="form-control">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10 col-sm-10">
+                <div class="form-group col-md-12">
+                  <label> {% trans 'Reason for Relocation' %}</label>
+                  <textarea class="form-control rounded-0" id="id_reallocation_new_description" rows="9" name="description"></textarea>
+                </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" disabled="disabled" class="btn btn-primary" id="create_re_allocation">{% trans 'Save' %}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="romanio_pallet_barcode" class="modal fade" role="dialog"  aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content" style="
+    border-radius: 6px;">
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="notes">{% trans 'Boxes Read' %}</label>
+                <input type="text" readonly="true" class="form-control weight_count" value="0">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                  <label for="notes">{% trans 'Weight Read' %}</label>
+                  <input type="text" readonly="true" class="total_weight_kg_count form-control" value="0">
+                </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                  <label for="notes">{% trans 'Barcode' %}</label>
+                  <input type="text" min="0" class="barcode_reader form-control">
+                </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                  <label for="notes"></label>
+                  <textarea rows="10" style="height:100%; width: 100%;" class="barcode_total_read" readonly="true"></textarea>
+                </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary barcode_scanner_submit" disabled="disabled">{% trans 'Save' %}</button>
+
+        <button type="button" class="btn btn-default barcode_scanner_cancle_button" data-dismiss="modal">{% trans 'Cancel' %}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+<style type="text/css">
+
+
+  .head_margin{ margin-left: 10px!important }
+  .body_margin{ margin-left: 20px!important }
+</style>
+<script type="text/javascript">
+    $(document).ready(function(){
+    var status = $(".status_class").val()
+    
+    if(status != "InManeuvers"){
+     $('.confirm_pallet').addClass("hide")
+   }    
+  });
+
+  $(".next_pallet").click(function(){
+    selected_product = $("#product_measurement_select_id").find(':selected')
+    warehouse_exit_id = $("#id_warehouse_exit").val()
+    measurement_id = selected_product.val()
+    product_id = selected_product.data("product-id")
+    pallet = $("#id_pallet").val()
+    if(pallet.length){
+      pallet_id = pallet
+    }
+    else{
+      pallet_id = 0
+    }
+    $.LoadingOverlay('show')
+    get_pallet_detail(warehouse_exit_id, product_id, measurement_id, pallet_id, "next")
+  })
+
+  $(".prev_pallet").click(function(){
+    selected_product = $("#product_measurement_select_id").find(':selected')
+    warehouse_exit_id = $("#id_warehouse_exit").val()
+    measurement_id = selected_product.val()
+    product_id = selected_product.data("product-id")
+    pallet = $("#id_pallet").val()
+    if(pallet.length){
+      pallet_id = pallet
+    }
+    else{
+      pallet_id = 0
+    }
+    $.LoadingOverlay('show')
+    get_pallet_detail(warehouse_exit_id, product_id, measurement_id, pallet_id, "prev")
+  })
+
+  $("#product_measurement_select_id").select2()
+  $("#product_measurement_select_id").change(function(){
+    $(".product_description").val($(this).find(':selected').data("product-description"))
+    tr_click = $(this)
+    $.LoadingOverlay('show')
+    measurement_id = $(this).find(':selected').val()
+    product_id = $(this).find(':selected').data("product-id")
+    warehouse_exit_id = $("#id_warehouse_exit").val()
+    get_pallet_detail(warehouse_exit_id, product_id, measurement_id, 0, "")
+    $(".current_pallet").val(1)
+  })
+
+  function get_pallet_detail(warehouse_exit_id, product_id, measurement_id, pallet_id, filter_type){
+    variable_weight = $("#product_measurement_select_id").find(":selected").data("variable_weight")
+    if(variable_weight == 'False'){
+      $(".romaneo_th").addClass("hide")
+    }
+    else{
+      $(".romaneo_th").removeClass("hide")
+    }
+    jQuery.ajax( {
+      url: "/warehouse_exit/exit-pallet-details/"+warehouse_exit_id,
+      type: "GET",
+      dataType: "json",
+      data: {"measurement_id": measurement_id, "product_id": product_id, 'pallet_id': pallet_id, "filter_type": filter_type},
+    } ).done( function( response )
+    {
+      $(".pallet_details").removeClass("hide")
+      if(response.pallet_found == true){
+        if(response.data['confirmed']){
+          $(".confirm_level").val("Confirmado")
+        }
+        else{
+          $(".confirm_level").val("Pendiente")
+        }
+
+        $(".pallet_lote_tarima").val(response.data["palet_lot"])
+        $(".pallet_boxes").val(response.data["boxes"])
+        $(".pallet_lote_cliente").val(response.data["cost_lot"])
+        $(".pallet_gross_weight").val(response.data["gross_weight"])
+        $(".pallet_net_weight").val(response.data["net_weight"])
+        $(".pallet_location").val(response.data["location_code"])
+        $("#id_pallet").val(response.data["id"])
+        
+        $(".total_pallet").val(response.measurement_detail['total_pallet'])
+        $(".total_boxes").val(response.measurement_detail['total_boxes'])
+        $(".total_gross_weight").val(response.measurement_detail['total_gross_weight'])
+        $(".pallet_exp_date").val(response.data["exp_date"])
+        if(filter_type == "next"){
+          current_pallet = $(".current_pallet").val()
+          $(".current_pallet").val(parseInt(current_pallet) + 1)
+        }
+        else if (filter_type == "prev"){
+          current_pallet = $(".current_pallet").val()
+          $(".current_pallet").val(parseInt(current_pallet) - 1)
+        }
+      }
+      else{
+        
+        if(filter_type == "next"){
+          alert("No se encontró el siguiente palé")
+        }
+        else if (filter_type == "prev"){
+          alert("No se encontró ninguna paleta anterior")
+        }
+        else{
+          alert("No se encontró ninguna paleta")
+        }
+
+      }
+      $.LoadingOverlay('hide')
+      return false
+    })
+  }
+
+
+
+
+  $(document).on("click",".pallet_romaneo", function (){ 
+
+    selected_product = $("#product_measurement_select_id").find(":selected")
+    var measurements_id = selected_product.val()
+    code = selected_product.data("product-code")
+    description = selected_product.data("product-description")
+    palet_lot = $(".pallet_lote_tarima").val()
+    boxes = $(".pallet_boxes").val()
+    exp_date = $(".pallet_exp_date").val()
+    gross_weight = $(".pallet_gross_weight").val()
+    net_weight = $(".pallet_net_weight").val()
+    id_pallet = $("#id_pallet").val()
+    var product_bar_code = selected_product.data("barcode_to_use")
+
+    barcodes = ["bc_sasa", "BC_Yoreme", "BC_LaVeinte", "BC_Carnicos",
+    "BC_GCM", "BC_Cicaba", "BC_Integra", "BC_Integra2", "BC_Bonacarne", "BC_Soles", "Codigo Ayvi"]
+    id_customer_barcoderead = $("#id_customer_barcoderead").val()
+    product_bar_code_exists = false
+    if($.inArray(product_bar_code, barcodes) > -1)
+    {
+      product_bar_code_exists = true
+    }
+    if( id_customer_barcoderead == "True" && product_bar_code_exists){
+      $(".barcode_scanner").removeClass("hide")
+    }
+    else{
+      $(".barcode_scanner").addClass("hide")
+    }
+
+    $("#pallet_romaneo").modal('show')
+    div_data = $( "<div class='loader-image'> <img src='{% static 'theme/img/loader.gif' %}' alt='loader'/ ></div> " )
+    $(".loader-romaneo").append(div_data)
+    $(".romaneo_client").val($("#id_customer").data("name"))
+    $(".romaneo_product_code").val(code)
+    $(".romaneo_product_description").val(description)
+
+    $(".romaneo_lote_tarima").val(palet_lot)
+    $(".romaneo_cajas").val(boxes)
+    $(".romaneo_exit_date").val(exp_date)
+    $(".romaneo_peso_bruto").val(parseFloat(gross_weight).toFixed(3))
+    $(".romaneo_peso_neto").val(parseFloat(net_weight).toFixed(3))
+    $(".romaneo_pallet_id").val(id_pallet)
+
+    jQuery.ajax( {
+      url: "{% url 'exit-get-pallet-peso-variable' 0 %}".replace('0', id_pallet),
+      type: "GET",
+      dataType: "json",
+    } ).done( function( response )
+    {
+      $(".box_peso_veriable").find('.box_peso_veriable_apend').html('')
+
+      existing = response.peso_variable.length
+
+      if (response["data-matched"] == "yes") {
+
+        peso_html=""
+        for (i = 0; i < response.peso_variable.length; i++) {
+
+          palet_id = ""
+          if(i < parseInt(boxes) ){
+
+            peso_html += 
+            "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkafterthreeDecimal(event, this);' class='romaneo_peso_variable form-control' value="+ response.peso_variable[i].peso_variable_quantity +"  data-palet-id="+ palet_id +"></div></div>"
+          }
+          else if(parseInt(boxes)>response.peso_variable.length){
+
+            peso_html += 
+            "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkafterthreeDecimal(event, this);' class='romaneo_peso_variable form-control' value='0'  data-palet-id="+ palet_id +"></div></div>"
+          }
+        }
+        $('.romaneo_peso_variable:first').select();
+        $('.romaneo_peso_variable:first').focus() 
+
+        $(".box_peso_veriable").find('.box_peso_veriable_apend').append(peso_html)
+      }else if (response["data-matched"] == "true") {      
+        total_box = parseInt(boxes)
+        new_box = total_box - existing
+        peso_html=""
+
+        if (total_box >= existing) {
+          for (i = 0; i < existing; i++) { 
+            palet_id = response.peso_variable[i].id
+            peso_html += 
+            "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkafterthreeDecimal(event, this);' class='romaneo_peso_variable form-control' value="+ response.peso_variable[i].peso_variable_quantity +"  data-palet-id="+ palet_id +"></div></div>"
+          }
+
+          for (i = 0; i < new_box; i++) { 
+            peso_html += 
+            "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkafterthreeDecimal(event, this);' class='romaneo_peso_variable form-control' value='0'  data-palet-id="+ "" +"></div></div>"
+          } 
+        }
+        else{
+          counter=0;
+          for (i = 0; i < total_box; i++) { 
+
+            counter+=1
+            palet_id = response.peso_variable[i].id
+            peso_html += 
+            "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkafterthreeDecimal(event, this);' class='romaneo_peso_variable form-control' value="+ response.peso_variable[i].peso_variable_quantity +"  data-palet-id="+ palet_id +"></div></div>"
+          }
+          deleted = existing - total_box
+
+          for (i = counter; i < existing; i++) {
+            palet_id = response.peso_variable[i].id
+            peso_html += 
+            "<div class='col-md-2'><div class='form-group'><input type='number' min='0' onkeypress=' return checkafterthreeDecimal(event, this);' class='romaneo_peso_variable form-control hide' value="+ response.peso_variable[i].peso_variable_quantity +"  data-palet-id="+ palet_id +" data-palet-removed="+ palet_id +"></div></div>"
+          }
+
+        }
+
+
+        $('.romaneo_peso_variable:first').select();
+        $('.romaneo_peso_variable:first').focus() 
+        $(".box_peso_veriable").find('.box_peso_veriable_apend').append(peso_html)
+      }
+
+      else{  
+        peso_html=""
+        for (i = 0; i < parseInt(boxes); i++) { 
+          peso_html += 
+          "<div class='col-md-2'><div class='form-group'><input type='number' onkeypress=' return checkafterthreeDecimal(event, this);' min='0' class='romaneo_peso_variable form-control' value='0.0'></div></div>"
+        } 
+        $('.romaneo_peso_variable:first').select();
+        $('.romaneo_peso_variable:first').focus()  
+        $(".box_peso_veriable").find('.box_peso_veriable_apend').append(peso_html)
+      }
+      $(".loader-romaneo").html('')
+    })
+    return false
+  });
+
+$(".romaneo_cancle").click(function(){
+  $("#pallet_romaneo").modal('hide')
+})
+
+$(".confirm_pallet").click(function(){
+  pallet_id = $("#id_pallet").val()
+
+  jQuery.ajax( {
+    url: "/warehouse_exit/confirm-exit-pallet/"+warehouse_exit_id,
+    type: "GET",
+    dataType: "json",
+    data: {'pallet_id': pallet_id},
+  } ).done( function( response )
+  {
+    if(response.not_confirmed){
+      $(".confirm_level").val("Pendiente")
+    }
+    else{
+      $(".confirm_level").val("Confirmado")
+    }
+    alert(response.message)
+  })
+  $("#pallet_romaneo").modal('hide')
+})
+
+
+
+
+  $(document).on("click",".romaneo_cancle", function () {
+    $("#pallet_romaneo").modal('hide')
+  })
+
+  $(document).on("click",".romaneo_submit", function () {
+    div_data = $( "<div class='loader-image'> <img src='{% static 'theme/img/loader.gif' %}' alt='loader'/ ></div> " )
+    $(".loader-romaneo").append(div_data)
+    box_peso_veriable = $(this).parent().parent()
+    pallet_id = box_peso_veriable.find(".romaneo_pallet_id").val()
+    total_peso = box_peso_veriable.find(".romaneo_peso_variable")
+    active_total_kg = parseFloat($("#product_measurement_select_id").find(":selected").attr("data-total_kg"))
+
+    product_measurement_id = $("#product_measurement_select_id").find(":selected").val()
+
+    romaneo_peso_bruto = parseFloat($(".romaneo_peso_bruto").val())
+    pallet_boxes =  $(".romaneo_cajas").val()
+    total_enterd_weight = 0
+    boxes = parseFloat($("#product_measurement_select_id").find(":selected").attr("data-boxes"))
+     array = []
+      arr_counter = 0
+      total_peso.each(function(){
+        total_enterd_weight += parseFloat($(this).val())
+        deleted_id = 'False'
+        if($(this).attr('data-palet-removed') != undefined){
+          deleted_id = 'True'
+        }
+        arr_counter+=1
+        array.push(
+        {
+          "palet_value": $(this).val(),
+          "palet_id": pallet_id,
+          "id": $(this).attr('data-palet-id'),
+          "delete": deleted_id
+        }
+        )
+      })
+ save_peso_variable(array,arr_counter, total_enterd_weight)
+
+
+  })
+
+function save_peso_variable(array,arr_counter, total_enterd_weight){
+  pallet_id = $(".romaneo_pallet_id").val()
+      jQuery.ajax( {
+        url: "{% url 'exit-save-pallet-peso-variable' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+          palet_values: array,
+          arr_counter: arr_counter,
+          pallet_id: pallet_id
+        }
+      } ).done( function( response )
+      {
+        if (response["code"] == "200") {
+          total_weight = response["total_weight"]
+          measurement_gross_weight = response["measurement_gross_weight"]
+          
+          Swal.fire('Romaneo Peso Variable',response["message"],'success')
+          $(".loader-romaneo").html('')
+          $("#pallet_romaneo").modal('hide')
+          
+          $(".pallet_gross_weight").val(total_weight.toFixed(3))
+          $(".pallet_net_weight").val(total_weight.toFixed(3))
+          $(".total_gross_weight").val(measurement_gross_weight.toFixed(3))
+
+        }else{
+          Swal.fire('Romaneo Peso Variable','Pallet peso variable details failed to update','error')
+        }
+
+      })
+}
+
+  $(".pallet_selection").click(function(){
+    $("#reallocation_modal").modal("show")
+  })
+
+    function load_for_filter_data() {
+    pallet_code = $("#pallete_palet_lot_id").val()
+    entrance_id = $("#id_warehouse_entrance_id").val()
+
+    jQuery.ajax( {
+      url: "{% url 'entrance-pallet-detail-for-relocation' %}",
+      type: "GET",
+      dataType: "json",
+      data: {
+        pallet_code: pallet_code,
+      }
+    } ).done( function( response )
+    {
+      debugger 
+      // response
+      boxes = response.pallet_info["inventory_total_boxes"]
+      gross_weight = response.pallet_info["available_gross_weight"]
+      net_weight = response.pallet_info["available_net_weight"]
+      rack_number = response.pallet_info["warehouse_number"]
+      palet_lot = response.pallet_info["palet_lot"]
+      palet_id = response.pallet_info["id"]
+      location_uniq_code = response.pallet_info["location_uniq_code"]
+      description = response.pallet_info["product_description"]
+      product_code = response.pallet_info["product_code"]
+      $("#id_reallocation_pallet_lot").val(palet_lot)
+      $("#id_reallocation_rack").val(rack_number)
+      $("#id_reallocation_boxes").val(boxes)
+      $("#id_reallocation_gross_weight").val(gross_weight)
+      $("#id_reallocation_net_weight").val(net_weight)
+      $("#id_reallocation_pallet_id").val(palet_id)
+      $("#id_pallet_location").val(location_uniq_code)
+      $("#id_reallocation_product_code").val(product_code)
+      $("#id_reallocation_product_description").val(description)     
+
+    })
+    $.LoadingOverlay('hide')
+  }
+
+  $('#id_reallocation_new_location').keypress(function(event){
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == 13){
+      $.LoadingOverlay('show')
+      pallet_code = $("#pallete_palet_lot_id").val()
+      exit_id = $("#id_warehouse_exit").val()
+      new_location = $("#id_reallocation_new_location").val()
+      jQuery.ajax( {
+        url: "{% url 'relocation-exit-shortcode-weight-volume' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+          entrance_id: 0,
+          pallet_code: pallet_code,
+          new_location: new_location
+        }
+      } ).done( function( response )
+      {
+        if(response.location_not_found == true){
+          alert("Ubicación no encontrada.")
+          $("#id_reallocation_new_location").val("")
+        }
+        else{
+          ware_volume = parseFloat(response.available_volume)
+          ware_weight = parseFloat(response.available_weight)
+          product_volume = parseFloat(response.product_volume)
+          product_weight = parseFloat(response.product_net_weight)
+          if ((ware_volume >= product_volume) && (ware_weight >= product_weight)) {
+            $("#create_re_allocation").removeAttr("disabled")
+
+            } else {
+              $("#id_destination_location").val("").trigger("change.select2");
+              alert(
+                "La ubicación no cuenta con el espacio suficiente o el peso sobrepasa el limite del nivel de la ubicación. Por favor seleccione otra ubicación"
+                )
+            }
+
+        }
+       $.LoadingOverlay('hide')
+      })
+      
+    }
+  })
+
+  $("#create_re_allocation").click(function(){
+    pallet_code = $("#pallete_palet_lot_id").val()
+    entrance_id = $("#id_warehouse_entrance_id").val()
+    new_location = $("#id_reallocation_new_location").val()
+    description = $("#id_reallocation_new_description").val()
+    jQuery.ajax( {
+        url: "{% url 'save-relocation-from-shortcode' %}",
+        type: "POST",
+        dataType: "json",
+        data: {
+          entrance_id: entrance_id,
+          pallet_code: pallet_code,
+          new_location: new_location,
+          description: description
+        }
+      } ).done( function( response )
+      {
+        alert("La reubicación de la Tarima fue realizada con éxito")
+        location.reload(true);
+      })
+  })
+
+  function checkDecimal(evt, item, lenBeforeDecimal, lenAfterDecimal) {
+      var charCode = evt.which;
+
+      var trimmed = $(item).val().replace(/\b^0+/g, "");
+      if(checkStartsWith(trimmed, '.') == true){
+        trimmed = '0' + trimmed;
+      }  
+
+      if(charCode == 8 || charCode == 9){
+        return true;
+      } 
+
+      if(charCode == 46){
+        var dotOccurrences = (trimmed.match(/\./g) || []).length;
+
+        if(dotOccurrences != undefined && dotOccurrences == 1){
+          return false;
+        }else{
+          return true;
+        }
+      }
+
+      if (charCode > 31 && ((charCode < 48) || (charCode > 57))) {
+        return false;
+      }
+      if ($(item).val() != trimmed){
+        $(item).val(trimmed);}  
+
+        if(trimmed.indexOf('.') == -1){
+          if(trimmed.length >= parseInt(lenBeforeDecimal)){
+            return false;
+          }
+        }else{
+          var inputArr = trimmed.split(".");
+          if(inputArr[0].length > parseInt(lenBeforeDecimal) || inputArr[1].length >= parseInt(lenAfterDecimal)){
+            return false;
+          }
+        }
+
+        return true;
+      }
+      function checkStartsWith(str, prefix){
+        return str.indexOf(prefix) === 0;
+      }
+
+
+  $(document).on("blur",".romaneo_peso_variable", function () {
+  total_values= 0
+  $(".romaneo_peso_variable:visible").each(function(){
+    if($(this).val()=="")
+    {
+      $(this).val(0)
+    }
+    total_values += parseFloat($(this).val())  
+      })
+  $(".romaneo_peso_neto").val(total_values.toFixed(3))
+  $(".romaneo_peso_bruto").val(total_values.toFixed(3))
+
+})
+
+$(document).on("click",".barcode_scanner", function () {
+  $("#romanio_pallet_barcode").modal('show')
+  localStorage.setItem("barcode_reader_codes", JSON.stringify([]))
+  localStorage.setItem("barcode_weight_kg", JSON.stringify([]))
+  var stored_datas = JSON.parse(localStorage["barcode_reader_codes"]);
+  $(".barcode_total_read").val("")
+  $(".barcode_reader").val("")
+  $(".weight_count").val(0)
+  $(".total_weight_kg_count").val(0)
+  $(".barcode_reader").removeAttr("readonly")
+  $(".barcode_scanner_submit").attr("disabled", "disabled")
+});
+
+$(document).on("keypress",".barcode_reader", function (e) {
+  var key = e.which;
+  console.log(key)
+  if(key == 13) {
+    var barcode_reader_val = $(this).val();
+    
+    if (barcode_reader_val.length <=23 ){
+      alert("Ingrese el código de barras correcto.")
+    }
+    else{
+      if (localStorage["barcode_reader_codes"]){
+
+      }
+      else{
+        localStorage.setItem("barcode_reader_codes", JSON.stringify([]));
+      }
+      if (localStorage["barcode_weight_kg"]){
+      }
+      else{
+        localStorage.setItem("barcode_weight_kg", JSON.stringify([]));
+      }
+      var stored_bar_code_reader = JSON.parse(localStorage.getItem("barcode_reader_codes"));
+      var stored_bar_code_weight = JSON.parse(localStorage.getItem("barcode_weight_kg"));
+      if (stored_bar_code_reader.includes(barcode_reader_val)){
+        alert("El código de barras ya está escaneado")
+      }
+      else{
+        stored_bar_code_reader.push(barcode_reader_val)
+        debugger
+        localStorage.setItem("barcode_reader_codes", JSON.stringify(stored_bar_code_reader));
+        local_storage_code_data = JSON.parse(localStorage.getItem("barcode_reader_codes")).toString()
+        local_storage_code_data = local_storage_code_data.replace(/,+/g, '\n ') 
+        $(".barcode_total_read").val(local_storage_code_data)
+        weight_count = $(".weight_count").val()
+        weight_count = parseInt(weight_count) + 1
+        $(".weight_count").val(weight_count)
+        product_bar_code = $("#product_measurement_select_id").find(":selected").data("barcode_to_use")
+        
+        var total_val = calculate_barcode_weight_val(barcode_reader_val, product_bar_code)
+        stored_bar_code_weight.push(total_val)
+        localStorage.setItem("barcode_weight_kg", JSON.stringify(stored_bar_code_weight));
+        total_weight = eval(JSON.parse(localStorage["barcode_weight_kg"]).join("+"))
+        total_weight = parseFloat(total_weight).toFixed(3)
+        $(".total_weight_kg_count").val(total_weight)
+        if($(".romaneo_peso_variable").length == parseInt(weight_count)){
+          $(".barcode_reader").attr("readonly", true)
+          $(".barcode_scanner_submit").removeAttr("disabled")
+          alert("Todo el código de barras se escanea correctamente")
+        }
+        else{
+          $(".barcode_reader").removeAttr("readonly")
+          $(".barcode_scanner_submit").attr("disabled", "disabled")
+        }
+        }
+      }
+      $(".barcode_reader").val("")
+      return false
+    }
+    
+
+  })
+
+$(document).on("click", ".barcode_scanner_submit", function(){
+  barcode_weight_kg = JSON.parse(localStorage["barcode_weight_kg"])
+  if (barcode_weight_kg.length > 0){
+    $( ".romaneo_peso_variable" ).each(function( index ) {
+      $(this).val(barcode_weight_kg[index])
+    })
+  }
+  $("#romanio_pallet_barcode").modal("hide")
+  localStorage.setItem("barcode_reader_codes", JSON.stringify([]));
+  localStorage.setItem("barcode_weight_kg", JSON.stringify([]));
+  $(".romaneo_peso_variable").blur()
+})
+
+$(document).on("click", ".barcode_scanner_cancle_button", function(){
+  localStorage.setItem("barcode_reader_codes", JSON.stringify([]));
+  localStorage.setItem("barcode_weight_kg", JSON.stringify([]));
+})
+
+
+</script>
+{% endblock %}

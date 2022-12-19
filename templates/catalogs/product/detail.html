@@ -1,0 +1,239 @@
+{% extends 'form-edit.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Products' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Products' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'product-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{product.product_code}}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{{product.product_code}}{% endblock %}
+
+{% block form-fields-col-width %}
+<div class="col-md-12">
+{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="col-md-8">
+    <div class="form-group col-md-4">
+        <label for="productCode">{% trans 'Product Code' %}</label>
+        <input type="hidden" id="productId" value="{{product.id}}" >
+        <input type="text" class="form-control" id="productCode" name="product_code" value="{{product.product_code}}" required>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="productCustCode">{% trans 'Customer Prod. Code' %}</label>
+        <input type="text" class="form-control" id="productCustCode" name="customer_product_code" value="{{product.customer_product_code}}" required>
+    </div>
+    <div class="form-group col-md-4">
+        <label>{% trans 'Product Family' %}</label>
+        <div>
+            {{ form.product_family }}
+        </div>
+    </div>
+    <div class="form-group col-md-12">
+        <label>{% trans 'Customer' %}</label>
+        <select class="form-control customer" id="product_customer" name="customer" required=""> 
+          <option value="">Seleccione...</option>                  
+          {% for client in product_customers %}
+            {% if client.id == product.customer_id %}
+              <option value="{{client.id}}" data-bar_code="{{client.barcoderead}}" selected>{{client.name}}</option>
+            {% else %}
+              <option value="{{client.id}}" data-bar_code="{{client.barcoderead}}" >{{client.name}}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+    </div>
+    <div class="form-group col-md-12">
+        <label for="productDescription">{% trans 'Product Description as it appears in outer package label' %}</label>
+        <input type="text" class="form-control" id="productDescription" name="product_description" value="{{product.product_description}}" required>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="productReplValue">{% trans 'Replacement Values' %}</label>
+        <input type="number" class="form-control" id="productReplValue" name="replacement_value" value="{{product.replacement_value}}" required>
+    </div>
+    <div class="form-group col-md-4">
+        <label>{% trans 'Package Type' %}</label>
+        <div>
+            {{ form.package_type }}
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="productStorageTemp">{% trans 'Storage Temperature ' %}&#8451</label>
+        <input type="text" class="form-control" id="productStorageTemp" name="storage_temperature" value="{{product.storage_temperature}}" required>
+    </div>
+    <div class="form-group col-md-3">
+        <label for="productGrossWeight">{% trans 'Gross Weight' %}</label>
+        <input type="text" min="0" class="form-control" id="productGrossWeight" name="gross_weight" value="{{product.gross_weight | unlocalize }}" required onkeypress ="return isFloat(event)">
+    </div>
+    <div class="form-group col-md-3">
+        <label for="productNetWeight">{% trans 'Net Weight' %}</label>
+        <input type="text" min="0" class="form-control" id="productNetWeight" name="net_weight" value="{{product.net_weight | unlocalize}} " required onkeypress ="return isFloat(event)">
+    </div>
+    <div class="form-group col-md-3">
+      <div class="checkbox">
+        <label for="productVarWeight">
+          {% if product.variable_weight %}
+          <input type="checkbox" id="productVarWeight" name="variable_weight" checked="{{product.variable_weight}}">
+          {% else %}
+          <input type="checkbox" id="productVarWeight" name="variable_weight">
+          {% endif %}
+          {% trans 'Variable Weight' %}
+        </label>
+      </div>
+
+      <div class="checkbox">
+        <label for="productAverageWeight">
+          {% if product.average_weight %}
+          <input type="checkbox" id="productAverageWeight" name="average_weight" checked="{{product.average_weight}}">
+          {% else %}
+          <input type="checkbox" id="productAverageWeight" name="average_weight" {% if product.variable_weight != True %}disabled="disabled"{%endif%} >
+          {% endif %}
+          {% trans 'Average Weight' %}
+        </label>
+      </div>
+
+    </div>
+    <div class="form-group col-md-3">
+      {% if product.storage_type == 'refrigerated' %}
+      <input type="radio" name="storage_type" value="refrigerated" checked> {% trans "Refrigerated" %}<br>
+      {% else %}
+      <input type="radio" name="storage_type" value="refrigerated"> {% trans "Refrigerated" %}<br>
+      {% endif %}
+      {% if product.storage_type == 'frozen' %}
+      <input type="radio" name="storage_type" value="frozen" checked> {% trans "Frozen" %}<br>
+      {% else %}
+      <input type="radio" name="storage_type" value="frozen"> {% trans "Frozen" %}<br>
+      {% endif %}
+
+    </div>
+     {% if product.customer.barcoderead %}
+        <div class="product_barcode_div form-group col-md-12">
+      {% else %}
+        <div class="product_barcode_div hide form-group col-md-12">
+      {% endif %}
+      <label for="productBarcodeToUse">{% trans 'Barcode To Use' %}</label>
+        {{ form.barcode_to_use }}
+    </div>
+    <div class="form-group col-md-12">
+      <label for="productSpecialObservations">{% trans 'Special Observations' %}</label>
+      <textarea form="sga-form" class="form-control" style="resize:none;" id="productSpecialObservations" name="special_observations" rows="10" value="{{product.special_observations}}" required>{{product.special_observations}}</textarea>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class='row'>
+      <div class="col-md-6">
+        <div class="form-group col-md-12">
+          <label for="productLength">{% trans 'Length' %}</label>
+          <input type="text" min="0" class="form-control" id="productLength" name="length" value="{{product.length  | unlocalize }}" required onkeypress ="return isFloat(event)">
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productWidth">{% trans 'Width' %}</label>
+          <input type="text" min="0" class="form-control" id="productWidth" name="width" value="{{product.width  | unlocalize }}" required onkeypress ="return isFloat(event)">
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productHeight">{% trans 'Height' %}</label>
+          <input type="text" min="0" class="form-control" id="productHeight" name="height" value="{{product.height  | unlocalize }}" required onkeypress ="return isFloat(event)">
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productDiameter">{% trans 'Diameter' %}</label>
+          <input type="text" min="0" class="form-control" id="productDiameter" name="diameter" value="{{product.diameter  | unlocalize }}" required onkeypress ="return isFloat(event)">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group col-md-12">
+          <label for="productPackagesPerBed">{% trans 'Packages Per Bed' %}</label>
+          <input type="number" min="0" class="form-control" id="productPackagesPerBed" name="packages_per_bed" value="{{product.packages_per_bed}}" required>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productBedsPerPallet">{% trans 'Beds Per Pallet' %}</label>
+          <input type="number" min="0" class="form-control" id="productBedsPerPallet" name="beds_per_pallet" value="{{product.beds_per_pallet}}" required>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productPackagesPerPallet">{% trans 'Packages Per Pallet' %}</label>
+          <input type="number" min="0" class="form-control" id="productPackagesPerPallet" name="packages_per_pallet" value="{{product.packages_per_pallet}}" required readonly="true">
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="productMinExpRec">{% trans 'Min. Expiration For Reception' %}</label>
+          <input type="text" class="form-control" id="productMinExpRec" name="min_expiration_for_reception" value="{{product.min_expiration_for_reception}}" required>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productMinExpShip">{% trans 'Min. Expiration For Shipping' %}</label>
+          <input type="text" class="form-control" id="productMinExpShip" name="min_expiration_for_shipping" value="{{product.min_expiration_for_shipping}}" required>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  $("#productPackagesPerBed,#productBedsPerPallet").blur(function(){
+  prod_pack = $("#productPackagesPerBed").val()
+  prod_bed = $("#productBedsPerPallet").val()
+  palet = $("#productPackagesPerPallet")
+  if ((prod_pack !='') && (prod_bed !='')){
+    palet.val(parseInt(prod_pack) * parseInt(prod_bed))
+  }
+  else{
+    palet.val(0)
+  }
+
+
+})
+  $('#form-submit-btn').on('click',function(e){
+    console.log("dgdg")
+    
+    // e.preventDefault();
+    var net_weight = $('#productNetWeight').val()
+    var length = $('#productLength').val()
+    var width = $('#productWidth').val()
+    var height = $('#productHeight').val()
+    var product_id = $('#productId').val()
+
+    jQuery.ajax( {
+      url: "{% url 'product-update' %}",
+      type: "POST",
+      dataType: "json",
+      data: {
+        net_weight: net_weight,
+        length: length,
+        width: width,
+        height: height,
+        product_id:product_id
+      },
+    } ).done( function( response ) {
+
+  })
+  })
+  $('#form-cancel-btn').on('click',function(){
+    location.href = '/product'
+  })
+ 
+
+ 
+$('#productVarWeight').on('click',function(){
+  if($(this).prop("checked")){
+    $("#productAverageWeight").removeAttr("disabled")
+  }
+  else{
+    if ($("#productAverageWeight").prop("checked")){
+      $("#productAverageWeight").trigger("click")
+    }
+    
+    $("#productAverageWeight").attr("disabled", "disabled")
+  }
+})
+
+</script>
+{% endblock %}
+{# Cancel URL #}
+{% block cancel-url %}{% url 'product-list' %}{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/product/sidebar.html' %}
+{% endblock %}

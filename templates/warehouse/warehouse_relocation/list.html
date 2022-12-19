@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+<link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}{% block content-header %}
+<h1>
+  {% block header-title %}{% endblock %}
+  <small>{% trans 'Overview' %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li class="active">{% trans 'RELOCATIONS' %}</li>
+</ol>
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box">
+      <div class="box-header">
+        <h4> {% trans 'RELOCATIONS' %} </h4>      
+      </div>          
+      <div class="box-body">
+        <form id="warehouse_relocation_search" role="form" method="post">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-4">
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <a class="btn btn-primary" href="add" style="margin-top: 25px;" role="button">{% trans "NEW RELOCATIONS" %}</a>
+                </div>
+
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Pallet Num.' %}</label>
+                  <input type="text" name="palet_lot" class="form-control">
+                </div>
+
+              </div>
+              <div class="row">
+                
+
+                <div class="form-group col-md-12">
+                  <label>{% trans 'Customer' %}</label>
+                  <select class="form-control customer" name="customer">
+                    <option value="">Seleccione...</option>
+                    <option value="ALL">Todos</option>
+                    {% for client in customers %}
+                    <option value="{{client.id}}">{{client.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Source Warehouse' %}</label>
+                  <select class="form-control source_warehouse" name="source_warehouse">
+                    <option value="">Seleccione...</option>
+                    <option value="ALL">Todas</option>
+                    {% for warehouse in warehouses %}
+                    <option value="{{warehouse.id}}">{{warehouse.code}}</option>
+                    {% endfor %}
+                  </select>                
+
+                </div> 
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Source Location' %}</label>
+                  <select class="form-control source_location" name="source_location">
+                    <option value="">Seleccione...</option>
+                    {% for location in locations %}
+                    <option value="{{location.id}}">{{location.shortcode}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Start Date' %}</label>
+                  <input type="text" name="created_at__gte" class="form-control start_date">
+                </div>
+                <div class="form-group col-md-4">
+                  <label>{% trans 'End Date' %}</label>
+                  <input type="text" name="created_at__lte" class="form-control end_date">
+                </div>
+                <div class="form-group col-md-4" style="margin-top: 25px">
+                  <input type="submit" name="search" class="btn btn-primary" value="{%trans 'Search' %}">
+                  <input type="button" name="cancle" class="btn btn-default" value="{%trans 'Cancel' %}" id="warehouse_relocation_clear">
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-8">
+                  <label>{% trans 'Product' %}</label>
+                  <select class="form-control product" name="product">
+                    <option value="">Seleccione...</option>
+                    {% for product in products %}
+                    <option value="{{product.id}}">{{product.product_code}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Destination Warehouse' %}</label>
+                  <select class="form-control destination_warehouse" name="destination_warehouse">
+                    <option value="">Seleccione...</option>
+                    <option value="ALL">Todas</option>
+                    {% for warehouse in warehouses %}
+                    <option value="{{warehouse.id}}">{{warehouse.code}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Destination Location' %}</label>
+                  <select class="form-control destination_location" name="destination_location">
+                    <option value="">Seleccione...</option>
+                    {% for location in locations %}
+                    <option value="{{location.id}}">{{location.shortcode}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <table id="data-table" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              {% block list-header-columns %}
+              <th>{% trans 'Relocation Date' %}</th>
+              <th>{% trans 'Customer' %}</th>
+              <th>{% trans 'Product' %}</th>
+              <th>{% trans 'Total Kg' %}</th>
+              <th>{% trans 'Actions' %}</th>
+              {% endblock %}
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for warehouse_entrance in warehouse_entrance_filter_list %}
+            <tr>
+              <td>{{ warehouse_entrance.customer }}</td>
+              <td>{{ warehouse_entrance.product }}</td>
+              <td>Entrada</td>
+              <td>{{ warehouse_entrance.entrance_hour }}</td>
+              <td>{{ warehouse_entrance.total_kg | unlocalize}}</td>
+              <td>
+                <a role="button" href="{% url 'entrance-detail' warehouse_entrance.id %}" class="btn btn-warning"><i
+                  class="fa fa-eye"></i>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<style type="text/css">
+.margin_top {
+  margin-top: 26px
+}
+</style>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+<script>
+  datepicker()
+  function datepicker() {
+    var start_date = $('.start_date').datepicker({
+      format: "yyyy-mm-dd",
+      autoclose: true
+      }).datepicker("setDate",'now');
+
+          var end_date = $('.end_date').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true
+      }).datepicker("setDate",'now');
+          start_date.on('changeDate', function(){
+            newDate = new Date($(this).val());
+            newDate.setDate(newDate.getDate());
+            end_date.datepicker('setStartDate', newDate)
+          })
+          end_date.on('changeDate', function(){
+            newDate = new Date($(this).val());
+            newDate.setDate(newDate.getDate());
+            start_date.datepicker('setEndDate', newDate)
+
+          })
+
+  }
+
+
+  var datatable =  $("#data-table").DataTable({
+    "language": {
+      "sProcessing":     "Procesando...",
+      "sLengthMenu":     "Mostrar _MENU_ registros",
+      "sZeroRecords":    "No se encontraron resultados",
+      "sEmptyTable":     "Ningún dato disponible en esta tabla",
+      "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix":    "",
+      "sSearch":         "Buscar:",
+      "sUrl":            "",
+      "sInfoThousands":  ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst":    "Primero",
+        "sLast":     "Último",
+        "sNext":     "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    }
+  });
+
+  $("#warehouse_relocation_search").submit(function(e){
+    e.preventDefault();
+    formdata = {}
+    $("#warehouse_relocation_search").find('.form-control').each(function(){
+      if($(this).val() !== ''){
+        var key_name = $(this).attr('name')
+        var key_value = $(this).val()
+        formdata[key_name]=key_value
+       }
+    })
+
+    $.post("{% url 'warehouse-relocation-filter-api' %}", formdata, function(data, code){
+      datatable.clear()
+      datatable.rows.add(data)
+      datatable.draw()
+    })
+
+
+  })
+
+  $("select.customer").change(function(){
+    $.get("{% url 'customer-products' 0 %}".replace('0', $(this).val() ), function(data, status){
+      if(status == 'success'){
+        $(".product").empty()
+        select = $(".product")
+        select.append('<option value="" selected="selected">Seleccione...</option>')
+        data.forEach(function(product) {
+          select.append('<option value="'+product['id']+'">' +product['product_description']+'</option>')
+        })
+      }
+    });
+  })
+
+  $("select.source_warehouse").change(function(){
+    if($(this).val() != ''){
+      $.get("{% url 'warehouse-locations' 0 %}".replace('0', $(this).val() ), function(data, status){
+        if(status == 'success'){
+          $("select.source_location").empty()
+          select = $("select.source_location")
+          select.append('<option value="" selected="selected">Seleccione...</option>')
+          data.forEach(function(location) {
+            select.append('<option value="'+location['id']+'">' +location['shortcode']+'</option>')
+          })
+        }
+      });
+    }
+    else{
+      $("select.source_location").empty()
+    }
+
+  })
+
+  $("select.destination_warehouse").change(function(){
+    if($(this).val() != ''){
+      $.get("{% url 'warehouse-locations' 0 %}".replace('0', $(this).val() ), function(data, status){
+        if(status == 'success'){
+          $("select.destination_location").empty()
+          select = $("select.destination_location")
+          select.append('<option value="" selected="selected">Seleccione...</option>')
+          data.forEach(function(location) {
+            select.append('<option value="'+location['id']+'">' +location['shortcode']+'</option>')
+          })
+        }
+      });
+    }
+    else{
+      $("select.destination_location").empty()
+    }
+
+  })
+
+  $("#warehouse_relocation_clear").click(function(){
+    $("#warehouse_relocation_search").trigger('reset');
+    datepicker()
+    datatable.clear()
+    datatable.draw()
+  })
+  $("#warehouse-catalogs li.relocation").addClass('active')
+</script>
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

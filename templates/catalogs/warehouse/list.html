@@ -1,0 +1,57 @@
+{% extends 'list.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block header-title %}{% trans 'Warehouses' %}{% endblock %}
+{% block breadcrumb-specific %}{% trans 'Warehouses' %}{% endblock %}
+
+{% block create-url %}{% url 'warehouse-create' %}{% endblock %}
+
+{% block list-header-columns %}
+<th>{% trans 'Code' %}</th>
+<th>{% trans 'Description' %}</th>
+<th>{% trans 'Total Locations' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block list-items %}
+{% for warehouse in warehouse_list %}
+<tr>
+    <td>{{ warehouse.code }}</td>
+    <td>{{ warehouse.description }}</td>
+    <td>{{ warehouse.total_locations }}</td>
+    <td>
+        <a role="button" href="{% url 'warehouse-detail' warehouse.id %}" class="btn btn-success"><i
+                class="fa fa-edit"></i></a>
+        {% if  warehouse.deletable %}        
+        <a role="button" href="{% url 'warehouse-delete' warehouse.id %}"
+           class="btn btn-danger btn-delete"
+           data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                class="fa fa-close"></i></a>
+        {% else %}
+        <a role="button" href="javascript:void(0)"
+               class="btn btn-danger" onclick="alert('El registro esta siendo utilizado por el Sistema y no puede ser eliminado. Verifique por favor.')"> <i class="fa fa-close"></i></a>
+
+        {% endif %}
+
+        <a role="button" href="{% url 'warehouse-update-details' warehouse.id %}" class="btn btn-info" style="width: 37px;height: 34px;display: inline-block; border-radius: 3px; padding: 5px;">
+            <img src="{% static 'theme/img/warehouse.png' %}" style="width: 100%;"></a>
+        <a role="button" href="{% url 'warehouse-qr-code-generater' warehouse.id %}" class="btn btn-default" style="width: 37px;height: 34px;display: inline-block; border-radius: 3px; padding: 5px; border-color: yellow;">
+            <img src="{% static 'theme/img/QR_code.png' %}" style="width: 100%;"></a>
+        
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block list-footer-columns %}
+<th>{% trans 'Code' %}</th>
+<th>{% trans 'Description' %}</th>
+<th>{% trans 'Total Locations' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% endblock %}
+

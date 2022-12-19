@@ -1,0 +1,134 @@
+
+{% extends 'base.html' %}
+
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+<link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}
+
+{% block content-header %}
+<h1>
+    {% block header-title %}{% endblock %}
+    <small>{% trans 'Overview' %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li class="active">{% trans 'WAREHOUSE-EXIT-APPOINTMENTS' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h4> {% trans 'WAREHOUSE-EXIT-APPOINTMENTS' %} </h4>
+                <a class="btn btn-primary" href="{% url 'new-exit' %}" role="button">{% trans "EXIT WITHOUT APPOINTMENT" %}</a>
+            </div>
+            <div class="box-body">
+                <table id="data-table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% block list-header-columns %}
+                            <th>{% trans 'Date' %}</th>
+                            <th>{% trans 'Time' %}</th>
+                            <th>{% trans 'Customer' %}</th>
+                            <th>{% trans 'Total Kg' %}</th>
+                            <th>Folio</th>
+                            <th>{% trans 'Status' %}</th>
+                            {% if request.user.is_authenticated and not request.user.get_client %}
+                            <th>{% trans 'Action' %}</th>
+                            {% endif %}
+                           {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for warehouse_exit in warehouseexit_list %}
+                        <tr>
+                            <td>{{ warehouse_exit.exit_date }}</td>
+                            <td>{{ warehouse_exit.exit_hour|time:"h:i A" }}</td>
+                            <td>{{ warehouse_exit.customer }}</td>
+                            <td>{{ warehouse_exit.get_total_kgs | unlocalize}}</td>
+                            <td>{{ warehouse_exit.id}}</td>
+                            <td><spna class="label {{ warehouse_exit.status}}">{% trans warehouse_exit.status %}</spna></td>
+                            {% if request.user.is_authenticated and not request.user.get_client %}
+                            <td>
+                                <a role="button" title="Editar Captura de Mesa de Control" href="{% url 'update-exit' warehouse_exit.id %}" class="btn btn-success"><i
+                                    class="fa fa-edit"></i></a>
+
+                                <a role="button" title="Definir Ubicación en Almacén" href="{% url 'confirm-exit-pallets' warehouse_exit.id %}" class="btn btn-info"><i
+                                    class="fa fa-check"></i></a>
+                                    <a role="button" href="{% url 'exit-delete' warehouse_exit.id %}"
+                                    class="btn btn-danger btn-delete"
+                                    data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                                    class="fa fa-close"></i></a>
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>                       
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block scripts %}
+    <script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+        $(function () {
+            $("#data-table").DataTable({
+                "ordering": false,
+                "language": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+        });
+
+        var deleteLinks = document.querySelectorAll('.btn-delete');
+
+        for (var i = 0; i < deleteLinks.length; i++) {
+            deleteLinks[i].addEventListener('click', function (event) {
+                event.preventDefault();
+
+                var choice = confirm(this.getAttribute('data-confirm'));
+
+                if (choice) {
+                    
+                    window.location.href = this.getAttribute('href');
+                }
+            });
+        }
+        $("#warehouse-catalogs li.exits").addClass('active')
+    </script>
+    {% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

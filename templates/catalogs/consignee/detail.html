@@ -1,0 +1,163 @@
+{% extends 'form_consigee_image.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Consignees' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Consignees' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'consignee-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Consignee' %}{% endblock %}
+
+{% block form-fields-col-width %}
+<div class="col-md-12">
+    {% endblock %}
+
+    {% block form-fields %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ConsigneeCode">{% trans 'Consignee Code' %}</label>
+                        <input type="text" class="form-control" id="ConsigneeCode" name="code" required value="{{consignee.code}}">
+                    </div>
+                </div>
+                <div class="col-md-12">
+
+                    <div class="form-group">
+                        <label for="ConsigneeName">{% trans 'Consignee Name' %}</label>
+                        <input type="text" class="form-control" id="ConsigneeName" name="name" required value="{{consignee.name}}">
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>{% trans 'Customer' %}</label>
+                        <div>
+                            {{ form.customer }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ContactPhoneNumber ">{% trans 'Contact Phone Number' %}</label>
+                                <input type="text" class="form-control mobile_number_format" id="ContactPhoneNumber" name="contact_phone" required value="{{consignee.contact_phone}}">
+                            </div>
+
+
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ContactEmail">{% trans 'Email' %}</label>
+                                <input type="email" class="form-control email_validate" id="ContactEmail" name="email" required value="{{consignee.email}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ConsigneeName">{% trans 'Signature' %}</label>
+                        <div class="input-group image-preview">
+                            
+
+                            {% if consignee.signature %}
+                            <input type="text" class="form-control signature_image image-preview-filename" disabled="disabled" value="{{consignee.signature}}" >
+                                    {% else %}
+                                     <input type="text" class="form-control signature_image image-preview-filename" disabled="disabled" >
+                                {% endif %}
+
+                            <span class="input-group-btn">                                
+                                <div class="btn btn-default image-preview-input">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <span class="image-preview-input-title"></span>
+                                    <input type="file" accept="image/png, image/jpeg, image/gif" name=" signature"/>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class ="col-md-12">
+                    <div class="form-group">
+                        <div class="preview-browse-img">
+                            <figure>
+                                {% if consignee.signature %}
+                                       <img src="{{consignee.signature.url}}" alt="" class="preview_here" />
+                                    {% else %}
+                                      <img src="" alt="" class="preview_here" />
+                                {% endif %}
+                                
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+
+.image-preview-input {
+    position: relative;
+    overflow: hidden;
+    margin: 0px;    
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;    
+}
+.image-preview-input input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.image-preview-input-title {
+    margin-left:2px;
+}
+.preview-browse-img figure {
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    overflow: hidden;
+    height: 207px;
+    display: inline-flex;
+}
+
+
+.preview-browse-img figure img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
+</style>
+
+{% endblock %}
+
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'consignee-list' %}{% endblock %}
+
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/consignee/sidebar.html' %}
+{% endblock %}

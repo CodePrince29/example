@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% endblock %}
+
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'warehouse-entrances-list' %}">{% trans 'WAREHOUSE-ENTRANCE-APPOINTMENTS' %}</a></li>
+  <li class="active">{{warehouseentrance.id}}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="loader-section">
+ </div>
+<div class="row">
+	<div class="col-md-12">
+		<h3 class="box-title">{%trans 'Warehouse' %}</h3>
+	</div>
+	<div class="col-md-6">		
+		<div class="form-group">
+			<select class="form-control" id="warehouse_select_id">
+				<option value="">---------</option>
+				{% for warehouse in warehouse_list %}
+				<option value="{{warehouse.id}}">{{warehouse}}</option>
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="form-group">
+			<button class="btn btn-primary" type="button" onclick="return load_entrance_location()">{% trans 'Check locations' %}</button>		</div>
+		</div>
+	</div> 
+
+
+	<div class="row">
+		<div class="col-md-12">
+			<div id="list_location">
+
+			</div>
+		</div>
+	</div>
+
+	<style type="text/css">
+		.loader-image{ position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 9;  }
+		.loader-image img{ position: absolute; top: 50%; left: 50%; width:100px;  }		
+	</style>
+
+
+  {% endblock %}
+
+    {% block scripts %}
+
+    <script type="text/javascript">
+    	 function load_entrance_location(){
+      $("#list_location").empty()
+      warehouse = $("#warehouse_select_id").val()
+      if(warehouse != '')
+      {
+      	div_data = $( "<div class='loader-image'> <img src='{% static 'theme/img/loader.gif' %}' alt='loader'/ ></div> " )
+				$(".loader-section").append(div_data)        
+        jQuery.ajax( {
+              url: "{% url 'warehouse-location-manage' 0 %}".replace('0', warehouse),
+              type: "GET",
+              dataType: "json",
+          } ).done( function( response )
+          {
+          $("#list_location").append(response.warehouse) 
+          $(".loader-section").html('')
+        })
+      }
+
+    }
+
+    </script>
+
+    {% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

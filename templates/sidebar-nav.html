@@ -1,0 +1,765 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <a href="{% url 'main-dashboard' %}">
+                <h1 class="logo">
+                    <img src="{% static 'custom/dashboard/img/logo.png' %}" alt="SGA Logo">
+
+                </h1>
+            </a>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="header">{% trans 'MAIN NAVIGATION' %}</li>
+            <li {% if request.get_full_path == "/" %}class="active"{% endif %}>
+                <a href="{% url 'main-dashboard' %}">
+                    <i class="fa fa-dashboard"></i> <span>{% trans 'Dashboard' %}</span>
+                </a>
+            </li>
+            {% if request.user.is_authenticated %}
+            {% if request.user.almacen_maniobras %}
+
+            <li id="sidebar-maneuvers" class="treeview">
+                <a href="">
+                    <i class="fa fa-arrows"></i> <span>{% trans 'Maneuvers' %}</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="entrance"><a href="{%url 'maniobras-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                    <li class="exists"><a href="{%url 'maniobras-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+
+                    
+                    <li class="inventory"><a href="{% url 'inventory-taking-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Taking inventory' %}</a></li> 
+                    <li class="pallet"><a href="{% url 'pallet-consult-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consult Pallet' %}</a></li> 
+                    <li class="entrance"><a href="{%url 'pallet-consolidate' %}"><i class="fa fa-circle-o"></i>{% trans 'Consolidación Pallet' %}</a></li>
+                </ul>
+            </li>
+            <li id="warehouse-warehouse" class="treeview">
+                <a href="">
+                    <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="relocation"><a href="{% url 'relocation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Relocations' %}</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+            {%if request.user.get_syatema_access %}
+            <li id="sidebar-catalogs" class="treeview">
+                <a href="#">
+                    <i class="fa fa-th"></i> <span>{% trans 'Catalogs' %}</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="sidebar-catalogs-gp">
+                        <a href="{% url 'gp-list' %}"><i
+                            class="fa fa-circle-o"></i>{% trans 'General System Parameters' %}</a>
+                        </li>    
+                        <li class="sidebar-catalogs-packaging">
+                            <a href="{% url 'packaging-list' %}"><i class="fa fa-circle-o"></i>{% trans "Packaging" %}
+                            </a>
+                        </li>
+                        <li class="sidebar-catalogs-unit">
+                            <a href="{% url 'unit-list' %}"><i class="fa fa-circle-o"></i>{% trans "Units" %}
+                            </a>
+                        </li>
+                        <li class="sidebar-catalogs-prodfamily">
+                            <a href="{% url 'productfamily-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Product Families' %}
+                            </a>
+                        </li>
+                        <li class="sidebar-catalogs-service">
+                            <a href="{% url 'service-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Services' %}
+                            </a>
+                        </li>
+                        <li class="sidebar-catalogs-pricelist">
+                            <a href="{% url 'pricelist-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Price List' %}
+                            </a>
+                        </li>
+                        {#<li class="sidebar-catalogs-pricelistitems"><a href="{% url 'pricelistservicerelation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Price List Items' %}</a>#}
+                        {# </li>#}
+
+                        <li class="sidebar-catalogs-warehouses">
+                            <a href="{% url 'warehouse-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouses' %}
+                            </a>
+                        </li>
+                        {#<li class="sidebar-catalogs-warehouseloc"><a href="#"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Locations' %}</a>#}
+                        {#</li>#}
+                        <li class="sidebar-catalogs-users">
+                            <a href="{% url 'user-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Users' %}
+                            </a>
+                        </li>
+                        <li class="sidebar-catalogs-vehicle">
+                            <a href="{% url 'vehicle-list' %}"><i class="fa fa-circle-o"></i>{% trans "Vehicles" %}
+                            </a>
+                        </li>
+                        <li class="sidebar-catalogs-carriers">
+                            <a href="{% url 'carrier-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Carriers' %}
+                            </a>
+                        </li>
+
+                        <li class="sidebar-catalogs-consignee">
+                            <a href="{% url 'consignee-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consignees' %}
+                            </a>
+                        </li>
+
+                        <li class="sidebar-catalogs-branch">
+                            <a href="{% url 'branch-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Branch' %}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li id="sidebar-clients" class="treeview">
+                    <a href="{% url 'client-list' %}">
+                        <i class="fa fa-users"></i> <span>{% trans 'Clients' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                </li>
+                <li id="sidebar-products" class="treeview">
+                    <a href="{% url 'product-list' %}">
+                        <i class="fa fa-shopping-bag"></i> <span>{% trans 'Products' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                </li>
+                <li id="warehouse-catalogs" class="treeview">
+                    <a href="">
+                        <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <!-- <li class="entrance"><a href="{%url 'entrances-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>-->
+                        <li class="entrance"><a href="{%url 'entrances-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li> 
+                        <li class="exits"><a href="{%url 'new-warehouse-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+                       <!--  <li class="exits"><a href="{%url 'new-warehouse-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li> -->
+                        <li class="history"><a href="{%url 'warehouse-history-list' %}"><i class="fa fa-circle-o"></i>{% trans 'History Movements' %}</a></li>
+                        <li class="relocation"><a href="{% url 'relocation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Relocations' %}</a></li>        
+                        <li class="location"><a href="{% url 'location-management-search' %}"><i class="fa fa-circle-o"></i>{% trans 'Location Management' %}</a></li>
+
+                        <li class="inventory"><a href="{% url 'warehouse-inventory-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Ajustes a Inventario' %}</a></li>
+
+                        <li class="reserved"><a href="{% url 'inventory-reserve-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Reserve/Release Product' %}</a></li>
+
+                        <li class="print"><a href="{% url 'pallet-reprint' %}"><i class="fa fa-circle-o"></i>{% trans 'Reimpresión Etiquetas' %}</a></li>
+
+                    </ul>
+                </li>
+
+                <li id="sidebar-maneuvers" class="treeview">
+                    <a href="">
+                        <i class="fa fa-arrows"></i> <span>{% trans 'Maneuvers' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">                  
+                        <!-- <li class="entrance"><a href="{%url 'maniobras-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li> -->
+                        <li class="entrance"><a href="{%url 'maniobras-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <!-- <li class="exists"><a href="{% url 'maniobras-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>  -->                       
+
+                        <li class="exists"><a href="{%url 'maniobras-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+
+                        <li class="inventory"><a href="{% url 'inventory-taking-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Taking inventory' %}</a></li> 
+                        <li class="pallet"><a href="{% url 'pallet-consult-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consult Pallet' %}</a></li> 
+                        <li class="entrance"><a href="{%url 'pallet-consolidate' %}"><i class="fa fa-circle-o"></i>{% trans 'Consolidación Pallet' %}</a></li>
+
+                    </ul>
+                </li>
+
+                <li id="sidebar-reports" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>{% trans 'Reports' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="entrance"><a href="{%url 'entrances-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Entrance Report' %}
+                        </a></li>
+                        <li class="exists"><a href="{%url 'exit-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Exit Report' %}
+                        </a></li>
+
+                        <li class="inventory"><a href="{%url 'inventory-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Inventory Report' %}
+                        </a></li>
+                        <li class="ocupancy"><a href="{%url 'ocupancy-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Occupation' %}
+                        </a></li>
+
+                        <li class="entrances-resumido"><a href="{%url 'entrances-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Entries' %}
+                        </a></li>
+
+                        <li class="exit-resumido"><a href="{%url 'exit-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Exit' %}
+                        </a></li>
+
+                        <li class="inventario-resumido"><a href="{%url 'inventario-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Inventory' %}
+                        </a></li>
+
+                        <li class="inventory_log"><a href="{%url 'inventory_log_list' %}"><i class="fa fa-circle-o"></i>{% trans 'Ajustes a Inventario' %}
+                        </a></li>
+                        <li class="resultado_de_romaneo"><a href="{%url 'resultado-de-romaneo' %}"><i class="fa fa-circle-o"></i>{% trans 'Resultado de Romaneo' %}
+                        </a></li>
+                        <li class="trazabilidad-reporte"><a href="{%url 'trazabilidad-reporte' %}"><i class="fa fa-circle-o"></i>{% trans 'Trazabilidad' %}
+                        </a></li>
+                        <li class="entrance_exit_diff_reportes"><a href="{%url 'entrance-exit-diff-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Diferencias Detallado' %}
+                        </a></li>
+
+                        
+                    </ul>
+                </li>
+                {%endif%}
+
+                {%if request.user.get_control_menu_access %}
+                <li id="sidebar-warehouse" class="treeview">
+                    <a href="">
+                        <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        <li class="entrance"><a href="{%url 'entrances-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <li class="exits"><a href="{%url 'new-warehouse-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+                        <li class="history"><a href="{%url 'warehouse-history-list' %}"><i class="fa fa-circle-o"></i>{% trans 'History Movements' %}</a></li>
+                        <li class="relocation"><a href="{% url 'relocation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Relocations' %}</a></li>        
+                        <li class="location"><a href="{% url 'location-management-search' %}"><i class="fa fa-circle-o"></i>{% trans 'Location Management' %}</a></li>
+                    </ul>
+                </li>
+
+                <li id="sidebar-maneuvers" class="treeview">
+                    <a href="">
+                        <i class="fa fa-arrows"></i> <span>{% trans 'Maneuvers' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        <li class="inventory"><a href="{% url 'inventory-taking-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Taking inventory' %}</a></li> 
+                        <li class="pallet"><a href="{% url 'pallet-consult-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consult Pallet' %}</a></li> 
+                    </ul>
+                </li>
+
+                <li id="sidebar-reporte" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>{% trans 'Reports' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="entrance"><a href="{%url 'entrances-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Entrance Report' %}
+                        </a></li>
+                        <li class="exists"><a href="{%url 'exit-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Exit Report' %}
+                        </a></li>
+
+                        <li class="inventory"><a href="{%url 'inventory-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Inventory Report' %}
+                        </a></li>
+                        <li class="ocupancy"><a href="{%url 'ocupancy-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Occupation' %}
+                        </a></li>
+
+                        <li class="entrances-resumido"><a href="{%url 'entrances-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Entries' %}
+                        </a></li>
+
+                        <li class="exit-resumido"><a href="{%url 'exit-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Exit' %}
+                        </a></li>
+
+                        <li class="inventario-resumido"><a href="{%url 'inventario-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Inventory' %}
+                        </a></li>
+
+                        <li class="inventory_log"><a href="{%url 'inventory_log_list' %}"><i class="fa fa-circle-o"></i>{% trans 'Ajustes a Inventario' %}
+                        </a></li>
+                        <li class="resultado_de_romaneo"><a href="{%url 'resultado-de-romaneo' %}"><i class="fa fa-circle-o"></i>{% trans 'Resultado de Romaneo' %}
+                        </a></li>
+                        <li class="trazabilidad-reporte"><a href="{%url 'trazabilidad-reporte' %}"><i class="fa fa-circle-o"></i>{% trans 'Trazabilidad' %}
+                        </a></li>
+                        <li class="entrance_exit_diff_reportes"><a href="{%url 'entrance-exit-diff-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Diferencias Detallado' %}
+                        </a></li>
+
+
+                    </ul>
+                </li>
+                {%endif%}
+                {%if request.user.get_direccion_access %}
+
+                <li id="sidebar-clients" class="treeview">
+                    <a href="{% url 'client-list' %}">
+                        <i class="fa fa-users"></i> <span>{% trans 'Clients' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                </li>
+
+                <li id="sidebar-products" class="treeview">
+                    <a href="{% url 'product-list' %}">
+                        <i class="fa fa-shopping-bag"></i> <span>{% trans 'Products' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                </li>
+
+                <li id="sidebar-warehouse" class="treeview">
+                    <a href="">
+                        <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+
+                        <li class="entrance"><a href="{%url 'entrances-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <li class="exits"><a href="{%url 'new-warehouse-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+                        <li class="history"><a href="{%url 'warehouse-history-list' %}"><i class="fa fa-circle-o"></i>{% trans 'History Movements' %}</a></li>
+                        <li class="relocation"><a href="{% url 'relocation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Relocations' %}</a></li>        
+                        <li class="location"><a href="{% url 'location-management-search' %}"><i class="fa fa-circle-o"></i>{% trans 'Location Management' %}</a></li>
+
+                        <li class="inventory"><a href="{% url 'warehouse-inventory-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Ajustes a Inventario' %}</a></li>
+
+
+                    </ul>
+
+                </li>
+
+                <li id="sidebar-maneuvers" class="treeview">
+                    <a href="">
+                        <i class="fa fa-arrows"></i> <span>{% trans 'Maneuvers' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="entrance"><a href="{%url 'pallet-consolidate' %}"><i class="fa fa-circle-o"></i>{% trans 'Consolidación Pallet' %}</a></li>
+                    </ul>
+                </li>
+
+                <li id="sidebar-reporte" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>{% trans 'Reports' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="entrance"><a href="{%url 'entrances-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Entrance Report' %}
+                        </a></li>
+                        <li class="exists"><a href="{%url 'exit-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Exit Report' %}
+                        </a></li>
+
+                        <li class="inventory"><a href="{%url 'inventory-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Inventory Report' %}
+                        </a></li>
+                        <li class="ocupancy"><a href="{%url 'ocupancy-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Occupation' %}
+                        </a></li>
+
+                        <li class="entrances-resumido"><a href="{%url 'entrances-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Entries' %}
+                        </a></li>
+
+                        <li class="exit-resumido"><a href="{%url 'exit-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Exit' %}
+                        </a></li>
+
+                        <li class="inventario-resumido"><a href="{%url 'inventario-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Inventory' %}
+                        </a></li>
+
+                        <li class="inventory_log"><a href="{%url 'inventory_log_list' %}"><i class="fa fa-circle-o"></i>{% trans 'Ajustes a Inventario' %}
+                        </a></li>
+                        <li class="resultado_de_romaneo"><a href="{%url 'resultado-de-romaneo' %}"><i class="fa fa-circle-o"></i>{% trans 'Resultado de Romaneo' %}</a></li>
+                        <li class="trazabilidad-reporte"><a href="{%url 'trazabilidad-reporte' %}"><i class="fa fa-circle-o"></i>{% trans 'Trazabilidad' %}
+                        </a></li>
+                        <li class="entrance_exit_diff_reportes"><a href="{%url 'entrance-exit-diff-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Diferencias Detallado' %}
+                        </a></li>
+
+
+                    </ul>
+                </li>
+                {%endif%}
+
+                {%if request.user.get_jefealmacen_access %}
+
+                <li id="sidebar-products" class="treeview">
+                    <a href="{% url 'product-list' %}">
+                        <i class="fa fa-shopping-bag"></i> <span>{% trans 'Products' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                </li>
+
+                <li id="sidebar-warehouse" class="treeview">
+                    <a href="">
+                        <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">  
+
+                        <li class="entrance"><a href="{%url 'entrances-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <li class="exits"><a href="{%url 'new-warehouse-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+                        <li class="history"><a href="{%url 'warehouse-history-list' %}"><i class="fa fa-circle-o"></i>{% trans 'History Movements' %}</a></li>
+                        <li class="relocation"><a href="{% url 'relocation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Relocations' %}</a></li>        
+                        <li class="location"><a href="{% url 'location-management-search' %}"><i class="fa fa-circle-o"></i>{% trans 'Location Management' %}</a></li>
+                        <li class="reserved"><a href="{% url 'inventory-reserve-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Reserve/Release Product' %}</a></li>
+	    	    </ul>
+                </li>
+
+                <li id="sidebar-maneuvers" class="treeview">
+                    <a href="">
+                        <i class="fa fa-arrows"></i> <span>{% trans 'Maneuvers' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        <li class="entrance"><a href="{%url 'maniobras-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <li class="exists"><a href="{% url 'maniobras-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li> 
+                        <li class="inventory"><a href="{% url 'inventory-taking-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Taking inventory' %}</a></li> 
+                        <li class="pallet"><a href="{% url 'pallet-consult-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consult Pallet' %}</a></li>
+                        <li class="entrance"><a href="{%url 'pallet-consolidate' %}"><i class="fa fa-circle-o"></i>{% trans 'Consolidación Pallet' %}</a></li>
+                    </ul>
+                </li>
+
+                <li id="sidebar-reporte" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>{% trans 'Reports' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="entrance"><a href="{%url 'entrances-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Entrance Report' %}
+                        </a></li>
+                        <li class="exists"><a href="{%url 'exit-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Exit Report' %}
+                        </a></li>
+
+                        <li class="inventory"><a href="{%url 'inventory-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Inventory Report' %}
+                        </a></li>
+                        <li class="ocupancy"><a href="{%url 'ocupancy-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Occupation' %}
+                        </a></li>
+
+                        <li class="entrances-resumido"><a href="{%url 'entrances-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Entries' %}
+                        </a></li>
+
+                        <li class="exit-resumido"><a href="{%url 'exit-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Exit' %}
+                        </a></li>
+
+                        <li class="inventario-resumido"><a href="{%url 'inventario-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Inventory' %}
+                        </a></li>
+
+                        <li class="inventory_log"><a href="{%url 'inventory_log_list' %}"><i class="fa fa-circle-o"></i>{% trans 'Ajustes a Inventario' %}
+                        </a></li>
+
+                        <li class="resultado_de_romaneo"><a href="{%url 'resultado-de-romaneo' %}"><i class="fa fa-circle-o"></i>{% trans 'Resultado de Romaneo' %} </a> </li>
+                        <li class="trazabilidad-reporte"><a href="{%url 'trazabilidad-reporte' %}"><i class="fa fa-circle-o"></i>{% trans 'Trazabilidad' %}
+                        </a></li>
+                        <li class="entrance_exit_diff_reportes"><a href="{%url 'entrance-exit-diff-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Diferencias Detallado' %}
+                        </a></li>
+
+                    </ul>
+                </li>
+
+                {%endif%}
+
+                {%if request.user.get_inventory_access %}
+                <li id="sidebar-warehouse" class="treeview">
+                    <a href="">
+                        <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">                  
+    
+
+                        <li class="history"><a href="{%url 'warehouse-history-list' %}"><i class="fa fa-circle-o"></i>{% trans 'History Movements' %}</a></li>
+                        <li class="relocation"><a href="{% url 'relocation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Relocations' %}</a></li>        
+                        <li class="location"><a href="{% url 'location-management-search' %}"><i class="fa fa-circle-o"></i>{% trans 'Location Management' %}</a></li>
+
+
+
+
+                    </ul>
+                </li>
+
+
+
+                <li id="sidebar-maneuvers" class="treeview">
+                    <a href="">
+                        <i class="fa fa-arrows"></i> <span>{% trans 'Maneuvers' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        <li class="inventory"><a href="{% url 'inventory-taking-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Taking inventory' %}</a></li> 
+                        <li class="pallet"><a href="{% url 'pallet-consult-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consult Pallet' %}</a></li> 
+                        <li class="entrance"><a href="{%url 'pallet-consolidate' %}"><i class="fa fa-circle-o"></i>{% trans 'Consolidación Pallet' %}</a></li>
+                    </ul>
+                </li>
+
+
+                <li id="sidebar-reporte" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>{% trans 'Reports' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="entrance"><a href="{%url 'entrances-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Entrance Report' %}
+                        </a></li>
+                        <li class="exists"><a href="{%url 'exit-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Exit Report' %}
+                        </a></li>
+
+                        <li class="inventory"><a href="{%url 'inventory-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Inventory Report' %}
+                        </a></li>
+                        <li class="ocupancy"><a href="{%url 'ocupancy-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Occupation' %}
+                        </a></li>
+
+                        <li class="entrances-resumido"><a href="{%url 'entrances-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Entries' %}
+                        </a></li>
+
+                        <li class="exit-resumido"><a href="{%url 'exit-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Exit' %}
+                        </a></li>
+
+                        <li class="inventario-resumido"><a href="{%url 'inventario-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Inventory' %}
+                        </a></li>
+
+                        <li class="inventory_log"><a href="{%url 'inventory_log_list' %}"><i class="fa fa-circle-o"></i>{% trans 'Ajustes a Inventario' %}
+                        </a></li>
+
+                    </ul>
+                </li>
+                {%endif%}
+
+
+                {%if request.user.get_warehouseshiftsupervisor_access%}
+
+                <li id="warehouse-catalogs" class="treeview">
+                    <a href="">
+                        <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+
+                        <li class="entrance"><a href="{%url 'entrances-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <li class="exits"><a href="{%url 'new-warehouse-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+                        <li class="relocation"><a href="{% url 'relocation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Relocations' %}</a></li> 
+
+                    </ul>
+                </li>
+                <li id="sidebar-maneuvers" class="treeview">
+                    <a href="">
+                        <i class="fa fa-arrows"></i> <span>{% trans 'Maneuvers' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">                  
+                        <li class="entrance"><a href="{%url 'maniobras-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <li class="exists"><a href="{% url 'maniobras-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li> 
+                        <li class="inventory"><a href="{% url 'inventory-taking-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Taking inventory' %}</a></li> 
+                        <li class="pallet"><a href="{% url 'pallet-consult-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consult Pallet' %}</a></li> 
+                        <li class="entrance"><a href="{%url 'pallet-consolidate' %}"><i class="fa fa-circle-o"></i>{% trans 'Consolidación Pallet' %}</a></li>
+                    </ul>
+                </li>
+
+                {%endif%}
+
+
+                {%if request.user.get_jefeadministration_access %}
+
+                <li id="sidebar-catalogs" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-th"></i> <span>{% trans 'Catalogs' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        <li class="sidebar-catalogs-packaging">
+                            <a href="{% url 'packaging-list' %}"><i class="fa fa-circle-o"></i>{% trans "Packaging" %}
+                            </a>
+                        </li>
+
+                        <li class="sidebar-catalogs-unit">
+                            <a href="{% url 'unit-list' %}"><i class="fa fa-circle-o"></i>{% trans "Units" %}
+                            </a>
+                        </li>
+
+                        <li class="sidebar-catalogs-prodfamily">
+                            <a href="{% url 'productfamily-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Product Families' %}
+                            </a>
+                        </li>    
+
+
+                        <li class="sidebar-catalogs-vehicle">
+                            <a href="{% url 'vehicle-list' %}"><i class="fa fa-circle-o"></i>{% trans "Vehicles" %}
+                            </a>
+                        </li>
+                        <li class="sidebar-catalogs-carriers">
+                            <a href="{% url 'carrier-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Carriers' %}
+                            </a>
+                        </li>
+
+                        <li class="sidebar-catalogs-consignee">
+                            <a href="{% url 'consignee-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consignees' %}
+                            </a>
+                        </li>
+
+                        <li class="sidebar-catalogs-branch">
+                            <a href="{% url 'branch-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Branch' %}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li id="sidebar-clients" class="treeview">
+                    <a href="{% url 'client-list' %}">
+                        <i class="fa fa-users"></i> <span>{% trans 'Clients' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                </li>
+
+                <li id="sidebar-products" class="treeview">
+                    <a href="{% url 'product-list' %}">
+                        <i class="fa fa-shopping-bag"></i> <span>{% trans 'Products' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                </li>
+                <li id="sidebar-warehouse" class="treeview">
+                    <a href="">
+                        <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        <li class="entrance"><a href="{%url 'entrances-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <li class="exits"><a href="{%url 'new-warehouse-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+                        <li class="history"><a href="{%url 'warehouse-history-list' %}"><i class="fa fa-circle-o"></i>{% trans 'History Movements' %}</a></li>
+                        <li class="relocation"><a href="{% url 'relocation-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Relocations' %}</a></li>        
+                        <li class="location"><a href="{% url 'location-management-search' %}"><i class="fa fa-circle-o"></i>{% trans 'Location Management' %}</a></li>
+                        <li class="reserved"><a href="{% url 'inventory-reserve-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Reserve/Release Product' %}</a></li>
+
+                    </ul>
+                </li>
+
+                <li id="sidebar-maneuvers" class="treeview">
+                    <a href="">
+                        <i class="fa fa-arrows"></i> <span>{% trans 'Maneuvers' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="entrance"><a href="{%url 'maniobras-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+
+                        <li class="exists"><a href="{%url 'maniobras-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+
+                        <li class="inventory"><a href="{% url 'inventory-taking-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Taking inventory' %}</a></li> 
+                        <li class="pallet"><a href="{% url 'pallet-consult-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Consult Pallet' %}</a></li> 
+                        <li class="entrance"><a href="{%url 'pallet-consolidate' %}"><i class="fa fa-circle-o"></i>{% trans 'Consolidación Pallet' %}</a></li>
+                    </ul>
+                </li>
+
+                <li id="sidebar-reporte" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>{% trans 'Reports' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        <li class="entrance"><a href="{%url 'entrances-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Entrance Report' %}
+                        </a></li>
+                        <li class="exists"><a href="{%url 'exit-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Exit Report' %}
+                        </a></li>
+
+                        <li class="inventory"><a href="{%url 'inventory-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Inventory Report' %}
+                        </a></li>
+                        <li class="ocupancy"><a href="{%url 'ocupancy-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Warehouse Occupation' %}
+                        </a></li>
+
+                        <li class="entrances-resumido"><a href="{%url 'entrances-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Entries' %}
+                        </a></li>
+
+                        <li class="exit-resumido"><a href="{%url 'exit-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Exit' %}
+                        </a></li>
+
+                        <li class="inventario-resumido"><a href="{%url 'inventario-resumido-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Summary Inventory' %}
+                        </a></li>
+                        <li class="resultado_de_romaneo"><a href="{%url 'resultado-de-romaneo' %}"><i class="fa fa-circle-o"></i>{% trans 'Resultado de Romaneo' %}
+                        </a></li>
+                        <li class="trazabilidad-reporte"><a href="{%url 'trazabilidad-reporte' %}"><i class="fa fa-circle-o"></i>{% trans 'Trazabilidad' %}
+                        </a></li>
+                        <li class="entrance_exit_diff_reportes"><a href="{%url 'entrance-exit-diff-report' %}"><i class="fa fa-circle-o"></i>{% trans 'Diferencias Detallado' %}
+                        </a></li>
+
+
+                    </ul>
+                </li>
+                {%endif%}
+
+
+
+                {% if request.user.get_client %}
+                <li class="treeview">
+                    <a href="">
+                        <i class="fa fa-area-chart"></i> <span>{% trans 'Warehouse' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu"> 
+
+                        <li class="entrance"><a href="{%url 'entrances-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Inputs' %}</a></li>
+                        <li class="exits"><a href="{%url 'new-warehouse-exit-list' %}"><i class="fa fa-circle-o"></i>{% trans 'Outputs' %}</a></li>
+                        <li class="history"><a href="{%url 'warehouse-history-list' %}"><i class="fa fa-circle-o"></i>{% trans 'History Movements' %}</a></li>
+
+                    </ul>
+                </li>
+
+                <li id="sidebar-change-password" class="treeview">
+                    <a href="{% url 'change-customer-password' %}">
+                        <i class="fa fa-dashboard"></i> <span>{% trans 'Change password' %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                </li>
+                {%endif%}
+            {%endif%}
+
+
+
+            <li class="header">{% trans 'ACTIONS' %}</li>
+            <li class=""><a href="{% url 'logout' %}"><i class="fa fa-sign-out text-red"></i>
+                <span>{% trans 'Logout' %}</span></a></li>
+    </section>
+</aside>

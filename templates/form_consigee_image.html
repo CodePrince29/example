@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block header-links %}
+  {% load staticfiles %}
+  {% load i18n %}
+{% endblock %}
+
+{% block content-header %}
+<h1>
+  {% block header-title %}{% endblock %}
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% block breadcrumb-category-url %}{% endblock %}">{% block breadcrumb-category %}{% endblock %}</a></li>
+  <li class="active">{% block breadcrumb-specific %}{% endblock %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <!-- left column -->
+  <div class="col-md-12">
+    <!-- general form elements -->
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">{% block form-box-title %}{% endblock %}</h3>
+      </div>
+      <!-- /.box-header -->
+      <!-- form start -->
+      <form id="sga-form" role="form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="box-body">
+          <div class="row">
+            {% block form-fields-col-width %} <!-- default is <div class="col-md-6"> in form html files -->
+            {% endblock %}
+              {% include 'form-error.html' %}
+              {% block form-fields %}
+              {% endblock %}
+            </div>
+    <div class="row">
+            <div class="col-md-6">
+              <button type="submit" id="form-submit-btn" class="btn btn-lg btn-primary">{% trans 'Save' %}</button>
+              <button type="button" id="form-cancel-btn" class="btn btn-lg">{% trans 'Cancel' %}</button>
+            </div>
+             </div>
+          </div>
+        </div>
+        <!-- /.box-body -->
+        <!--<div class="box-footer"></div>-->
+      </form>
+    </div>
+    <!-- /.box -->
+
+  </div>
+</div>
+<!-- /.row -->
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'theme/js/jquery.are-you-sure.min.js' %}"></script>
+<script>
+$(document).ready(function() {
+  $('form').areYouSure();
+
+});
+
+document.getElementById("form-cancel-btn").onclick = function () {
+  location.href = "{% block cancel-url %}{% endblock %}";
+};
+
+    $(".image-preview-input input:file").change(function (){     
+        var img = $('<img/>', {
+            id: 'preview_here'
+
+        });
+
+        var file = this.files[0];
+        var ext = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase();
+        if (file && ( ext == "png" || ext == "jpeg" || ext == "jpg")) {
+            var file = this.files[0];
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(".signature_image").val(file.name);
+                img.attr('src', e.target.result);
+                $(".preview-browse-img figure").empty();
+                $(".preview-browse-img figure").append($(img)[0].outerHTML);
+            }        
+            reader.readAsDataURL(file);
+        }else{
+            alert("sorry please upload only png jpeg jpg file")
+            $('#preview_here').attr('src', '');
+        }
+    });
+
+    $("#ContactPhoneNumber").inputmask("(99) 9999-999-999")
+
+    $('#sga-form').validate({
+        rules: {
+            email: {
+                required: true,
+                email: true
+            }
+        }
+    });
+
+
+
+  </script>
+{% block additional-custom-scripts %}
+{% endblock %}
+{% endblock %}

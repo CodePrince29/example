@@ -1,0 +1,45 @@
+{% extends 'list.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block header-title %}{% trans 'Users' %}{% endblock %}
+{% block breadcrumb-specific %}{% trans 'Users' %}{% endblock %}
+
+{% block create-url %}{% url 'user-create' %}{% endblock %}
+
+{% block list-header-columns %}
+<th>{% trans 'Name' %}</th>
+<th>{% trans 'Role' %}</th>
+<th>{% trans 'Email' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block list-items %}
+{% for user in userprofile_list %}
+    <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+            <a role="button" href="{% url 'user-detail' user.id %}"
+               class="btn btn-success"><i class="fa fa-edit"></i></a>
+            <a role="button" href="{% url 'user-delete' user.id %}"
+               class="btn btn-danger btn-delete"
+               data-confirm="{% trans 'Are you sure to delete this item?' %}"><i
+                    class="fa fa-close"></i></a>
+        </td>
+    </tr>
+{% endfor %}
+{% endblock %}
+
+{% block list-footer-columns %}
+<th>{% trans 'Name' %}</th>
+<th>{% trans 'Role' %}</th>
+<th>{% trans 'Email' %}</th>
+<th>{% trans 'Actions' %}</th>
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'auth/sidebar.html' %}
+{% endblock %}

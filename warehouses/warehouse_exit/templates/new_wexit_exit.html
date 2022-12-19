@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% endblock %}
+
+{% block content-header %}
+<h1>
+  <small>{% block header-subtitle %}{% endblock %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li><a href="{% url 'warehouse-exit-list' %}">{% trans 'WAREHOUSE-EXIT-APPOINTMENTS' %}</a></li>
+  <li class="active">{%trans "New" %}</li>
+</ol>
+{% endblock %}
+
+
+
+<!-- <a href="{% url 'packaging-list' %}"></a> -->
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-primary">
+      <table class="hide">
+        <tr data-role="w-product-measurment-row" class="tr_body empty-form">
+          {% for field in w_exit_product_measurment_form.empty_form %}
+          {% if not field.is_hidden %}
+          <td>
+            {{ field }}
+          </td>
+          {% endif %}
+          {% endfor %}
+        </tr>
+      </table>
+
+      <form id="sga-form" role="form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="box-header with-border">
+          <div class="pull-right">
+            {% if object.status == "InManeuvers" %}
+              <a href="/warehouse_exit/exit-print-picking/{{object.id}}" class="btn btn-primary">&nbsp;<i class="fa fa-print" aria-hidden="true"></i> &nbsp; {% trans 'PRINT PICKING' %} &nbsp;</a>
+              {% endif %}
+            
+
+            <button type="button" class="btn-success btn btn-lg" id="save_maniover">Enviar a Maniobras</button>
+            <input type="hidden" name="status"  id="id_status" value="{{object.status}}" class="status_class">
+            <input type="hidden"  id="id_exit_pk" value="{{object.id}}" class="class_exit_pk">
+            <input type="submit" name="" class="btn btn-primary btn-lg" value="{% trans 'Save' %}" id="sga-form-submit">
+
+            <a href="/warehouse_exit/new-warehouse-exit-list" class="btn btn-lg  btn-default">{% trans 'Cancel' %}</a>
+          </div>
+        </div>
+
+
+        <div class="box-body">
+          <div class="row">            
+            {% include 'form-error.html' %}
+            <div class="form-group col-md-6">
+              <label>{% trans 'Customer' %}</label>
+
+              <div>                
+                <div>
+                {{ form.customer }}
+              </div>
+              </div>
+
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="exit_date">{% trans 'Exit Date' %}</label>
+              <input type="text" class="form-control" id="exit_date" name="exit_date" value="{{object.exit_date| date:"Y-m-d" }}" required>
+            </div>
+            <div class="form-group input-group bootstrap-timepicker timepicker">
+              <label for="exit_hour">{% trans 'Exit Hour' %}</label>
+              <input type="text" class="form-control input-small" id="exit_hour1" name="exit_hour" value="{{object.exit_hour}}" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 product_measurment_form_management_form">
+              {{ w_exit_product_measurment_form.management_form }}
+              <table data-role="w-product-measurment" class="table table-bordered measurement_table exit_product_measurement">
+                <tr>
+                  <th>{% trans 'Product Code' %}</th>
+                  <th>{% trans 'Description' %}</th>
+
+                  <th>{% trans 'Caducidad' %}</th>
+                  <th>{% trans 'Lote Cliente' %}</th>
+                  <th>{% trans 'Lote Tarima' %}</th>
+                  <th>{% trans 'Folio Entrada' %}</th>
+
+                  <th>{% trans 'Boxes' %}</th>
+                  <th>{% trans 'Kilos' %}</th>                  
+                  <th class="delete_measurement">{% trans 'Delete' %}</th>
+                </tr>
+
+                {% for form in w_exit_product_measurment_form.forms %}
+                <tr data-role="w-product-measurment-row" class="tr_body">
+                  {{ form.id }}
+                  {{ form.description.errors }}
+                  {{ form.description.label_tag }}
+                  {{ form.description }}
+                  {% for field in form %}
+                  {% if not field.is_hidden %}
+                  <td>
+                    {{ field }}
+                  </td>
+                  {% endif %}
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+
+
+
+              </table>
+
+              <button type="button" class="btn btn-primary" data-action="add-product_measurment_form">{% trans 'Add Another' %}</button>
+            </div>
+                <div class="col-xs-12">
+                  <table class="table calculate" id="calculate_tr">
+                    <tr>
+                      <td style="width: 30% !important"><h4>{% trans 'GRAND TOTAL' %}</h4></td>
+                      <td style="width: 10% !important"></td>
+                      <td style="width: 10% !important"></td>
+                      <td style="width: 10% !important"></td>
+                      <td style="width: 15% !important"><input type="text" name="boxes" class="form-control" id="exit_boxes" readonly="true" value="{{object.boxes | unlocalize}}"></td>
+                      <td style="width: 15% !important"><input type="text" name="total_kg" class="form-control" id="exit_total_kg" readonly="true" value="{{object.total_kg | unlocalize}}"></td>
+                      
+                    </tr >
+                  </table>
+                </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Cargo Sender' %}</label>
+                  <div>
+                    {{ form.cargo_sender }}
+                  </div>
+                </div> 
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Reference' %}</label>
+                  <div>
+                    {{ form.cust_reference }}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Consignees' %}</label>
+                  <div>
+                    {{ form.consignee }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="entrance_error_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document" style="width: 1000px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">{% trans 'WAREHOUSE ENTRANCE ERROR' %}
+          </h4>
+
+        </div>
+
+        <div class="modal-body" >
+          <div class="row">
+            <table class="table table-hover new-tab error_table">
+              <thead>
+                <tr>
+                  <th class="input-group-th"> 
+                    {% trans 'Product' %}
+                  </th>
+                  <th class="input-group-th">
+                    {% trans 'Description' %}
+                  </th>
+                  <th class="input-group-th">
+                    {% trans 'Available Boxes' %}
+                  </th>
+                  <th class="input-group-th">
+                    {% trans 'Selected Boxes' %}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="entrance_error_on_maniobras">
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" name="status" value="control" id="id_status" value="{{warehouse_exit.status}}" >
+          <label class="label label-info error-msg"></label>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<style type="text/css">
+  #id_cargo_type li {
+    float: left;
+    padding: 24px;
+    list-style: none;
+  }
+</style>
+ <link rel="stylesheet" href="{%static 'custom/warehouse/css/warehouse-entrance.css' %}"> 
+  {% endblock %}
+
+  {% block scripts %}
+  
+
+  <script src="{% static 'theme/js/jquery.are-you-sure.min.js' %}"></script>
+  <script src="{% static 'custom/warehouse/js/exit_detail.js' %}"></script>
+  <script src="{% static 'theme/js/django-formset.js' %}"></script>
+    <script src="{% static 'custom/warehouse/js/download_pdf.js' %}"></script>
+  <script type="text/javascript">
+
+  $(document).ready(function(){
+    var status = $(".status_class").val()
+    
+    if(status != "control"){
+      $('input[type="text"]').prop("disabled", true);
+      $('input[type="radio"]').prop("disabled", true);
+      /*Disable textarea using id */
+     $('select').prop("disabled", true);
+     $('button').addClass("hide")
+     $('input[type="submit"]').addClass("hide")
+     $('.delete_measurement').addClass("hide")
+     $(".print_picking").removeClass("hide")
+   }    
+  });
+
+    load_products()
+    var formset = $('tr[data-role="w-product-measurment-row"]').djangoFormset({
+           on: {
+               formAdded: function(event, form) {
+                   console.log(form);
+                   var position = form.elem.find('.whm_boxes').attr('name').replace ( /[^\d.]/g, '' );
+                    form.elem.find('.w_product_measurment').select2()
+
+               }
+           }
+       });
+   $(".product_measurment_form_management_form").on('click', 'button[data-action=add-product_measurment_form]', function(event) {
+       formset.addForm();
+   });
+
+   $(document).on('change', '.w_product_measurment', function(){
+     $(this).closest('tr').find('.whm_p_description').val($(this).find("option:selected").attr('data-description'))
+     variable_weight = $(this).find("option:selected").attr('data-variable_weight')
+     if(variable_weight == 'false'){
+      $(this).closest("tr").find(".whm_total_kg").attr("readonly", "true")
+    }
+    else{
+      $(this).closest("tr").find(".whm_total_kg").removeAttr("readonly")
+    }
+   })
+
+   $(document).on('click', '.btn-danger', function(event) {
+    sum_table()
+   })
+
+    function checkDecimal(evt, item, lenBeforeDecimal, lenAfterDecimal) {
+      var charCode = evt.which;
+
+      var trimmed = $(item).val().replace(/\b^0+/g, "");
+      if(checkStartsWith(trimmed, '.') == true){
+        trimmed = '0' + trimmed;
+      }  
+
+      if(charCode == 8 || charCode == 9){
+        return true;
+      } 
+
+      if(charCode == 46){
+        var dotOccurrences = (trimmed.match(/\./g) || []).length;
+
+        if(dotOccurrences != undefined && dotOccurrences == 1){
+          return false;
+        }else{
+          return true;
+        }
+      }
+
+      if (charCode > 31 && ((charCode < 48) || (charCode > 57))) {
+        return false;
+      }
+      if ($(item).val() != trimmed){
+        $(item).val(trimmed);}  
+
+        if(trimmed.indexOf('.') == -1){
+          if(trimmed.length >= parseInt(lenBeforeDecimal)){
+            return false;
+          }
+        }else{
+          var inputArr = trimmed.split(".");
+          if(inputArr[0].length > parseInt(lenBeforeDecimal) || inputArr[1].length >= parseInt(lenAfterDecimal)){
+            return false;
+          }
+        }
+
+        return true;
+      }
+      function checkStartsWith(str, prefix){
+        return str.indexOf(prefix) === 0;
+      }
+ 
+      
+  $("[id$=image-clear_id]").css({'display': "none"})
+  $("[id$=image-clear_id]").next().css({'display': "none"})
+  $('form').areYouSure();
+
+
+
+  $("#save_continue").click(function(){
+    $("#id_save_continue").val(1)
+    $("#sga-form-submit").trigger('click')
+    if($('form').valid()){
+      $('form').validate()
+      $.LoadingOverlay("show");
+    }
+  })
+
+</script>
+{% block additional-custom-scripts %}
+{% endblock %}
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

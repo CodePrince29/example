@@ -1,0 +1,64 @@
+{% extends 'pdf/base_pdf.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% block content-header %}
+<div style="max-width:900px;padding:20px; margin:0 auto; background:#fff; display: inline-block;">
+    <table class="firstBlock" style="width:100%; vertical-align: top;">
+        <tr>
+        <td style="width: 50%; height: 100px;" align="left">
+            <img src="http://sga.frigorificosantander.mx/static/custom/login_page/img/logo.png" alt="" width="124px" height="165px" align="top"/>
+        </td>
+        <td style="width:50%; ">
+            <h2 style="font-size:30px; margin-top:-60px; margin-bottom:10px;" align="right">{% trans 'INVENTARIO RESUMIDO' %} </h2>
+            <table width="100%" align="right" style="font-size:14px;">
+                <tr>
+                    <td width="50%" align="right"><strong>{% trans 'Print Date Time' %}</strong></td>
+                    <td width="50%" align="right">{{print_date}}</td>
+                </tr>               
+            </table>
+        </td>
+    </tr>
+    </table>
+    <br>
+    <br>
+    <div style="width:100%; float:left; min-height:560px; font-size: 13px;">
+        <table width="100%" style="text-transform:uppercase; border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Customer' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Product' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Product Descriptions' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Pending Exit Boxes' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Pending Entrance Exit' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Cantidad Disponible' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Cantidad Total' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Kg Brutos' %}</th>
+            <th align="left" style="border-bottom: 1px solid #000; padding:0 5px;">{% trans 'Kg Netos' %}</th>
+        </tr>
+    </thead>
+    <tbody>       
+        {{summery_data|safe}}
+         <tr style="border-top:1px solid #000; padding: 5px 0;">
+            <td valign="top" style="margin-left:15px;"> </td>
+            <td valign="top" style="margin-left:15px;"> </td>
+            <td valign="top" style="margin-left:15px;">Total: </td>
+            <td valign="top" style="margin-left:15px;">{{total_inprocessed_exit_boxes | unlocalize}}  </td>
+            <td valign="top" style="margin-left:15px;">{{total_inventory_avail_retained_boxes | unlocalize}} </td>
+            <td valign="top" style="margin-left:15px;">{{total_available_quantity | unlocalize}} </td>
+            <td valign="top" style="margin-left:15px;">{{total_quantity | unlocalize}} </td>
+            <td valign="top" style="margin-left:15px;">{{total_gross_weight | unlocalize}} </td>
+            <td valign="top" style="margin-left:15px;">{{total_net_weight | unlocalize}} </td>
+        </tr>
+    </tbody>
+    </table>
+    </div>
+</div>
+<style type="text/css">
+    @page {
+        size: landscape;
+        margin-left: 2cm;
+        margin-right: 2cm;
+    }
+</style>
+{% endblock %}

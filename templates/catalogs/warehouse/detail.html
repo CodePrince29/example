@@ -1,0 +1,799 @@
+{% extends 'base.html' %}
+
+{% block header-links %}
+    {% load staticfiles %}
+    {% load i18n %}
+    {% load l10n %}
+
+    <link rel="stylesheet" href="{% static 'custom/warehouse/css/warehouse-style.css' %}">
+{% endblock %}
+
+{% block content-header %}
+    <h1>
+        {% trans 'Warehouse' %} {{warehouse.code}}
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+        <li><a href="{% url 'warehouse-list' %}"><i class="fa fa-dashboard"></i> {% trans 'Warehouse' %}</a></li>
+        <li class="active">{{warehouse.code}}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    {% if message %}
+      <div class="alert alert-success">
+          <strong>{% trans 'Action Message' %}:</strong> {{ message }}
+      </div>
+    {% endif %}
+    {% if errors %}
+        {% trans 'Encountered Errors' %}:
+            {% for error in errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+    {% endif %}
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-primary">             
+          <div class="box-body">
+            <div id="warehouse-filters" class="row">
+              <div class="col-md-12">
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Customer' %}</label>
+                  <select class="form-control customer">
+                    <option value="">---</option>
+                    {% for client in clients %}
+                    <option value="{{client.id}}">{{client.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group col-md-4">
+                  <label>{% trans 'Product Family' %}</label>
+                  <select class="form-control product-family">
+                    <option class="all" value="">---</option>
+                    {% for family in product_family %}
+                    <option value="{{family.id}}">{{family.description}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group col-md-6">
+                  <label>{% trans 'Product' %}</label>
+                  <select class="form-control product">
+                    <option class="all" value="">---</option>
+                    {% for product in products %}
+                    <option value="{{product.id}}">{{product.product_description}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group col-md-6">
+                  <button id="warehouse-filter-btn" class="btn-primary btn btn-lg">{% trans 'Filter' %}</button>
+                  <button id="warehouse-filter-clean" class="btn btn-lg">{% trans 'Clean' %}</button>
+                  <button type="button" class="btn btn-primary confirm_entrance btn-primary btn btn-lg" data-toggle="modal" data-target="#shortcode-modal">{% trans 'Assign Shortcode' %}</button>
+                </div>                
+              </div>
+            </div>
+            <div class="row row-table-wrapper">
+              <div class="warehouse-row-table">
+                {% for row in warehouse.rows_locations %}
+                <div class="col-md-12 warehouse-row">
+                  <h2 class="row-title">{% trans 'ROW' %} {{row.index}}</h2>
+                  <div class="heights-table">
+                    <h3>{{row.description}}</h3>
+                    <table class="table table-bordered dataTable">
+                      <thead>
+                        <tr rowspan="1"><th>{% trans 'Levels' %}
+                        </th></tr>
+                      </thead>
+                      <tbody>
+                        {% for height in row.sections.0.heights %}
+                        <tr>
+                          <th>{{height.description}} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                  {% for section in row.sections %}
+                  <div class="section-table">
+                    <h3>{% trans "Section" %} {{section.index}}</h3>
+                    <table class="table table-bordered table-hover dataTable">
+                      <thead>
+                        <tr>
+                          {% for depth in section.heights.0.depths %}
+                          <th>
+                            {{depth.description}}
+                          </th>
+                          {% endfor %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for height in section.heights %}
+                        <tr>
+                          {% for depth in height.depths %}
+                            {% if not depth.warehouse_location.is_locked %}
+                                <td style="background: {{depth.get_depth_color}}" id="{{depth.warehouse_location}}" class="warehouse-location" onclick="adjustModal(this);"
+                                data-row="{{row.index}}" data-section="{{section.index}}"
+                                data-height="{{height.description}}" data-depth="{{depth.description}}"
+                                data-customer="{{depth.warehouse_location.get_customer}}" data-product="{{depth.warehouse_location.get_product}}" 
+                                data-customerName="{{depth.warehouse_location.get_customer.name}}" 
+                                data-productFamily="{{depth.warehouse_location.get_product_family}}" data-productFamilyDescription="{{depth.warehouse_location.product_family.description}}"
+                                data-prodDateEntered="?" data-prodLot="?" 
+
+                                data-location="{{depth.warehouse_location.location_number}}"
+                                data-available_weight="{{depth.warehouse_location.available_weight | unlocalize }}"
+                                data-available_volume="{{depth.warehouse_location.available_volume | unlocalize }}"
+                                data-warehouse="{{object.id}}"
+                                data-toggle="modal" data-target="#locationModal" data-total-kg="{{depth.warehouse_location.total_stored_kg | unlocalize}}" data-total-boxes="{{depth.warehouse_location.total_stored_boxes }}"
+                                data-retained-boxes="{{depth.warehouse_location.total_retained_boxes }}"  
+                                data-shortcode="{{depth.warehouse_location.shortcode | unlocalize }}">
+                              {{depth.warehouse_location}} <br/>{{depth.warehouse_location.shortcode}}</td>
+                            {% else %}
+                              <td style="background: {{depth.get_depth_color}}" 
+                              id="{{depth.warehouse_location}}" class="warehouse-location blockable_product {% if depth.warehouse_location.is_locked %} mark_red {% endif %}"
+                               data-row="{{row.index}}" data-section="{{section.index}}"
+                                data-height="{{height.description}}" data-depth="{{depth.description}}"
+                                data-customer="{{depth.warehouse_location.get_customer}}" data-product="{{depth.warehouse_location.get_product}}" 
+                                data-customerName="{{depth.warehouse_location.get_customer.name}}" 
+                                data-productFamily="{{depth.warehouse_location.get_product_family}}" data-productFamilyDescription="{{depth.warehouse_location.product_family.description}}"
+                                data-prodDateEntered="?" data-prodLot="?" 
+                                data-retained-boxes="{{depth.warehouse_location.total_retained_boxes }}"
+                                data-location="{{depth.warehouse_location.location_number}}"
+                                data-available_weight="{{depth.warehouse_location.available_weight | unlocalize }}"
+                                data-available_volume="{{depth.warehouse_location.available_volume | unlocalize }}"
+                                data-warehouse="{{object.id}}" 
+                                data-shortcode="{{depth.warehouse_location.shortcode | unlocalize }}">
+                            {{depth.warehouse_location}}<br/>{{depth.warehouse_location.shortcode}}</td>
+                          {% endif %}
+                        {% endfor %}
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="clearfix"></div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+
+        <div class="box-footer"></div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <div class="modal fade product-list" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" id="modal-close-btn" class="btn" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">{% trans 'Close' %}</span></button>
+          <div class="form-group col-md-3">
+            <label>{% trans 'Position ID' %}</label>
+            <input type="text" id="modal-location-id" class="form-control" readonly>
+          </div>
+          <div class="form-group col-md-3">
+            <label>{% trans 'Short Code' %}</label>
+            <input type="text" id="modal-short-code" class="form-control" readonly>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-md-3">
+              <label>{% trans 'Warehouse' %}</label>
+              <input type="text" id="modal-location-warehouse" class="form-control" value="{{warehouse.code}}" readonly>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{% trans 'Row' %}</label>
+              <input type="text" id="modal-location-row" class="form-control" readonly>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{% trans 'Section' %}</label>
+              <input type="text" id="modal-location-section" class="form-control" readonly>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{% trans 'Height Level' %}</label>
+              <input type="text" id="modal-location-height" class="form-control" readonly>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{% trans 'Depth Level' %}</label>
+              <input type="text" id="modal-location-depth" class="form-control" readonly>
+            </div>
+          </div>
+          <div class="row">
+
+            <div class="form-group col-md-2">
+              <label>{% trans 'Total Kg' %}</label>
+              <input type="text" id="modal-location-total-kg" class="form-control"  readonly>
+            </div>
+
+            <div class="form-group col-md-2">
+              <label>{% trans 'Total Stored Boxes' %}</label>
+              <input type="text" id="modal-location-total-boxes" class="form-control"  readonly>
+            </div>
+
+            <div class="form-group col-md-2">
+              <label>{% trans 'Retained boxes' %}</label>
+              <input type="text" id="modal-location-retained-boxes" class="form-control"  readonly>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>{% trans 'Available Volume' %}</label>
+              <input type="text" id="modal-available-volume" class="form-control"  readonly>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>{% trans 'Available Weight' %}</label>
+              <input type="text" id="modal-available-weight" class="form-control"  readonly>
+            </div>
+
+          </div>
+        </div>
+
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="tab" href="#warehouse_inventory">INVENTARIO</a></li>
+          <li><a data-toggle="tab" href="#warehouse_entrance">ENTRADAS</a></li>
+          <li><a data-toggle="tab" href="#salidas">SALIDAS</a></li>
+          <li><a data-toggle="tab" href="#reubicaciones">REUBICACIONES</a></li>
+        </ul>
+
+
+        <div class="tab-content">
+          <div id="warehouse_inventory" class="tab-pane fade in active">
+            <div class="box-body">
+              <table id="data-table_inventory" class="table table-striped">
+                <thead>
+                  <tr>                    
+
+                    <th>{% trans 'Customer' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Palet Lot' %}</th>
+                    <th>{% trans 'Cust Lot' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>                   
+                    <th>{% trans 'Exp. Date' %}</th>
+                    <th>{% trans 'Cajas totales' %}</th>
+                    <th>{% trans 'Cajas disponibles' %}</th>
+                    <th>{% trans 'Retained boxes' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="warehouse_entrance" class="tab-pane fade">
+            <div class="box-body">
+              <table id="data-table_product" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{% trans 'Customer' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Palet Lot' %}</th>
+                    <th>{% trans 'Cust Lot' %}</th>
+                    <th>{% trans 'Exp. Date' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>
+                    <th>{% trans 'Available Boxes' %}</th>
+                    <th>{% trans 'Retained boxes' %}</th>
+                    <th>{% trans 'Actions' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="salidas" class="tab-pane fade">
+            <div class="box-body">
+              <table id="data-table_exit" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{% trans 'Customer' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Palet Lot' %}</th>
+                    <th>{% trans 'Cust Lot' %}</th>
+                    <th>{% trans 'Exp. Date' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>
+                    <th>{% trans 'Available Boxes' %}</th>
+                    <th>{% trans 'Retained boxes' %}</th>
+                    <th>{% trans 'Actions' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="reubicaciones" class="tab-pane fade">
+            <div class="box-body">
+              <table id="data-table_reubicacion" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{% trans 'Customer' %}</th>
+                    <th>{% trans 'Product' %}</th>
+                    <th>{% trans 'Palet Lot' %}</th>
+                    <th>{% trans 'Total Kg' %}</th>
+
+                    <th>{% trans 'Almacen Origen' %}</th>
+                    <th>{% trans 'Ubicacion Origen' %}</th>
+                    <th>{% trans 'Almacen Destino' %}</th>
+                    <th>{% trans 'Ubicacion Destino' %}</th>
+
+                    
+                    <th>{% trans 'Actions' %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>          
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="shortcode-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document" style="width: 700px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">{% trans 'Assign Shortcode' %}
+          </h4>
+        </div>
+        <form class="assign_short_code" action="{%url 'warehouse-assign_short_code' %}" method="POST" enctype="multipart/form-data">
+          <div class="modal-body" >
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <div class="input-group image-preview">
+                    <input type="text" class="form-control signature_image image-preview-filename" disabled="disabled">
+                    <span class="input-group-btn">
+                      <div class="btn btn-default image-preview-input">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        <span class="image-preview-input-title"></span>
+                        <input type="file" name=" code_assign"/>
+                      </div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="loader-section"></div>
+          <div class="modal-footer">
+            <label class="label label-info error-msg"></label>
+            <button type="submit" class="btn btn-primary shortcode_submit" disabled="">{% trans 'Save' %}</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+          </div>
+        </form>
+
+      </div> 
+    </div>
+  </div>
+<style type="text/css">
+
+.image-preview-input {
+    position: relative;
+    overflow: hidden;
+    margin: 0px;    
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;    
+}
+.image-preview-input input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.image-preview-input-title {
+    margin-left:2px;
+}
+.preview-browse-img figure {
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    overflow: hidden;
+    height: 207px;
+    display: inline-flex;
+}
+
+
+.preview-browse-img figure img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+  
+  $('.warehouse-row').sort(function(a, b) {
+    if ($(a).find("h1.row-title").text().toLowerCase() < $(b).find("h1.row-title").text().toLowerCase()) {
+      return -1;
+    } else {
+      return 1;
+    }
+  }).appendTo('.row-table-wrapper');
+  $('.warehouse-row').each(function(){
+    $(this).show();
+  });
+  // Set on click functionality to filter buttons
+  $("#warehouse-filter-clean").click(function(){
+    resetButton();
+  });
+  $("#warehouse-filter-btn").click(function(){
+    filterLocations();
+  });
+
+  $("select.customer").change(function(){
+    $.get("{% url 'warehouseproduct-filter' 0 %}".replace('0', $(this).val() ), function(data, status){
+        if(status == 'success'){
+          $(".product-family").empty()
+          select = $(".product-family")
+          select.append('<option value="" selected="selected">---</option>')
+          data.forEach(function(product_family) {
+            if (typeof(Storage) !== "undefined") {
+               localStorage.setItem(product_family['code'], JSON.stringify(product_family['product']));
+            } else {
+                alert('Sorry! No Web Storage support..')
+            }
+
+            select.append('<option value="'+product_family['id']+'" family-code="'+product_family['code']+'">' +product_family['description']+'</option>')
+          })
+          select.change(function(){
+
+              product_select = $(".product")
+              product_select.empty()
+              product_select.append('<option value="" selected="selected">---</option>')
+              product_list = JSON.parse(localStorage.getItem($('option:selected', this).attr('family-code')))
+              product_list.forEach(function(product) {
+                 product_select.append('<option value="'+product['id']+'">' +product['product_code']+'</option>')
+              })
+                
+          })
+
+        }
+    });
+  })
+});
+
+$(".image-preview-input input:file").change(function (){
+  var file = this.files[0];
+  var ext = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase();
+  if (file && ( ext == "xlsx")) {
+    var file = this.files[0];
+    var reader = new FileReader();
+    $(".signature_image").val(file.name);
+    $(".shortcode_submit").removeAttr("disabled")
+  }else{
+    $(".shortcode_submit").attr("disabled", "disabled")
+    alert("sorry please upload only xlsx file")
+    $(".signature_image").val("");
+  }
+});
+
+$(".shortcode_submit").click(function (e){
+  div_data = $( "<div class='loader-image'> <img src='{% static 'theme/img/loader.gif' %}' alt='loader'/ ></div> " )
+    $(".loader-section").append(div_data)
+})
+
+</script>
+
+<script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+   
+
+<script>
+function adjustModal(location){
+  //Coordinates
+  var locationId = location.id;
+  customer = 0
+  customer_data = $(".customer").val()
+  if (customer_data != "") {
+    customer = $(".customer").val()
+  }
+
+$("#modal-available-volume").val($("#"+locationId).attr("data-available_volume"));
+$("#modal-available-weight").val($("#"+locationId).attr("data-available_weight"));
+
+  $("#modal-location-id").val(locationId);
+  $("#modal-location-row").val($("#"+locationId).attr("data-row"));
+  $("#modal-location-section").val($("#"+locationId).attr("data-section"));
+  $("#modal-location-height").val($("#"+locationId).attr("data-height"));
+  $("#modal-location-depth").val($("#"+locationId).attr("data-depth"));
+  $("#modal-location-total-boxes").val($("#"+locationId).attr("data-total-boxes"))
+  $("#modal-location-total-kg").val($("#"+locationId).attr("data-total-kg"))
+  $("#modal-location-retained-boxes").val($("#"+locationId).attr("data-retained-boxes"))
+  $("#modal-short-code").val($("#"+locationId).attr("data-shortcode"))
+  
+  // 
+  // Inventory
+  $.get("/warehouses/warehouselocation-product/"+$("#"+locationId).attr("data-warehouse")+"/"+$("#"+locationId).attr("data-location")+"/"+customer, function(data, status){
+  if (status == 'success') {    
+    stored_kg = jQuery.parseJSON(data)[4].stored_kg
+    stored_boxes = jQuery.parseJSON(data)[5].stored_boxes
+    $("#modal-location-total-kg").val(stored_kg)
+    $("#modal-location-total-boxes").val(stored_boxes)
+    entrance_conf = jQuery.parseJSON(data)[0].entrance_conf
+    exit_conf = jQuery.parseJSON(data)[1].exit_conf
+    relocation_serializer = jQuery.parseJSON(data)[2].relocation_serializer
+    inventory_serializer = jQuery.parseJSON(data)[3].inventory_serializer
+
+    var dataSet = entrance_conf.map(function(confirm_entproduct){
+      return [confirm_entproduct.customer,
+              confirm_entproduct.code,
+              confirm_entproduct.palet_lot,
+             confirm_entproduct.cost_lot,             
+             confirm_entproduct.exp_date,
+             confirm_entproduct.gross_weight,
+             confirm_entproduct.getavailable_boxes,
+             confirm_entproduct.retained_quantity,
+             "<a role='button' href='/warehouse_entrance/"+confirm_entproduct.werehouse_entrance+"/detail' class='btn btn-warning'><i class='fa fa-eye'></i></a>"]})
+    var exit_dataSet = exit_conf.map(function(confirm_entproduct){ 
+      return [confirm_entproduct.customer,
+              confirm_entproduct.code,
+              confirm_entproduct.palet_lot,
+             confirm_entproduct.cost_lot,             
+             confirm_entproduct.exp_date,
+             confirm_entproduct.gross_weight,
+             confirm_entproduct.getavailable_boxes,
+             confirm_entproduct.retained_quantity,
+             "<a role='button' href='/warehouse_exit/"+confirm_entproduct.werehouse_exit+"/detail' class='btn btn-warning'><i class='fa fa-eye'></i></a>"]})
+    var relocation_dataSet = relocation_serializer.map(function(confirm_entproduct){
+      return [confirm_entproduct.customer,
+              confirm_entproduct.product,
+             confirm_entproduct.palet_lot,
+             confirm_entproduct.gettotal_kg,
+             confirm_entproduct.s_warehouse_code,
+             confirm_entproduct.s_location_number,
+             confirm_entproduct.d_warehouse_code,
+             confirm_entproduct.d_location_number,
+             "<a role='button' href='/warehouse_relocation/"+confirm_entproduct.id+"/detail' class='btn btn-warning'><i class='fa fa-eye'></i></a>"
+
+             ]})
+
+
+
+    var inventory_dataSet = inventory_serializer.map(function(confirm_entproduct){
+      return [confirm_entproduct.customer_data,
+              confirm_entproduct.product_data,
+              confirm_entproduct.lote_tarima,
+              confirm_entproduct.lote_cliente,
+              confirm_entproduct.available_gross_weight,
+              confirm_entproduct.exp_date,
+              confirm_entproduct.total_boxes,
+              confirm_entproduct.available_total_boxes,
+              confirm_entproduct.retained_boxes,             
+             // "<a role='button' href='/warehouse_relocation/"+confirm_entproduct.id+"/detail' class='btn btn-warning'><i class='fa fa-eye'></i></a>"
+
+             ]})
+
+
+    datatable.clear();
+    datatable.rows.add(dataSet);
+    datatable.draw();
+
+    datatableexit.clear();
+    datatableexit.rows.add(exit_dataSet);
+    datatableexit.draw();
+
+    datatablereubacecion.clear();
+    datatablereubacecion.rows.add(relocation_dataSet);
+    datatablereubacecion.draw();
+
+    datatableinventerio.clear();
+    datatableinventerio.rows.add(inventory_dataSet);
+    datatableinventerio.draw();
+
+
+  }
+
+  })
+}
+var datatable = $('#data-table_product').DataTable( {
+        language: {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+    } );
+
+
+
+
+var datatableexit = $('#data-table_exit').DataTable( {
+        language: {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+    } );
+
+
+var datatablereubacecion = $('#data-table_reubicacion').DataTable( {
+        language: {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+    } );
+
+
+var datatableinventerio = $('#data-table_inventory').DataTable( {
+        language: {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+    } );
+
+</script>
+
+{# FILTER BUTTONS #}
+<script>
+function resetButton() {
+  $("#warehouse-filters select option").filter(function() {
+    //may want to use $.trim in here
+    return $(this).text() == "---";
+  }).prop('selected', true);
+  $(".warehouse-location").each(function(){
+    $(this).css("background-color","#d9e0cb");
+    $(this).css("opacity","1");
+    $(this).bind('click');
+    $(this).attr("data-target", "#locationModal");
+  });
+}
+function filterLocations() {
+  $(".warehouse-location").each(function(){
+        customer = $("#warehouse-filters select.customer option:selected").val()
+        array_cust =   JSON.parse($(this).attr("data-customer")) 
+        return_customer = $.inArray( (parseInt(customer)), array_cust)
+
+        product = $("#warehouse-filters select.product option:selected").val()
+        array_product =   JSON.parse($(this).attr("data-product"))       
+        return_product = $.inArray( (parseInt(product)), array_product)
+
+        family = $("#warehouse-filters select.product-family option:selected").val()
+        array_family =   JSON.parse($(this).attr("data-productFamily"))       
+        return_family = $.inArray( (parseInt(family)), array_family)
+
+    if (
+      ($("#warehouse-filters select.customer option:selected").val()=="" ||
+        return_customer >=0) &&
+      ($("#warehouse-filters select.product option:selected").val()=="" ||
+        return_product >=0) &&
+      ($("#warehouse-filters select.product-family option:selected").val()==""||
+        return_family >=0)
+    ){
+      $(this).css("background-color","#d9e0cb");
+      $(this).css("opacity","1");
+      $(this).bind('click');
+      $(this).attr("data-target", "#locationModal");
+    } else if (
+      ($("#warehouse-filters select.customer option:selected").val()!="" && 
+        return_customer < 0)||
+      ($("#warehouse-filters select.product option:selected").val()!="" && 
+        return_product < 0)||
+      ($("#warehouse-filters select.product-family option:selected").val()!="" && 
+        return_family < 0)
+    ){
+      $(this).css("background-color","#f4f4f4");
+      $(this).css("opacity","0.65");
+      $(this).unbind('click');
+      $(this).attr("data-target", "");
+    }
+  });
+}
+
+</script>
+
+
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+{% include 'catalogs/warehouse/sidebar.html' %}
+{% endblock %}

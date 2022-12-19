@@ -1,0 +1,163 @@
+{% extends 'form-new.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Products' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Products' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'product-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Product' %}{% endblock %}
+
+{% block form-fields-col-width %}
+<div class="col-md-12">
+{% endblock %}
+
+{% block form-fields %}
+<div class="row">
+  <div class="col-md-8">
+    <div class="form-group col-md-4">
+        <label for="productCode">{% trans 'Product Code' %}</label>
+        <input type="text" class="form-control" id="productCode" name="product_code" required>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="productCustCode">{% trans 'Customer Prod. Code' %}</label>
+        <input type="text" class="form-control" id="productCustCode" name="customer_product_code" required>
+    </div>
+    <div class="form-group col-md-4">
+        <label>{% trans 'Product Family' %}</label>
+        <div>
+            {{ form.product_family }}
+        </div>
+    </div>
+<!--     <div class="form-group col-md-12">
+        <label>{% trans 'Customer' %}</label>
+        <div>
+            {{ form.customer }}
+        </div>
+    </div> -->
+
+      <div class="form-group col-md-12">
+        <label>{% trans 'Customer' %}</label>
+        <select class="form-control customer" id="product_customer" name="customer" required=""> 
+          <option value="">Seleccione...</option>                  
+          {% for client in product_customers %}
+            {% if client.id == product.customer_id %}
+              <option value="{{client.id}}" data-bar_code="{{client.barcoderead}}" selected>{{client.name}}</option>
+            {% else %}
+              <option value="{{client.id}}" data-bar_code="{{client.barcoderead}}" >{{client.name}}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group col-md-12">
+        <label for="productDescription">{% trans 'Product Description as it appears in outer package label' %}</label>
+        <input type="text" class="form-control" id="productDescription" name="product_description" required>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="productReplValue">{% trans 'Replacement Values' %}</label>
+        <input type="number" class="form-control" id="productReplValue" name="replacement_value" required>
+    </div>
+    <div class="form-group col-md-4">
+        <label>{% trans 'Package Type' %}</label>
+        <div>
+            {{ form.package_type }}
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="productStorageTemp">{% trans 'Storage Temperature ' %}&#8451</label>
+        <input type="text" class="form-control" id="productStorageTemp" name="storage_temperature" required>
+    </div>
+    <div class="form-group col-md-3">
+        <label for="productGrossWeight">{% trans 'Gross Weight' %}</label>
+        <input type="text" min="0" class="form-control" id="productGrossWeight" name="gross_weight" required onkeypress ="return isFloat(event)">
+    </div>
+    <div class="form-group col-md-3">
+        <label for="productNetWeight">{% trans 'Net Weight' %}</label>
+        <input type="text" min="0" class="form-control" id="productNetWeight" name="net_weight" required onkeypress ="return isFloat(event)">
+    </div>
+    <div class="form-group col-md-3">
+      <div class="checkbox">
+        <label for="productVarWeight">
+          <input type="checkbox" id="productVarWeight" name="variable_weight">
+          {% trans 'Variable Weight' %}
+        </label>
+      </div>
+      <div class="checkbox">
+        <label for="productVarWeight">
+          <input type="checkbox" id="productAverageWeight" name="average_weight" disabled="true">
+          {% trans 'Average Weight' %}
+        </label>
+      </div>
+    </div>
+    <div class="form-group col-md-3">
+      <input type="radio" name="storage_type" value="refrigerated" checked> {% trans "Refrigerated" %}<br>
+      <input type="radio" name="storage_type" value="frozen"> {% trans "Frozen" %}<br>
+    </div>
+    <div class="product_barcode_div hide form-group col-md-12">
+      <label for="productBarcodeToUse">{% trans 'Barcode To Use' %}</label>
+        {{ form.barcode_to_use }}
+    </div>
+    <div class="form-group col-md-12">
+      <label for="productSpecialObservations">{% trans 'Special Observations' %}</label>
+      <textarea form="sga-form" class="form-control" style="resize:none;" id="productSpecialObservations" name="special_observations" rows="10" required></textarea>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class='row'>
+      <div class="col-md-6">
+        <div class="form-group col-md-12">
+          <label for="productLength">{% trans 'Length' %}</label>
+          <input type="text" min="0" class="form-control" id="productLength" name="length" required onkeypress ="return isFloat(event)">
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productWidth">{% trans 'Width' %}</label>
+          <input type="text" min="0" class="form-control" id="productWidth" name="width" required onkeypress ="return isFloat(event)">
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productHeight">{% trans 'Height' %}</label>
+          <input type="text" min="0" class="form-control" id="productHeight" name="height" required onkeypress ="return isFloat(event)">
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productDiameter">{% trans 'Diameter' %}</label>
+          <input type="text" min="0" class="form-control" id="productDiameter" name="diameter" required onkeypress ="return isFloat(event)">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group col-md-12">
+          <label for="productPackagesPerBed">{% trans 'Packages Per Bed' %}</label>
+          <input type="number" min="0" class="form-control" id="productPackagesPerBed" name="packages_per_bed" required>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productBedsPerPallet">{% trans 'Beds Per Pallet' %}</label>
+          <input type="number" min="0" class="form-control" id="productBedsPerPallet" name="beds_per_pallet" required>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productPackagesPerPallet">{% trans 'Packages Per Pallet' %}</label>
+          <input type="number" min="0" class="form-control" id="productPackagesPerPallet" name="packages_per_pallet" required readonly="true">
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="productMinExpRec">{% trans 'Min. Expiration For Reception' %}</label>
+          <input type="text" class="form-control" id="productMinExpRec" name="min_expiration_for_reception" required>
+        </div>
+        <div class="form-group col-md-12">
+          <label for="productMinExpShip">{% trans 'Min. Expiration For Shipping' %}</label>
+          <input type="text" class="form-control" id="productMinExpShip" name="min_expiration_for_shipping" required>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{# Cancel URL #}
+{% block cancel-url %}{% url 'product-list' %}{% endblock %}
+
+
+{% block sidebar-menu %}
+{% include 'catalogs/product/sidebar.html' %}
+{% endblock %}

@@ -1,0 +1,164 @@
+
+{% block header-links %}
+ {% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% endblock %}
+<!-- {% block content %} -->
+<style>
+.section-table h3{     background-color: #214A7B;
+    color: #fff; padding: 5px;  }
+.section-table th    {     background-color: #214A7B;
+    color: #fff;  padding: 8px; text-align: center; }
+.section-table td{ text-align: center; cursor: pointer;  }
+.mark_red{background:  red !important;}
+</style>
+<div class="row-table-wrapper">
+                    <div class="warehouse-row-table">
+                      {% for row in warehouse.rows_location_entrance %}
+                      <div class="col-md-12 warehouse-row">
+                       <h2 class="row-title">{% trans 'ROW' %} {{row.index}}</h2>
+                                          
+                        {% for section in row.sections %}
+                        <div class="section-table">
+                          <h3>{% trans "Section" %} {{section.index}}</h3>
+                          <table class="table table-bordered table-hover dataTable">
+                            <thead>
+                              <tr>
+                                {% for depth in section.heights.0.depths %}
+                                <th>
+                                  {{depth.description}}
+                                </th>
+                                {% endfor %}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for height in section.heights %}
+                              <tr>
+                                {% for depth in height.depths %}
+
+                                  {%if depth.warehouse_location.has_broduct%}
+                  
+                                     <td id="{{depth.warehouse_location}}" class="warehouse-location product-already" rack-data="{{section.index}}" rack-id="{{section.id}}" location-id="{{depth.warehouse_location.id}}"  data-available-weight="{{depth.warehouse_location.available_weight | unlocalize}}" data-available-volume="{{depth.warehouse_location.available_volume | unlocalize | unlocalize }}">
+                                      {{depth.warehouse_location}}
+                                    </td>
+
+                                    {%else%}
+                                      {%if depth.warehouse_location.is_locked %}
+                                         <td id="{{depth.warehouse_location}}" class="mark_red" rack-data="{{section.index}}" data-available-weight="{{depth.warehouse_location.available_weight | unlocalize }}" rack-id="{{section.id}}"  location-id="{{depth.warehouse_location.id}}" data-available-volume="{{depth.warehouse_location.available_volume | unlocalize }}" >{{depth.warehouse_location}}</td>
+                                      {%else%}
+                                      <td id="{{depth.warehouse_location}}" class="warehouse-location" rack-id="{{section.id}}"  rack-data="{{section.index}}" data-available-weight="{{depth.warehouse_location.available_weight | unlocalize }}" location-id="{{depth.warehouse_location.id}}" data-available-volume="{{depth.warehouse_location.available_volume | unlocalize }}">{{depth.warehouse_location}}</td>
+                                      {%endif%}                                      
+                                    {%endif%}
+
+                                {% endfor %}
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                        {% endfor %}
+                      </div>
+                      <div class="clearfix"></div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <script type="text/javascript">                 
+                   
+                  $(".warehouse-location").each(function(){
+                    $(this).css("background-color","#d9e0cb");
+
+                    $(this).css("opacity","1");
+                    $(this).bind('click');
+                    $(this).attr("data-target", "#locationModal");
+                  });
+                  
+                //   $.ajaxSetup({
+                //     timeout: 3000, 
+                //     retryAfter:1000
+                // });
+                
+                  //remove this section
+                  $(".warehouse-location").click(function(){
+                    var warehouse_location_this = $(this)
+                    weight = $(this).attr('data-available-weight')
+                    volume = $(this).attr('data-available-volume')
+
+                    html_section = 
+                        "<tr data-warehouse='{3}'><td>\
+                            <input type='text' value='{0}' class='form-control palet'>\
+                          </td>\
+                          <td>\
+                            <input type='text' value='{1}' class='form-control palet_lot'>\
+                          </td>\
+                        <td>\
+                            <input type='text' value='{2}' class='form-control location'>\
+                        </td>\
+                        <td>\
+                        <input type='button' class='btn btn-primary' value='selectionar'>\
+                        </td>\
+                        </tr>"
+
+                       index = $("#entrance_product_detail").find(".active_p").attr('data-table-row')
+                        location_num = parseInt($(this).attr('location-id'))
+                        rack_number = parseInt($(this).attr('rack-id'))
+                        warehouse_id = $("#warehouse_select_id option:selected").val()
+                        warehouse_text = $("#warehouse_select_id option:selected").text()
+                        product = $("#entrance_product_detail").find(".active_p").find("[id$='product']").val()
+                        palet_lot = $("#entrance_product_detail").find(".active_p").find("[id$='palet_lot']").val()
+
+                        pallet_row = $(".appDetails").parent().parent()
+                        boxes = pallet_row.find('.boxes').val()
+                       
+                        jQuery.ajax( {
+                          url: "{% url 'check-warehouse-availability' %}",
+                          type: "post",
+                          dataType: "json",
+                          data: { 
+                            warehouse: warehouse_id , 
+                            location: location_num,
+                            product: product,
+                            boxes: boxes,
+                            csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+                          }
+                        } ).done(function( response ){
+                          $("#list_location").find('input').each(function(){
+                            $(this).removeAttr('style')
+                          })
+                          $("#warehouse_entry_options tbody").html('')
+                          
+                          // $("#entrance_product_detail").find(".active_p").find("[id$='rack_number']").val(rack_number)
+
+                          console.log(response)
+                          if(response.code == 200){
+                            pallet_row.find('.warehouse').val(warehouse)
+                            pallet_row.find('.location').val(location_num)
+                            pallet_row.find('.rack_number').val(rack_number)
+                          }
+                          else{
+                            alert("La ubicación no cuenta con el espacio suficiente o el peso sobrepasa el limite del nivel de la ubicación. Por favor seleccione otra ubicación")
+
+                          }
+                            
+                            // if (response.data.length > 0) {
+                            //       response.data.forEach(function(warehouse_data) {
+                            //          console.log(warehouse_data.pallet)
+                            //          $("#warehouse_entry_options tbody").append(html_section.f(warehouse_data.pallet, palet_lot,location_num,warehouse_id ))
+                            //       })
+                            //   }
+                            //   else{
+                            //      console.log("else")
+                            //   }
+
+                                                   
+                        }).error(function() {
+                          console.log( 'Ajax request failed...' );
+                      });
+                  })
+                </script>
+
+<!-- {% endblock %} -->
+
+<!-- weight = $(this).attr('data-available-weight')
+volume = $(this).attr('data-available-volume')
+set_location_and_rack(parseInt($(this).text()),parseInt($(this).attr('rack-data')),weight,volume) -->

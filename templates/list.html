@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block header-links %}
+    {% load staticfiles %}
+    {% load i18n %}
+    <link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}
+
+{% block content-header %}
+    <h1>
+      {% block header-title %}{% endblock %}
+      <small>{% trans 'Overview' %}</small>
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+      <li class="active">{% block breadcrumb-specific %}{% endblock %}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div class="box">
+                <div class="box-header">
+                    <a class="btn btn-primary" href="{% block create-url %}{% endblock %}" role="button">{% trans 'New Record' %}</a>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="data-table" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            {% block list-header-columns %}
+                            <th>{% trans 'Code' %}</th>
+                            <th>{% trans 'Description' %}</th>
+                            <th>{% trans 'Actions' %}</th>
+                            {% endblock %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% block list-items %}
+                        {% endblock %}
+                        </tbody>
+                       
+
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <!-- {% load staticfiles %} -->
+    <script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+        $(function () {
+          $("#data-table").DataTable({
+            "language": {
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+          });
+        });
+
+        var deleteLinks = document.querySelectorAll('.btn-delete');
+
+        for (var i = 0; i < deleteLinks.length; i++) {
+            deleteLinks[i].addEventListener('click', function (event) {
+                event.preventDefault();
+
+                var choice = confirm(this.getAttribute('data-confirm'));
+
+                if (choice) {
+                    window.location.href = this.getAttribute('href');
+                }
+            });
+        }
+    </script>
+{% endblock %}

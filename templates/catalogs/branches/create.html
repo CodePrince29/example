@@ -1,0 +1,60 @@
+{% extends 'form_consigee_image.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Branch' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Branch' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'branch-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Branch' %}{% endblock %}
+
+{% block form-fields-col-width %}
+<div class="col-md-12">
+    {% endblock %}
+
+    {% block form-fields %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
+            <div class="row">
+                {% for field in form %}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{field.label}}</label>
+                            <div>
+                                {{ field }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'branch-list' %}{% endblock %}
+
+
+{% block sidebar-menu %}
+{% include 'catalogs/sidebar.html' %}
+<script type="text/javascript">
+    $("#sidebar-catalogs .sidebar-catalogs-branch").addClass("active");
+    $('input[type="text"]').addClass('form-control')
+    $('input[type="number"]').addClass('form-control')
+    {% if object and not object.deletable %}
+        $("#id_total_bays").prop('readonly', true)
+        $("#id_service_interval").prop('readonly', true)
+    {% endif %}
+</script>
+<style type="text/css">
+    .error{
+        color:red;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,305 @@
+  .calculate{ margin-left: 20px; }
+   .table ul{padding: 0;}
+   .table ul li{display: inline-block;}
+   .table ul li {
+     display: inline-block;
+     float: left;
+     width: 33.3%;
+     text-align: left;
+   }
+.owl-carousel .owl-item img {
+   display: block;
+   width: 100%;
+   height: 150px;
+   padding: 0 15px;
+}.img-browse-sec {
+   display: inline-block;
+   width: 100%;
+   overflow-x: auto;
+   max-height: 175px;
+   overflow-y: visible;
+}
+.owl-nav button span {
+   font-size: 32px;
+   padding: 6px;
+   line-height: 16px;
+}
+
+
+
+/* The check */
+.check {
+    display: block;
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 12px;
+    padding-right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.check input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff ;
+    border-color:#333;
+    border-style:solid;
+    border-width:2px;
+}
+
+
+
+/* When the checkbox is checked, add a blue background */
+.check input:checked ~ .checkmark {
+    background-color: #fff  ;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.check input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.check .checkmark:after {
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid ;
+    border-color:#333;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.wearhouse-digrame{position: relative;}
+.ck-bx-list li{display: inline-block;position: absolute;}
+.ck-bx-list li:first-child {
+    top: -4px;
+    left: 147px;
+}
+.ck-bx-list li:nth-child(2) {
+    top: 84px;
+    right: 153px;
+}
+.ck-bx-list li:nth-child(3) {
+    top: 206px;
+    right: -18px;
+}
+.ck-bx-list li:nth-child(4) {
+    top: 228px;
+    left: 194px;
+}
+.ck-bx-list li:nth-child(5) {
+    bottom: 176px;
+    left: 7px;
+}
+.ck-bx-list li:nth-child(6) {
+    bottom: 144px;
+    left: 160px;
+}
+.ck-bx-list li:nth-child(7) {
+    bottom: 147px;
+    right: 62px;
+}
+.ck-bx-list li:nth-child(8) {
+    bottom: 27px;
+    left: 85px;
+}
+.ck-bx-list li:nth-child(9) {
+    bottom:27px;
+    right: 160px;
+}
+.ck-bx-list li:last-child {
+    bottom: 29px;
+    right: 101px;
+}
+
+.wearhouse-digrame-img img{width: 100%;height: 540px;}
+
+.delete-row{ 
+  display: inline-block;
+  padding: 9px 12px;
+  margin-bottom: 0;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-image: none !important;
+  border: none;
+  text-shadow: none;
+  box-shadow: none;
+  transition: all 0.12s linear 0s !important;
+  font: 14px/20px "Helvetica Neue",Helvetica,Arial,sans-serif;
+  color: #fff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+.delete-row:hover{
+  color: #fff;
+  background-color: #f01d16;
+  }
+
+ #list_location{
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+    height: 217px;
+    overflow-x: hidden;
+}
+
+ 
+
+.points_table tbody { width:100% !important; display: inline-block;}
+
+.new-tab .input-group{
+  padding: 6px 6px;
+  overflow-x:auto;
+  width: 100%;
+}
+.new-tab .input-group p{ margin:0;  }
+
+
+/*exit confirm popup*/
+.td-group 
+{ margin-bottom: 0px; }
+
+
+.points_table_scrollbar{
+  height: 150px;
+  overflow-y: scroll !important;
+
+}
+
+.points_table tbody {
+  height: 200px;
+  overflow-y: auto;
+}
+.points_table thead{ padding-right: 10px;  }
+.points_table thead, .points_table tbody{
+  display: inline-block; width: 100%;
+}
+.points_table thead tr, .points_table tbody tr{ width:100%;  }
+.points_table thead tr th, .points_table tbody tr td{ width:100px; min-width: 100px; text-align: center;  }
+.points_table thead tr th:first-child, .points_table tbody tr td:first-child{ width:auto; min-width:100%;  }
+.points_table thead tr th:nth-child(3), .points_table tbody tr td:nth-child(3){ white-space: nowrap;  }
+.input-group{
+  padding: 6px 45px;
+}
+
+.input-group-th {
+    padding: 10px 10px !important;
+}
+.modal-footer{ display: inline-block; width: 100%; position: relative; top: -10px; padding-top: 0; background: #fff;  }
+
+  .p_description {
+    width: 214px;
+}
+
+  .w_product_measurment {
+    width: 142px;
+}
+
+.input-group-0{width: 0px !important}
+
+.table-scroll{ display: inline-block; width: 100%; overflow-x: auto; float: left; padding-bottom: 10px; }
+.table-scroll .pallet_th{ width: 120px; min-width: 120px; padding-left: 0!important; padding-right: 0!important;}
+.table-scroll .pallet_column{ display: table-cell; vertical-align: top; padding-bottom: 10px; width: 120px; min-width: 120px; float: none; }
+.table-scroll .table-row{ display: table; }
+.table-scroll .pallet_column.empty-block{ display: none; }
+.table-scroll .pallet_column.delete-block{ width:auto; min-width: auto; }
+.table-scroll .pallet_column .btn{ display: inline; }
+
+
+
+.select2-container .select2-selection--single {
+    height: 33px;
+    border: 1px solid #d2d6de;
+      border-radius: 0px;
+  }
+
+.partial_product1 .total_kg {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  color: white;
+}
+.partial_product1 .kg_per_boxes {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  color: white;
+}
+.partial_product1 .boxes {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  color: white;
+}
+.partial_product1 .kg_per_price {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  color: white;
+}
+
+
+.partial_product .total_kg {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  color: white;
+}
+
+.partial_product .kg_per_boxes {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  color: white;
+}
+
+.partial_product .boxes {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  color: white;
+}
+
+.partial_product .kg_per_price {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  color: white;
+}
+

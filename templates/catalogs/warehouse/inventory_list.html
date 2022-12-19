@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+<link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}
+
+{% block content-header %}
+<h1>
+    {% block header-title %}{% trans 'AJUSTES A INVENTARIO' %}{% endblock %}
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>  
+  <li class="active">{% trans 'AJUSTES A INVENTARIO' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+
+        <div class="col-xs-12">
+            <div class="box">            
+            <div class="box-body">
+                <form id="warehouse_inventory_search" role="form" method="post">
+                    {% csrf_token %}
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label>{% trans 'Cliente' %}</label>
+                        <select class="form-control client" name="client">
+                            <option value="">Seleccione...</option>
+                            <option value="ALL">Todas</option>
+                            {% for client in clients %}
+                            <option value="{{client.id}}">{{client.name}}</option>
+                            {% endfor %}
+                        </select>                
+
+                    </div> 
+                    <div class="form-group col-md-3">
+                        <label>{% trans 'Producto' %}</label>
+                        <select class="form-control product" name="product">
+                            <option value="">Seleccione...</option>
+                            <option value="ALL">Todas</option>
+                            {% for product in products %}
+                            <option value="{{product.id}}">{{product.product_description}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>{% trans 'Lote Tarima' %}</label>
+                        <input type="text" name="lote_tarima" class="form-control">
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label>{% trans 'Lote Cliente' %}</label>
+                        <input type="text" name="lote_cliente" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label>{% trans 'Source Warehouse' %}</label>
+                        <select class="form-control warehouse" name="warehouse">
+                            <option value="">Seleccione...</option>
+                            {% for warehouse in warehouses %}
+                            <option value="{{warehouse.id}}">{{warehouse.code}}</option>
+                            {% endfor %}
+                        </select>                
+
+                    </div> 
+                    <div class="form-group col-md-3">
+                        <label>{% trans 'Source Location' %}</label>
+                        <select class="form-control warehouse_location" name="warehouse_location">
+                            <option value="">Seleccione...</option>
+                            {% for location in locations %}
+                            <option value="{{location.id}}">{{location.shortcode}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label>{% trans 'Fecha Caducidad' %}</label>
+                        <input type="text" name="expire_date" id="expire_date" class="form-control">
+                    </div>
+
+                    <div class="col-md-3" style="margin-top: 24px;">
+                        <button  class="btn btn-primary" type="button" id="inventory_search_submit">{% trans 'Search' %}</button>
+                        <button  class="btn btn-default" type="reset" id="inventory_search_clear">{% trans 'Clean' %}</button>
+                      </div>
+                </div>
+            </form>
+                <table id="data-table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% block list-header-columns %}   
+                                <th>{% trans 'Customer' %}</th>
+                                <th>{% trans 'Product' %}</th>
+                                <th>{% trans 'Kg Totales' %}</th>
+                                <th>{% trans 'Cajas' %}</th>
+                                <th>{% trans 'Cajas Retenidas' %}</th>
+                                <th>{% trans 'Actions' %}</th>
+                            {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- {% for warehouse_inventory in warehouseinventory_list %}
+                        <tr>
+                            <td>{{ warehouse_inventory.client }}</td>
+                            <td>{{ warehouse_inventory.product }}</td>
+                            <td>{{ warehouse_inventory.total_kg | unlocalize }}</td>
+                            <td>{{ warehouse_inventory.total_boxes | unlocalize }}</td>
+                            <td>{{ warehouse_inventory.retained_boxes | unlocalize }}</td>
+                           
+                            <td>
+                                <a role="button" href="{% url 'warehouse-inventory-edit' warehouse_inventory.id %}" class="btn btn-success"><i
+                                    class="fa fa-edit"></i></a>
+                                </td>
+                            
+                            </tr>
+                            {% endfor %} -->
+                        </tbody>                       
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block scripts %}
+    <script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+  var datatable =  $("#data-table").DataTable({
+    "language": {
+      "sProcessing":     "Procesando...",
+      "sLengthMenu":     "Mostrar _MENU_ registros",
+      "sZeroRecords":    "No se encontraron resultados",
+      "sEmptyTable":     "Ningún dato disponible en esta tabla",
+      "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix":    "",
+      "sSearch":         "Buscar:",
+      "sUrl":            "",
+      "sInfoThousands":  ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst":    "Primero",
+        "sLast":     "Último",
+        "sNext":     "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    }
+  });
+
+
+        $("#inventory_search_submit").click(function(){
+            $.post("{% url 'warehouse-inventory-filter-api' %}", $('form#warehouse_inventory_search').serialize(), function(data, status){
+                console.log(data)
+                console.log(status)
+                datatable.clear()
+                datatable.rows.add(data)
+                datatable.draw()
+            })
+        })
+
+
+    $("select.warehouse").change(function(){
+    if($(this).val() != ''){
+      $.get("{% url 'warehouse-locations' 0 %}".replace('0', $(this).val() ), function(data, status){
+        if(status == 'success'){
+          $("select.warehouse_location").empty()
+          select = $("select.warehouse_location")
+          select.append('<option value="" selected="selected">Seleccione...</option>')
+          data.forEach(function(location) {
+            select.append('<option value="'+location['id']+'">' +location['shortcode']+'</option>')
+          })
+        }
+      });
+    }
+    else{
+      $("select.warehouse_location").empty()
+    }
+
+  })
+    $(".client").change(function(){
+    jQuery.ajax( {
+      url: "{% url 'customer-products' 0 %}".replace('0', $(".client").val()),
+      type: "GET",
+      dataType: "json",
+    } ).done( function( response ) {
+      product_field = $(".product")
+      product_field.empty()
+      product_field.append('<option value="">'+"Seleccione..."+'</option>')
+      product_field.append('<option value="ALL">'+"Todas"+'</option>')
+      response.forEach(function(product) {
+
+        product_field.append('<option value="'+product['id']+'"">' +product['product_description']+'</option>')
+      })
+    })
+    })
+
+
+    $('#expire_date').datepicker({
+      autoclose: false,
+      format: 'yyyy-mm-dd',
+    }).datepicker("setDate", new Date());
+
+</script>
+{% endblock %}
+
+
+{% block sidebar-menu %}
+{% include 'warehouse/sidebar.html' %}
+{% endblock %}

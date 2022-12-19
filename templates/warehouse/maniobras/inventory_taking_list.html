@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load utilities  %}
+{% load qr_tags %}
+{% load i18n %}
+{% load l10n %}
+
+
+<link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}
+
+{% block content-header %}
+<h1>
+    {% block header-title %}{% endblock %}
+    <small>{% trans 'Overview' %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li class="active">{% trans 'Taking inventory' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+            <div class="box-header">
+                <h4> {% trans 'Taking inventory' %} </h4>
+                <a class="btn btn-primary" href="add-inventory-taking" role="button">{% trans "Nueva Toma de Inventario" %}</a>
+            </div>
+
+            <div class="box-body">
+                <div class="table-responsive">
+                <table id="data-table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% block list-header-columns %}
+                            <th>{% trans 'Fecha' %}</th>
+                            <th>{% trans 'Hora' %}</th>
+                            <th>{% trans 'Customer' %}</th>
+                            <th style="max-width:220px !important;">{% trans 'Product' %}</th>
+                            <th>{% trans 'Kg Totales' %}</th>
+                            <th>{% trans 'Pallets Validados' %}</th>
+                            <th>{% trans 'Status' %}</th>
+                            <th>{% trans 'Action' %}</th>
+                           {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                         {% for takinginventory in takinginventory_list %}
+                         <tr>                           
+
+                            <td>{{ takinginventory.taking_date }}</td>
+                            <td>{{ takinginventory.taking_hour }}</td>
+                            <td>{{ takinginventory.customer }}</td>
+                            <td style="width:220px; max-width:220px;word-break: break-all;">{{ takinginventory.product_name}}</td>
+                            <td>{{ takinginventory.get_total_price | unlocalize }}</td>
+                            <td>{{ takinginventory.get_total_pallets_count | unlocalize }}</td>
+                            <td>{% trans takinginventory.status %}</td>
+                            <td>
+                            {%if takinginventory.status == "pending" %}
+                                <a role="button" href="{% url 'inventory-taking-update' takinginventory.id %}" class="btn btn-success"><i
+                                        class="fa fa-edit"></i></a>
+                                    
+                            {%else%}
+                                <a role="button" href="{% url 'inventory-taking-show' takinginventory.id %}" class="btn btn-warning"><i
+                                        class="fa fa-eye"></i></a>
+                                <a role="button" href="{% url 'inventory-taking-report' takinginventory.id %}"><img src="{% static 'theme/img/GenerarExcel_icon.png' %}" style="width: 35px"></i></a>
+                                 <a class="btn btn-info generate_pdf_form" role="button" data-id="{{takinginventory.id}}" href="#"><i class="fa fa-print"></i></a>
+                            {%endif%}
+                            </td>
+                            </tr>
+                         {%endfor%}
+                       
+                    </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block scripts %}
+    <script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    
+    <script>
+        $(function () {
+            $("#data-table").DataTable({
+                "language": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+        });
+    
+     $(".generate_pdf_form").on('click', function(event){
+        console.log("id")
+        event.preventDefault();
+        $.LoadingOverlay('show', {text: 'Procesando Petición...'})
+        id = $(this).attr("data-id")
+        
+        $.ajax({
+              url: "{% url 'generate-inventory-comparison-report' %}",
+              type: "POST",
+              data:{
+                inv_id:id
+              },
+              // contentType:false,
+              // processData:false,
+              success: function( response ) {
+                  if(response.code == 200){
+                    var lem = document.createElement('a')
+                    lem.href = "/media"+response.file
+                    lem.setAttribute('download', "")
+                    lem.click()
+                  }else{
+                    alert("Report is not generated")
+                  }
+                  $.LoadingOverlay('hide')
+                }
+            })
+    });
+
+     $("#sidebar-maneuvers").addClass("active");
+     $("#sidebar-maneuvers .inventory").addClass('active')
+    </script>
+    {% endblock %}

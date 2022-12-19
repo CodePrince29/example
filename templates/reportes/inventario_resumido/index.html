@@ -1,0 +1,284 @@
+
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">            
+            <div class="box-body">
+               <form id="inventario_resumido" role="form" method="post">
+                {% csrf_token %}
+                <div id="inventario_resumido_filters" class="row">
+                    <div class="col-md-12">
+
+                    <div class="form-group col-md-4">
+                        <label>{% trans 'Almacen' %}</label>
+                        <select class="form-control warehouse" name="warehouse">
+                          <option value="">Seleccione...</option>
+                          <option value="ALL">Todos</option>
+                          {% for warehouse in warehouses %}
+                          <option value="{{warehouse.id}}">{{warehouse.description}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+
+                      <div class="form-group col-md-4">
+
+                        <label>{% trans 'Customer' %}</label>
+                        
+                        <select class="form-control customer" name="client">
+                          {% if request.user.is_authenticated and request.user.is_staff %}
+                          <option value="">Seleccione...</option>
+                          <option value="ALL">Todos</option>
+                          {% endif %}
+                          {% for client in customers %}
+                          <option value="{{client.id}}">{{client.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label>{% trans 'Product' %}</label>
+                        <select class="form-control product" name="product">
+                          <option class="all" value="">Seleccione...</option>
+                          <option value="ALL">Todos</option>
+                          {% for product in products %}
+                          <option value="{{product.id}}">{{product.product_code}} {{product.product_description|title}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                  </div>
+                  <div class="col-md-12">
+                      <div class="col-md-4 margin_top">
+                        <button  class="btn btn-primary" type="button" id="inventario_resumido_submit">{% trans 'Search' %}</button>
+                        <button  class="btn btn-default" type="button" id="inventario_resumido_clear">{% trans 'Clean' %}</button>
+                      </div>
+                    </div>
+                </div>
+                </form>
+            	</div>
+
+            	
+
+        <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+            <div class="box-header">
+                <h4> {% trans 'Inventario Resumido' %} </h4>
+                <div class="col-md-6 pull-right">
+                <form class="pull-right excel-generate" id="generate_report_form">
+                    {% csrf_token %}
+                    <input type = "submit" class="btn btn-primary" href="javascript:void(0)" disabled="" value="{% trans "WAREHOUSE ENTRY REPORT" %}">
+                    <input type="hidden" id="ids_list" value="[]" name="ids_list">
+                </form>
+
+
+                <form class="pull-right" id="generate_pdf_form">
+                  {% csrf_token %}
+                  <input type = "submit" class="btn btn-primary" href="javascript:void(0)" disabled="" value="{% trans "GENERATE PDF" %}">
+                  <input type="hidden" id="pdf_ids_list" value="[]" name="pdf_ids_list">
+                </form>                
+            </div>
+            </div>
+
+            	<div class="box-body">
+                <table id="data-table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% block list-header-columns %}                            
+                            <th>{% trans 'Customer' %}</th>
+                            <th>{% trans 'Product' %}</th>
+                            <th>{% trans 'Product Descriptions' %}</th>
+                            <th>{% trans 'Pending Exit Boxes' %}</th>
+                            <th>{% trans 'Pending Entrance Exit' %}</th>
+                            <th>{% trans 'Cantidad Disponible' %}</th>
+                            <th>{% trans 'Cantidad Total' %}</th>
+                           {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>                        
+
+                        
+                    </tbody>                       
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style type="text/css">
+        .margin_top {
+            margin-top: 26px
+        }
+
+        .excel-generate{ margin-left: 30px;}
+    </style>
+
+
+
+
+{% endblock content %}
+
+{% block scripts %}
+
+    <script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+		<script type="text/javascript">
+        $('#sidebar-reports').addClass('active')
+        $('.inventario-resumido').addClass('active')
+        var datatable =  $("#data-table").DataTable({
+          "language": {
+              "sProcessing":     "Procesando...",
+              "sLengthMenu":     "Mostrar _MENU_ registros",
+              "sZeroRecords":    "No se encontraron resultados",
+              "sEmptyTable":     "Ningún dato disponible en esta tabla",
+              "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+              "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+              "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+              "sInfoPostFix":    "",
+              "sSearch":         "Buscar:",
+              "sUrl":            "",
+              "sInfoThousands":  ",",
+              "sLoadingRecords": "Cargando...",
+              "oPaginate": {
+                  "sFirst":    "Primero",
+                  "sLast":     "Último",
+                  "sNext":     "Siguiente",
+                  "sPrevious": "Anterior"
+              },
+              "oAria": {
+                  "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                  "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+              }
+          }
+        });
+
+      	function load_client_products(){
+
+      		jQuery.ajax( {
+      			url: "{% url 'customer-products' 0 %}".replace('0', $(".customer").val()),
+      			type: "GET",
+      			dataType: "json",
+      		} ).done( function( response ) {
+      			select = $("#inventario_resumido_filters").find('.product')
+      			select.empty()
+      			select.append('<option value="" selected="selected">---------</option>')
+      			select.append('<option value="ALL" selected="selected">Todos</option>')
+      			products = response
+
+      			products.forEach(function(product) {
+      			select.append('<option value="'+product['id'] +'">'+product['product_code'] + ' ' + camelize(product['product_description'])+'</option>')
+      		})
+      		})
+      	}
+        function camelize(str) {
+            if ((str===null) || (str===''))
+              return false;
+            else
+              str = str.toString();
+
+            return str.replace(/\w\S*/g, function(txt){
+              return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+         }
+      	$(".customer").change(function(){
+      		$(".product").empty()
+      		load_client_products()
+      	})
+
+      	$("#inventario_resumido_submit").click(function(){
+          $.LoadingOverlay('show', {text: 'Procesando Petición...'})
+      		data_filter()
+      	})
+
+      	function data_filter() {
+          $.post("{% url 'inventario-resumido-filter' %}", $('form#inventario_resumido').serialize(), function(data, status){
+                console.log(data)
+              	$("#ids_list").val(btoa(JSON.stringify(data)))
+                $("#pdf_ids_list").val(btoa(JSON.stringify(data)))
+                datatable.clear()
+                datatable.rows.add(data)
+                datatable.draw()
+                if(data.length > 0){
+                  $("#generate_report_form input[type='submit']").prop('disabled', false)
+                  $("#generate_pdf_form input[type='submit']").prop('disabled', false)
+                }else{
+                  $("#generate_report_form input[type='submit']").prop('disabled', true)
+                  $("#generate_pdf_form input[type='submit']").prop('disabled', true)
+                }
+                $.LoadingOverlay('hide')
+              }).done(function() {
+                  $.LoadingOverlay('hide')
+                })  
+        }
+        $("#generate_pdf_form").submit(function(event){
+              event.preventDefault();
+              $.LoadingOverlay('show', {text: 'Procesando Petición...'})
+              var data = new FormData($(this)[0]);
+              var data = $('#pdf_ids_list').val();
+
+              let request = new XMLHttpRequest();
+              request.open('POST', "{% url 'inventory_summary_generate_pdf' %}", true);
+              request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+              request.responseType = 'blob';
+
+              request.onload = function (e) {
+                  $.LoadingOverlay('hide')
+                  if (this.status === 200) {
+                    let blob = this.response;
+                    let date = new Date()
+                    filename_date = date.toLocaleString().split(', ')[0].replace(/\//g, '_')
+                    let downloadLink = window.document.createElement('a');
+                    var mediaType = 'application/pdf';
+                    downloadLink.href = window.URL.createObjectURL(new Blob([blob], {type: mediaType}));
+                    downloadLink.download = "Inventario_Resumido_"+filename_date+".pdf";;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                  }
+                  else if(this.status === 302){
+                    Swal.fire("Datos no encontrados", "Lo sentimos, no se encontraron datos para este valor", "info")
+                  }
+                }
+              request.send("pdf_ids_list="+data);
+          });
+
+         $("#generate_report_form").submit(function(event){
+              event.preventDefault();
+              $.LoadingOverlay('show', {text: 'Procesando Petición...'})
+              var data = $('#ids_list').val();
+
+              let request = new XMLHttpRequest();
+              request.open('POST', "{% url 'generate_inventory_resumido_report' %}", true);
+              request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+              request.responseType = 'blob';
+
+              request.onload = function (e) {
+                  $.LoadingOverlay('hide')
+                  if (this.status === 200) {
+                    let blob = this.response;
+                    let date = new Date()
+                    filename_date = date.toLocaleString().split(', ')[0].replace(/\//g, '_')
+                    let downloadLink = window.document.createElement('a');
+                    var mediaType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                    downloadLink.href = window.URL.createObjectURL(new Blob([blob], {type: mediaType}));
+                    downloadLink.download = "Inventario_resumido_"+filename_date+".xlsx";;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                  }
+                  else if(this.status === 302){
+                    Swal.fire("Datos no encontrados", "Lo sentimos, no se encontraron datos para este valor", "info")
+                  }
+                }
+              request.send("ids_list="+data);
+
+          });
+      </script>
+      {% endblock%}

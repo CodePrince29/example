@@ -1,0 +1,334 @@
+
+{% extends 'base.html' %}
+{% block header-links %}
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+
+<link rel="stylesheet" href="{% static 'vendor/plugins/datatables/dataTables.bootstrap.css' %}">
+{% endblock %}
+
+{% block content-header %}
+<h1>
+    {% block header-title %}{% endblock %}
+    <small>{% trans 'Overview' %}</small>
+</h1>
+<ol class="breadcrumb">
+  <li><a href="{% url 'main-dashboard' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  <li class="active">{% trans 'WAREHOUSE-ENTRANCE-APPOINTMENTS' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">            
+            <div class="box-body">
+               <form id="history_search" role="form" method="post">
+                {% csrf_token %}
+                <div id="warehouse-filters" class="row">
+                    <div class="col-md-12">
+                      <div class="form-group col-md-3">
+
+                        <label>{% trans 'Customer' %}</label>
+                        <select class="form-control customer" name="client">
+                          
+                          {% if request.user.is_authenticated and request.user.is_staff %}
+                          <option value="">Seleccione...</option>
+                          <option value="ALL">Todos</option>
+                          {% endif %}
+                          {% for client in customers %}
+                          <option value="{{client.id}}">{{client.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group col-md-3">
+                        <label>{% trans 'Product' %}</label>
+                        <select class="form-control product" name="product">
+                          <option class="all" value="">Seleccione...</option>
+                          {% for product in products %}
+                          <option value="{{product.id}}">{{product.product_code}}  {{product.product_description|title}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="col-md-2 margin_top">
+                        <button  class="btn btn-primary pull-right" type="button" id="history_search_submit">{% trans 'Search' %}</button>
+                      </div>
+                      <div class="col-md-2 margin_top">
+                        <button  class="btn btn-default" type="button" id="history_search_clear">{% trans 'Clean' %}</button>
+                      </div>
+                    </div>
+
+                    <div class="col-md-12">
+                      <div class="form-group col-md-3">
+                        <label>{% trans 'Start Date' %}</label>
+                        <input type="text" name="start_date" class="form-control start_date">
+                      </div>
+                      <div class="form-group col-md-3">
+                        <label>{% trans 'End Date' %}</label>
+                        <input type="text" name="end_date" class="form-control end_date">
+                      </div>
+                      <div class="form-group col-md-4 margin_top" >                        
+                         <label class="checkbox-inline">
+                              <input type="checkbox"  name="entrance" class="entrance_checkbox">Entrada
+                        </label>
+                        <label class="checkbox-inline">
+                          <input type="checkbox"  name="exit" class="exit_checkbox">Salida
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <form>
+                <table id="data-table" class="table table-bordered table-striped" data-cols-width="40,25,25,25,25,25">
+                    <thead>
+                        <tr data-f-bold="true" data-a-v="middle" data-height="30" data-fill-color="2d8de1" data-a-wrap="true">
+                            {% block list-header-columns %}                            
+                            <th data-f-sz="16">{% trans 'Customer' %}</th>
+                            <th data-f-sz="16">{% trans 'Product' %}</th>
+                            <th data-f-sz="16">{% trans 'Mov. Type' %}</th>
+                            <th data-f-sz="16">{% trans 'Folio' %}</th>
+                            <th data-f-sz="16">{% trans 'Date' %}</th>
+                            <th data-f-sz="16">{% trans 'Total Kg' %}</th>
+                            <th data-exclude="true">{% trans 'Action' %}</th>
+                           {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>                        
+
+                        
+                    </tbody>                       
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table id="datatable" class="hide" data-cols-width="40,25,25,25,25,25">
+      <thead>
+          <tr data-f-bold="true" data-a-v="middle" data-height="30" data-fill-color="2d8de1" data-a-wrap="true">
+              <th data-f-sz="16">{% trans 'Customer' %}</th>
+              <th data-f-sz="16">{% trans 'Product' %}</th>
+              <th data-f-sz="16">{% trans 'Mov. Type' %}</th>
+              <th data-f-sz="16">{% trans 'Folio' %}</th>
+              <th data-f-sz="16">{% trans 'Date' %}</th>
+              <th data-f-sz="16">{% trans 'Total Kg' %}</th>
+          </tr>
+      </thead>
+      <tbody>                        
+
+          
+      </tbody>                       
+
+    </table>
+
+    <style type="text/css">
+        .margin_top {
+            margin-top: 26px
+        }
+
+        td {
+            word-break: break-all !important;
+        }
+    </style>
+    {% endblock %}
+
+    {% block scripts %}
+    
+    <script src="{% static 'vendor/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'theme/js/TableToExcel.js' %}" type="text/javascript"></script>
+    <script src="{% static 'custom/warehouse/js/excel.js' %}"></script>
+    <script>
+      $(document).ready(function(){
+        current_url = window.location.href;
+
+        get_referal = current_url.split("?")
+        if (get_referal[1] == "redirect_query=true"){
+          localStorage.getItem("start_date")          
+           customer = localStorage.getItem("customer");
+           product = localStorage.getItem("product");
+           start_date = localStorage.getItem("start_date");
+           end_date = localStorage.getItem("end_date");           
+           entrance = localStorage.getItem("entrance");
+           exit = localStorage.getItem("exit");
+
+            $(".customer").val(customer)
+            $(".product").val(product)
+            $(".start_date").val(start_date)
+            $(".end_date").val(end_date)
+            if(entrance == "true"){
+              $(".entrance_checkbox").prop('checked', 'true')
+            }
+
+            if(exit == "true"){
+              $(".exit_checkbox").prop('checked', 'true')
+            }
+
+            data_filter()
+        }
+        else{
+           localStorage.removeItem("customer");
+           localStorage.removeItem("product");
+           localStorage.removeItem("start_date");
+           localStorage.removeItem("end_date");           
+           localStorage.removeItem("entrance");
+           localStorage.removeItem("exit");
+        }
+      })
+        datepicker()
+        function datepicker() {
+          var start = new Date();
+          var end = new Date(new Date().setYear(start.getFullYear()+1));
+
+          var start_date = $('.start_date').datepicker({
+                                  format: "yyyy-mm-dd",
+                                  autoclose: true,
+                                  // startDate : start,
+                                  // endDate   : end
+                              }).datepicker("setDate",'now');
+
+          var end_date = $('.end_date').datepicker({
+                                  format: "yyyy-mm-dd",
+                                  autoclose: true
+                                  // startDate : start,
+                                  // endDate   : end
+                              }).datepicker("setDate",'now');
+
+          start_date.on('changeDate', function(){
+                            newDate = new Date($(this).val());
+                            newDate.setDate(newDate.getDate() + 1);
+                            end_date.datepicker('setStartDate', newDate)
+                        })
+          end_date.on('changeDate', function(){
+                            newDate = new Date($(this).val());
+                            newDate.setDate(newDate.getDate() + 1);
+                            start_date.datepicker('setEndDate', newDate)
+
+                        })
+
+        }
+        
+        function camelize(text, separator) {
+ 
+            // Assume separator is _ if no one has been provided.
+            if(typeof(separator) == "undefined") {
+              separator = "_";
+            }
+           
+            // Cut the string into words
+            var words = text.split(separator);
+           
+            // Concatenate all capitalized words to get camelized string
+            var result = "";
+            for (var i = 0 ; i < words.length ; i++) {
+              var word = words[i];
+              var capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
+              result += capitalizedWord;
+            }
+           
+            return result;
+           
+          }
+
+        var datatable =  $("#data-table").DataTable({
+                "language": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                },
+                "buttons": ['excel']
+            });
+        $("#history_search_submit").click(function(){
+            exit = $(".exit_checkbox").prop('checked')
+            entrance = $(".entrance_checkbox").prop('checked')
+            customer = $(".customer").val()
+            product = $(".product").val()
+            start_date = $(".start_date").val()
+            end_date = $(".end_date").val()
+
+            localStorage.setItem("customer", customer);
+            localStorage.setItem("product", product);
+            localStorage.setItem("start_date", start_date);
+            localStorage.setItem("end_date", end_date);            
+            localStorage.setItem("entrance",entrance)
+            localStorage.setItem("exit",exit)
+            data_filter()            
+        })
+
+        function data_filter() {
+          $.LoadingOverlay('show',{'text': 'Cargando'})
+          $.post("{% url 'resultado-de-romaneo-report' %}", $('form#history_search').serialize(), function(data, status){
+            datatable.clear()
+            datatable.rows.add(data)
+            datatable.draw()
+            window.state = data
+            if(data.length > 0){
+              $('#export_excel').prop('disabled', false)
+            }else{
+              $('#export_excel').prop('disabled', true)
+            }
+            $.LoadingOverlay('hide')
+          })  
+        }
+
+    $("select.customer").change(function(){
+      product_detail()
+    })
+    if ($(".customer").val() != ""){
+          product_detail()
+        }
+
+    function product_detail() {
+      customer = $(".customer").val()
+      $.get("{% url 'customer-products' 0 %}".replace('0', customer ), function(data, status){
+          if(status == 'success'){
+            $(".product").empty()
+            select = $(".product")
+            select.append('<option value="" selected="selected">Seleccione...</option>')
+            data.forEach(function(product) {
+              select.append('<option value="'+product['id']+'">' + product['product_code']+' '+ camelize(product['product_description']) + '</option>')
+            })
+          }
+      });
+    }
+    $("#history_search_clear").click(function(){
+      $("#history_search").trigger('reset');
+      datepicker()
+      datatable.clear()
+      datatable.draw()
+      $('#export_excel').prop('disabled', true)
+    })
+
+ 
+
+  $("li.resultado_de_romaneo").addClass('active')
+
+  
+  </script>
+
+ 
+{% endblock %}
+
+{% block sidebar-menu %}
+{% include 'reportes/sidebar.html' %}
+{% endblock %}

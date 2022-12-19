@@ -1,0 +1,84 @@
+{% extends 'form-new.html' %}
+{% load staticfiles i18n %}
+
+{# Content header #}
+{% block header-title %}{% trans 'Price Lists' %}{% endblock %}
+{% block breadcrumb-category %}{% trans 'Price Lists' %}{% endblock %}
+{% block breadcrumb-category-url %}{% url 'pricelist-list' %}{% endblock %}
+{% block breadcrumb-specific %}{{ block.super }}{% endblock %}
+
+{# Content block #}
+{% block form-box-title %}{% trans 'Price List' %}{% endblock %}
+
+{% block form-fields-col-width %}
+    <div class="col-md-12">
+{% endblock %}
+
+{% block form-fields %}
+    <form action="." method="post">
+        {% csrf_token %}
+        <div>
+            {% for field in form %}
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        {{ field.errors }}
+                        {{ field.label_tag }} {{ field }}
+                        {% if field.help_text %}
+                            <span class="help">({{ field.help_text|safe }})</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <fieldset>
+            <legend>{% trans "Price List Items" %}</legend>
+            {{ item_form.management_form }}
+            {{ item_form.non_form_errors }}
+            {% for form in item_form %}
+
+                {{ form.id }}
+                <div class="inline {{ item_form.prefix }}">
+                    {#                    {{ form.as_p }}#}
+                    {% for field in form.visible_fields %}
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                {{ field.errors }}
+                                {{ field.label_tag }} {{ field }}
+                                {% if field.help_text %}
+                                    <p class="help">{{ field.help_text|safe }}</p>
+                                {% endif %}
+                                {% for hidden in form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </fieldset>
+    </form>
+   
+{% endblock %}
+
+{# Cancel URL #}
+{% block cancel-url %}{% url 'pricelist-list' %}{% endblock %}
+
+{% block additional-custom-scripts %}
+    <script src="{% static 'custom/warehouse/js/jquery.formset.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".inline.{{ item_form.prefix }}").formset({
+                prefix: "{{ item_form.prefix }}",
+                addText: "{% trans "Add another" %}",
+                deleteText: "{% trans "Remove" %}"
+            });
+        });
+    </script>
+
+{% endblock %}
+
+
+{% block sidebar-menu %}
+    {% include 'catalogs/sidebar.html' %}
+    {% include 'catalogs/price_list/sidebar.html' %}
+{% endblock %}
